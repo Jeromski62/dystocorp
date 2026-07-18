@@ -1,0 +1,88 @@
+daddelnmitmaurice
+
+# Projekt: DystoCorp Crew & Campaign Manager
+
+  ## Kontext
+
+  Wir spielen "Stargrave" (Osprey Games, Sci-Fi-Tabletop-Skirmish) als Grundlage für
+  unsere eigene Kampagnen-Welt "DystoCorp" (dystopisches Corporate-Cyberpunk-Setting,
+  2-3 Spieler, laufende Kampagne). Ich möchte eine Web-App bauen, mit der wir gemeinsam
+  online unsere Crews erstellen und über mehrere Spielabende hinweg tracken.
+
+  Bevor du irgendetwas implementierst: lies zuerst alle Dateien in `/context/stargrave/`
+  (Spielregeln: Crew-Erstellung, Power-Katalog, Kampf-/Aktivierungsregeln, Errata,
+  Crew-Sheet-Datenmodell) und `/context/dystocorp/` (unsere eigene Lore: Mega Corps,
+  Society, Campaign Intel) vollständig, bevor du Architektur oder Datenmodell vorschlägst.
+  Diese Dateien sind die Single Source of Truth für Spielregeln und Lore — nichts davon
+  erfinden oder vereinfachen, ohne mich zu fragen.
+
+  ## Was die App können muss (MVP)
+
+  1. **Auth & Nutzer**
+     - Einfacher Login (E-Mail/Passwort oder Magic Link). Jeder der 2-3 Spieler hat einen
+       eigenen Account.
+
+  2. **Kampagne**
+     - Eine Kampagne bündelt mehrere Crews (eine pro Spieler). Alle Spieler sind
+       gleichberechtigt — es gibt keine GM-/Admin-Rolle.
+     - Jeder Spieler sieht die Crews aller Mitspieler (read-only), kann aber nur seine
+       eigene Crew bearbeiten.
+     - Pro Crew wird über Spielabende hinweg getrackt: XP, Level, Credits, Loot,
+       Verletzungen — angelehnt an die "Post-Game Sequence" aus den Stargrave-Regeln.
+
+  3. **Mega-Corp-Auswahl (Layer VOR der Crew-Erstellung)**
+     - Bevor eine Crew angelegt wird, wählt der Spieler eine unserer Mega Corps
+       (aktuell: Yūgure Corp, BioNex Connect — Datenmodell aber erweiterbar für weitere,
+       z.B. Energie/Rohstoffe, Telekom, Transport/Logistik, Entertainment, Finanzen).
+     - Die Corp-Wahl ist **rein Flavor/Optik** (Name, Lore-Text, evtl. Farbschema/Emblem
+       auf der Crew-Übersicht) — hat **keinen** Einfluss auf Stargrave-Spielmechanik
+       (keine Stat-Boni, keine exklusiven Backgrounds/Powers/Gear).
+     - Lore-Texte pro Corp kommen 1:1 aus `/context/dystocorp/mega-corps/`.
+
+  4. **Crew Builder** (nach Corp-Wahl)
+     - Captain erstellen: Background wählen (8 zur Auswahl), Stat-Modifikatoren
+       automatisch anwenden, 5 Powers wählen (3-4 Core + 1-2 Non-Core), Activation-Number-
+       Berechnung automatisch (Core = printed, Non-Core = printed+2, danach 2 Powers um
+       je -1 senkbar), Level startet bei 15, 6 Gear-Slots.
+     - First Mate erstellen: gleiche Logik, aber 4 Powers (2-3 Core), Activation-Number
+       Core+2/Non-Core+4, keine Absenkung, Level startet bei 0, 5 Gear-Slots.
+     - Soldiers rekrutieren: max. 8 (davon max. 4 Specialists), Budget 400cr aus
+       Standard-/Specialist-Tabelle, fixe Stats, optional als "Robot" markierbar.
+     - **Volle Regel-Validierung**: ungültige Kombinationen (zu viele Powers, Budget
+       überschritten, zu viele Specialists etc.) müssen vom UI verhindert werden, nicht
+       nur "empfohlen".
+     - Ship-Verwaltung: Schiffsname, Ship Upgrades, Ship's Hold (freies Inventar).
+
+  5. **Power-Nachschlagewerk**
+     - Durchsuchbare/filterbare Liste aller 52 Powers (Name, Activation, Strain, Typ,
+       Volltext), filterbar z.B. nach Background-Core-Zugehörigkeit oder Power-Typ
+       (Self Only / Line of Sight / Touch / Out of Game A/B).
+
+  ## Explizit NICHT im MVP (aber Datenmodell sollte es nicht verbauen)
+
+  - Voller "Spiel-Begleiter"-Modus: live Kampf-Resolver (automatisierte
+    Shooting/Combat-Würfelauflösung), Kreaturen-KI-Ausführung, Loot-Rolls während des
+    Spiels. Das ist die Ausbaustufe 2 — bitte Datenmodell (Crew/Figuren-Stats,
+    Health-Tracking) so anlegen, dass sich das später ergänzen lässt, aber jetzt nicht
+    bauen.
+
+  ## Tech-Stack
+
+  Keine feste Vorgabe von mir — schlag einen pragmatischen, modernen Stack vor, der
+  Online-Sync zwischen 2-3 Nutzern, einfaches Hosting und schnelle Entwicklung
+  ermöglicht (z.B. Next.js/TypeScript + Postgres+Auth-Backend wie Supabase, oder eine
+  vergleichbare Alternative). Begründe kurz deine Wahl, bevor du loslegst.
+
+  ## Design
+
+  Dunkles, industrielles Sci-Fi/Cyberpunk-Look passend zum dystopischen
+  Corporate-Setting. Kein festes Branding vorgegeben — orientiere dich am Ton der
+  DystoCorp-Lore (kalt, corporate, leicht zynisch — siehe z.B. die "Campaign Intel"
+  Mission-Reports als Stil-Referenz für Copy/Tonalität), aber Priorität liegt auf
+  Funktionalität und Übersichtlichkeit, nicht auf aufwändigem Custom-Design.
+
+  ## Vorgehen
+
+  Bitte zuerst einen kurzen Architektur-/Datenmodell-Vorschlag (Entities: Campaign,
+  Player, Crew, Corp, Captain, FirstMate, Soldier, Power, ShipInventory) zur Abstimmung
+  vorlegen, bevor du mit der Implementierung startest.
