@@ -313,7 +313,8 @@ export async function updateCrewName(crewId: string, name: string): Promise<{ er
   if (error) return { error: error.message };
 
   revalidatePath(`/crews/${crewId}`);
-  revalidatePath(`/campaigns/${crew.campaign_id}`);
+  revalidatePath("/crews");
+  if (crew.campaign_id) revalidatePath(`/campaigns/${crew.campaign_id}`);
   return {};
 }
 

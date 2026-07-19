@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { saveCrewSessionResult } from "./actions";
+import { saveCrewMissionResult } from "./actions";
 
 type ExistingResult = {
   xpDelta: number;
@@ -11,15 +11,15 @@ type ExistingResult = {
   membersLost: string | null;
 };
 
-export function CrewResultForm({
+export function CrewMissionResultForm({
   campaignId,
-  sessionLogEntryId,
+  missionId,
   crewId,
   crewName,
   existing,
 }: {
   campaignId: string;
-  sessionLogEntryId: string;
+  missionId: string;
   crewId: string;
   crewName: string;
   existing: ExistingResult | null;
@@ -36,9 +36,9 @@ export function CrewResultForm({
   function handleSave() {
     setError(null);
     startTransition(async () => {
-      const result = await saveCrewSessionResult({
+      const result = await saveCrewMissionResult({
         campaignId,
-        sessionLogEntryId,
+        missionId,
         crewId,
         xpDelta,
         creditsDelta,

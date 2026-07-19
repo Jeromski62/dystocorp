@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export async function createCrew(campaignId: string, corpId: string) {
+export async function createCrew(campaignId: string | null, corpId: string) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -17,7 +17,7 @@ export async function createCrew(campaignId: string, corpId: string) {
     .single();
 
   if (error || !crew) {
-    redirect(`/campaigns/${campaignId}?error=crew-exists`);
+    redirect(campaignId ? `/campaigns/${campaignId}?error=crew-exists` : "/crews?error=crew-exists");
   }
 
   redirect(`/crews/${crew.id}`);

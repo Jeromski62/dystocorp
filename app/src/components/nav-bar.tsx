@@ -11,7 +11,7 @@ export async function NavBar() {
   return (
     <header className="border-b border-border bg-bg-surface">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <Link href="/campaigns" className="flex items-baseline gap-2">
+        <Link href="/" className="flex items-baseline gap-2">
           <span className="font-display text-sm tracking-widest text-text-default">
             DystoCorp
           </span>
@@ -19,11 +19,20 @@ export async function NavBar() {
         </Link>
         {user ? (
           <nav className="flex items-center gap-6 text-sm">
+            <Link href="/crews" className="text-text-secondary hover:text-text-default">
+              Meine Crews
+            </Link>
             <Link href="/campaigns" className="text-text-secondary hover:text-text-default">
               Kampagnen
             </Link>
-            <Link href="/powers" className="text-text-secondary hover:text-text-default">
-              Powers
+            <Link href="/rules" className="text-text-secondary hover:text-text-default">
+              Regeln
+            </Link>
+            <Link href="/setting" className="text-text-secondary hover:text-text-default">
+              Setting
+            </Link>
+            <Link href="/profile" className="text-text-secondary hover:text-text-default">
+              Profil
             </Link>
             <form action={signOut}>
               <button type="submit" className="text-text-secondary hover:text-danger">

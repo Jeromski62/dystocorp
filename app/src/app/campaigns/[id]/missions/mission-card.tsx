@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { startMission, submitMissionReport, updateMission } from "./actions";
+import { CrewMissionResultForm } from "./crew-mission-result-form";
 
 type MissionStatus = "planned" | "ongoing" | "report";
 
@@ -11,6 +12,19 @@ type Mission = {
   description: string | null;
   status: MissionStatus;
   report_text: string | null;
+  session_date: string | null;
+};
+
+type Crew = { id: string; name: string; player_id: string };
+
+type CrewResult = {
+  id: string;
+  crew_id: string;
+  xp_delta: number;
+  credits_delta: number;
+  loot_notes: string | null;
+  injury_notes: string | null;
+  members_lost: string | null;
 };
 
 const STATUS_LABEL: Record<MissionStatus, string> = {
@@ -19,7 +33,19 @@ const STATUS_LABEL: Record<MissionStatus, string> = {
   report: "Abgeschlossen",
 };
 
-export function MissionCard({ campaignId, mission }: { campaignId: string; mission: Mission }) {
+export function MissionCard({
+  campaignId,
+  mission,
+  crews,
+  myCrew,
+  results,
+}: {
+  campaignId: string;
+  mission: Mission;
+  crews: Crew[];
+  myCrew: Crew | null;
+  results: CrewResult[];
+}) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(mission.title);
   const [description, setDescription] = useState(mission.description ?? "");
@@ -59,12 +85,17 @@ export function MissionCard({ campaignId, mission }: { campaignId: string; missi
         ? "border border-border text-text-secondary"
         : "border border-accent/40 text-accent";
 
+  const myResult = myCrew ? (results.find((r) => r.crew_id === myCrew.id) ?? null) : null;
+  const otherResults = results.filter((r) => r.crew_id !== myCrew?.id);
+  const crewById = new Map(crews.map((c) => [c.id, c]));
+
   return (
     <article className="rounded-md border border-border bg-bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           {!editing ? <h2 className="font-semibold text-text-default">{mission.title}</h2> : null}
           <span className={`rounded-sm px-2 py-[3px] font-mono text-[11px] ${badgeClass}`}>{STATUS_LABEL[mission.status]}</span>
+          {mission.session_date ? <span className="font-mono text-[11px] text-text-secondary">{mission.session_date}</span> : null}
         </div>
         {!editing ? (
           <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-accent">
@@ -192,6 +223,44 @@ export function MissionCard({ campaignId, mission }: { campaignId: string; missi
             </button>
           </div>
         )
+      ) : null}
+
+      {mission.status !== "planned" ? (
+        <div className="mt-4 flex flex-col gap-2 border-t border-border pt-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-text-secondary">Crew-Ergebnisse</h3>
+          {myCrew ? (
+            <CrewMissionResultForm
+              campaignId={campaignId}
+              missionId={mission.id}
+              crewId={myCrew.id}
+              crewName={myCrew.name}
+              existing={
+                myResult
+                  ? {
+                      xpDelta: myResult.xp_delta,
+                      creditsDelta: myResult.credits_delta,
+                      lootNotes: myResult.loot_notes,
+                      injuryNotes: myResult.injury_notes,
+                      membersLost: myResult.members_lost,
+                    }
+                  : null
+              }
+            />
+          ) : null}
+          {otherResults.map((r) => (
+            <div key={r.id} className="rounded-md border border-border bg-bg-raised p-3 text-sm">
+              <span className="font-medium text-text-default">{crewById.get(r.crew_id)?.name ?? "?"}</span>
+              <p className="mt-1 text-xs text-text-secondary">
+                {r.xp_delta >= 0 ? "+" : ""}
+                {r.xp_delta} XP · {r.credits_delta >= 0 ? "+" : ""}
+                {r.credits_delta}cr
+              </p>
+              {r.loot_notes ? <p className="mt-1 text-xs text-text-secondary">Loot: {r.loot_notes}</p> : null}
+              {r.injury_notes ? <p className="mt-1 text-xs text-text-secondary">Verletzungen: {r.injury_notes}</p> : null}
+              {r.members_lost ? <p className="mt-1 text-xs text-text-secondary">Verluste: {r.members_lost}</p> : null}
+            </div>
+          ))}
+        </div>
       ) : null}
     </article>
   );

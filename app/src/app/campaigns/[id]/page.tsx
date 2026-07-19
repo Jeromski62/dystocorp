@@ -49,9 +49,6 @@ export default async function CampaignDetailPage({
         <Link href={`/campaigns/${campaign.id}/missions`} className="text-accent hover:underline">
           Missionen →
         </Link>
-        <Link href={`/campaigns/${campaign.id}/sessions`} className="text-accent hover:underline">
-          Session-Log →
-        </Link>
       </div>
 
       <section className="mt-6">
