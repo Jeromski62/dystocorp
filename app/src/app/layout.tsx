@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Orbitron, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components/nav-bar";
+import { cn } from "@/lib/utils";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${orbitron.variable} ${geistMono.variable} h-full antialiased`}
+      className={cn("h-full dark antialiased", inter.variable, orbitron.variable, geistMono.variable)}
     >
       <body className="min-h-full flex flex-col">
         <NavBar />

@@ -2,6 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { updateCrewName } from "./actions";
+import { Button } from "@/components/button";
+import { Button as ShadcnButton } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function EditCrewNameForm({ crewId, name }: { crewId: string; name: string }) {
   const [editing, setEditing] = useState(false);
@@ -31,32 +34,28 @@ export function EditCrewNameForm({ crewId, name }: { crewId: string; name: strin
 
   return (
     <div className="flex flex-col gap-2">
-      <input
+      <Input
         value={nameValue}
         onChange={(e) => setNameValue(e.target.value)}
         autoFocus
-        className="rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-lg font-semibold text-text-default focus:border-corp-accent focus:outline-none"
+        className="h-auto border-corp-border bg-corp-surface px-3 py-2 text-lg font-semibold text-text-default focus-visible:border-corp-accent focus-visible:ring-corp-accent/50"
       />
       {error ? <p className="text-sm text-danger">{error}</p> : null}
-      <div className="flex gap-2">
-        <button
-          type="button"
-          disabled={pending}
-          onClick={handleSave}
-          className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
-        >
+      <div className="flex items-center gap-3">
+        <Button type="button" disabled={pending} onClick={handleSave} className="self-start">
           {pending ? "Speichere…" : "Speichern"}
-        </button>
-        <button
+        </Button>
+        <ShadcnButton
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => {
             setEditing(false);
             setNameValue(name);
           }}
-          className="text-sm text-text-secondary hover:text-text-default"
         >
           Abbrechen
-        </button>
+        </ShadcnButton>
       </div>
     </div>
   );
