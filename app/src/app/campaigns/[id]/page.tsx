@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CopyId } from "./copy-id";
+import { EditCampaignForm } from "./edit-campaign-form";
 
 export default async function CampaignDetailPage({
   params,
@@ -37,10 +38,7 @@ export default async function CampaignDetailPage({
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-foreground">{campaign.name}</h1>
-      {campaign.description ? (
-        <p className="mt-1 text-sm text-muted">{campaign.description}</p>
-      ) : null}
+      <EditCampaignForm campaignId={campaign.id} name={campaign.name} description={campaign.description} />
 
       <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted">
         <span className="flex items-center gap-2">
