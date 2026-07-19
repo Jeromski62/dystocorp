@@ -64,12 +64,12 @@ export function PowerBrowser({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Suchen (Name oder Text)…"
-          className="flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+          className="flex-1 rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
         />
         <select
           value={backgroundId}
           onChange={(e) => setBackgroundId(e.target.value)}
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+          className="rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-text-default focus:border-accent focus:outline-none"
         >
           <option value="all">Core Power von: Alle</option>
           {backgrounds.map((b) => (
@@ -89,7 +89,7 @@ export function PowerBrowser({
             className={`rounded-full border px-3 py-1 text-xs ${
               activeTypes.includes(type)
                 ? "border-accent bg-accent text-accent-foreground"
-                : "border-border bg-surface text-muted hover:text-foreground"
+                : "border-border bg-bg-surface text-text-secondary hover:text-text-default"
             }`}
           >
             {TYPE_LABELS[type]}
@@ -97,27 +97,27 @@ export function PowerBrowser({
         ))}
       </div>
 
-      <p className="mt-4 text-xs text-muted">{filtered.length} Powers</p>
+      <p className="mt-4 text-xs text-text-secondary">{filtered.length} Powers</p>
 
       <div className="mt-2 flex flex-col gap-3">
         {filtered.map((power) => (
-          <article key={power.id} className="rounded-md border border-border bg-surface p-4">
+          <article key={power.id} className="rounded-md border border-border bg-bg-surface p-4">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="font-semibold text-foreground">{power.name}</h2>
-              <div className="flex flex-wrap gap-1.5 text-xs text-muted">
+              <h2 className="font-semibold text-text-default">{power.name}</h2>
+              <div className="flex flex-wrap gap-1.5 text-xs text-text-secondary">
                 <span>Activation {power.activation_number}</span>
                 <span>· Strain {power.strain}</span>
-                {power.armour_interference ? <span className="text-warning">· Armour Interference</span> : null}
+                {power.armour_interference ? <span className="text-status-injured">· Armour Interference</span> : null}
               </div>
             </div>
             <div className="mt-1 flex flex-wrap gap-1.5">
               {power.types.map((t) => (
-                <span key={t} className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
+                <span key={t} className="rounded-full border border-border px-2 py-0.5 text-xs text-text-secondary">
                   {TYPE_LABELS[t] ?? t}
                 </span>
               ))}
             </div>
-            <p className="mt-2 text-sm text-muted">{power.full_text}</p>
+            <p className="mt-2 text-sm text-text-secondary">{power.full_text}</p>
             {(backgroundsByPower[power.id] ?? []).length > 0 ? (
               <p className="mt-2 text-xs text-accent">
                 Core Power von: {(backgroundsByPower[power.id] ?? []).map((id) => backgroundById.get(id)).join(", ")}

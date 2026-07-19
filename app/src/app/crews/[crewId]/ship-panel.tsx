@@ -108,18 +108,18 @@ export function ShipPanel({
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <label className="text-xs uppercase tracking-wide text-muted">Schiffsname</label>
+        <label className="text-xs uppercase tracking-wide text-text-secondary">Schiffsname</label>
         <div className="mt-1 flex gap-2">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full max-w-sm rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+            className="w-full max-w-sm rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
           />
           <button
             type="button"
             onClick={saveShipName}
             disabled={pending}
-            className="rounded-md border border-border px-3 py-2 text-sm text-foreground hover:border-accent"
+            className="rounded-md border border-corp-border px-3 py-2 text-sm text-text-default hover:border-corp-accent"
           >
             Speichern
           </button>
@@ -129,7 +129,7 @@ export function ShipPanel({
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 
       <section>
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">
+        <h3 className="font-display text-sm tracking-[3px] text-text-secondary">
           Ship Upgrades ({credits}cr verfügbar)
         </h3>
         {crewShipUpgrades.length > 0 ? (
@@ -137,14 +137,14 @@ export function ShipPanel({
             {crewShipUpgrades.map((u) => (
               <div
                 key={u.id}
-                className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-3 py-1.5 text-sm"
+                className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm"
               >
-                <span className="text-foreground">{u.ship_upgrade_types.name}</span>
+                <span className="text-text-default">{u.ship_upgrade_types.name}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveUpgrade(u.id)}
                   disabled={pending}
-                  className="text-xs text-muted hover:text-danger"
+                  className="text-xs text-text-secondary hover:text-danger"
                 >
                   Entfernen
                 </button>
@@ -164,10 +164,10 @@ export function ShipPanel({
                 disabled={disabled}
                 onClick={() => handleAddUpgrade(t.id)}
                 title={t.effect_text}
-                className="flex items-center justify-between rounded-md border border-border bg-surface px-3 py-1.5 text-left text-sm hover:border-accent disabled:opacity-40"
+                className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-left text-sm hover:border-corp-accent disabled:opacity-40"
               >
-                <span className="text-foreground">{t.name}</span>
-                <span className="text-xs text-muted">{t.cost_cr}cr</span>
+                <span className="text-text-default">{t.name}</span>
+                <span className="text-xs text-text-secondary">{t.cost_cr}cr</span>
               </button>
             );
           })}
@@ -175,22 +175,22 @@ export function ShipPanel({
       </section>
 
       <section>
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">Ship&apos;s Hold</h3>
+        <h3 className="font-display text-sm tracking-[3px] text-text-secondary">Ship&apos;s Hold</h3>
         {holdItems.length > 0 ? (
           <div className="mt-2 flex flex-col gap-1.5">
             {holdItems.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-3 py-1.5 text-sm"
+                className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm"
               >
-                <span className="text-foreground">
+                <span className="text-text-default">
                   {item.equipment_items?.name ?? item.custom_name} × {item.quantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => handleRemoveHoldItem(item.id)}
                   disabled={pending}
-                  className="text-xs text-muted hover:text-danger"
+                  className="text-xs text-text-secondary hover:text-danger"
                 >
                   Entfernen
                 </button>
@@ -198,14 +198,14 @@ export function ShipPanel({
             ))}
           </div>
         ) : (
-          <p className="mt-2 text-sm text-muted">Leer.</p>
+          <p className="mt-2 text-sm text-text-secondary">Leer.</p>
         )}
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <select
             value={holdItemId}
             onChange={(e) => setHoldItemId(e.target.value)}
-            className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus:border-accent focus:outline-none"
+            className="rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default focus:border-corp-accent focus:outline-none"
           >
             <option value="">Freitext-Item…</option>
             {equipment.map((e) => (
@@ -219,7 +219,7 @@ export function ShipPanel({
               value={holdCustomName}
               onChange={(e) => setHoldCustomName(e.target.value)}
               placeholder="Name"
-              className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+              className="rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
             />
           ) : null}
           <input
@@ -227,13 +227,13 @@ export function ShipPanel({
             min={1}
             value={holdQuantity}
             onChange={(e) => setHoldQuantity(Math.max(1, Number(e.target.value)))}
-            className="w-16 rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-foreground focus:border-accent focus:outline-none"
+            className="w-16 rounded-md border border-corp-border bg-corp-surface px-2 py-1.5 text-sm text-text-default focus:border-corp-accent focus:outline-none"
           />
           <button
             type="button"
             onClick={handleAddHoldItem}
             disabled={pending || (!holdItemId && !holdCustomName.trim())}
-            className="rounded-md border border-border px-3 py-1.5 text-sm text-foreground hover:border-accent disabled:opacity-40"
+            className="rounded-md border border-corp-border px-3 py-1.5 text-sm text-text-default hover:border-corp-accent disabled:opacity-40"
           >
             Hinzufügen
           </button>

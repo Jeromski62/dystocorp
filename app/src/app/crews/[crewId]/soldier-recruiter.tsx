@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { addSoldier, removeSoldier, setSoldierRobot } from "./actions";
 import { SOLDIER_RULES } from "@/lib/stargrave/constants";
+import { StatusBadge } from "@/components/status-badge";
 
 type SoldierType = {
   id: string;
@@ -68,7 +69,7 @@ export function SoldierRecruiter({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap gap-4 rounded-md border border-border bg-surface px-4 py-3 text-sm">
+      <div className="flex flex-wrap gap-4 rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
         <span>{credits}cr verfügbar</span>
         <span>
           {soldiers.length}/{SOLDIER_RULES.maxSoldiers} Soldiers
@@ -85,23 +86,24 @@ export function SoldierRecruiter({
           {soldiers.map((s) => (
             <div
               key={s.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-surface-raised px-3 py-2 text-sm"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm"
             >
               <div>
-                <span className="font-medium text-foreground">{s.soldier_types.name}</span>
-                {s.name ? <span className="text-muted"> &quot;{s.name}&quot;</span> : null}
-                <span className="ml-2 text-xs text-muted">
+                <span className="font-medium text-text-default">{s.soldier_types.name}</span>
+                {s.name ? <span className="text-text-secondary"> &quot;{s.name}&quot;</span> : null}
+                <span className="ml-2 font-mono text-xs text-text-secondary">
                   M{s.soldier_types.move} F+{s.soldier_types.fight} S+{s.soldier_types.shoot} A
                   {s.soldier_types.armour} W+{s.soldier_types.will} H{s.soldier_types.health}
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-1 text-xs text-muted">
+                <StatusBadge currentHealth={s.current_health} health={s.soldier_types.health} />
+                <label className="flex items-center gap-1 text-xs text-text-secondary">
                   <input
                     type="checkbox"
                     checked={s.is_robot}
                     onChange={(e) => handleRobotToggle(s.id, e.target.checked)}
-                    className="accent-[var(--accent)]"
+                    className="accent-[var(--corp-accent)]"
                   />
                   Robot
                 </label>
@@ -109,7 +111,7 @@ export function SoldierRecruiter({
                   type="button"
                   disabled={pending}
                   onClick={() => handleRemove(s.id)}
-                  className="text-xs text-muted hover:text-danger"
+                  className="text-xs text-text-secondary hover:text-danger"
                 >
                   Entlassen
                 </button>
@@ -118,13 +120,13 @@ export function SoldierRecruiter({
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted">Noch keine Soldiers rekrutiert.</p>
+        <p className="text-sm text-text-secondary">Noch keine Soldiers rekrutiert.</p>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         {(["standard", "specialist"] as const).map((tableType) => (
           <div key={tableType}>
-            <p className="mb-2 text-xs uppercase tracking-wide text-muted">
+            <p className="mb-2 text-xs uppercase tracking-wide text-text-secondary">
               {tableType === "standard" ? "Standard" : "Specialist"}
             </p>
             <div className="flex flex-col gap-1.5">
@@ -142,10 +144,10 @@ export function SoldierRecruiter({
                       type="button"
                       disabled={disabled}
                       onClick={() => handleAdd(t.id)}
-                      className="flex items-center justify-between rounded-md border border-border bg-surface px-3 py-1.5 text-left text-sm hover:border-accent disabled:opacity-40"
+                      className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-left text-sm hover:border-corp-accent disabled:opacity-40"
                     >
-                      <span className="text-foreground">{t.name}</span>
-                      <span className="text-xs text-muted">{t.cost_cr === 0 ? "Free" : `${t.cost_cr}cr`}</span>
+                      <span className="text-text-default">{t.name}</span>
+                      <span className="text-xs text-text-secondary">{t.cost_cr === 0 ? "Free" : `${t.cost_cr}cr`}</span>
                     </button>
                   );
                 })}

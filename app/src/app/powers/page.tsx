@@ -17,8 +17,8 @@ export default async function PowersPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-foreground">Power-Nachschlagewerk</h1>
-      <p className="mt-1 text-sm text-muted">Alle {powers?.length ?? 0} Powers aus dem Regelwerk.</p>
+      <h1 className="text-2xl font-semibold text-text-default">Power-Nachschlagewerk</h1>
+      <p className="mt-1 text-sm text-text-secondary">Alle {powers?.length ?? 0} Powers aus dem Regelwerk.</p>
 
       <div className="mt-8">
         <PowerBrowser

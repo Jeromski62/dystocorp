@@ -13,7 +13,7 @@ export function CopyId({ id }: { id: string }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
       }}
-      className="rounded border border-border bg-surface px-2 py-1 font-mono text-foreground hover:border-accent"
+      className="rounded border border-border bg-bg-surface px-2 py-1 font-mono text-text-default hover:border-accent"
     >
       {copied ? "kopiert!" : id}
     </button>

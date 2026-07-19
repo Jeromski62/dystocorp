@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { saveOfficer } from "./actions";
 import { OFFICER_RULES, type ChoosableStat, type OfficerRole } from "@/lib/stargrave/constants";
+import { Button } from "@/components/button";
 import {
   computeActivationNumber,
   computeGearSlotTotal,
@@ -222,28 +223,23 @@ export function OfficerBuilder({
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <label className="text-xs uppercase tracking-wide text-muted">Name</label>
+        <label className="text-xs uppercase tracking-wide text-text-secondary">Name</label>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 block w-full max-w-sm rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+          className="mt-1 block w-full max-w-sm rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
         />
       </div>
 
       {stats ? (
-        <div className="flex flex-wrap gap-4 rounded-md border border-border bg-surface px-4 py-3 text-sm">
-          <span>Level {rules.startLevel}</span>
-          <span>M {stats.move}</span>
-          <span>F +{stats.fight}</span>
-          <span>S +{stats.shoot}</span>
-          <span>A {stats.armour}</span>
-          <span>W +{stats.will}</span>
-          <span>H {stats.health}</span>
+        <div className="rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
+          Level {rules.startLevel} — M{stats.move} · F+{stats.fight} · S+{stats.shoot} · A{stats.armour} · W+
+          {stats.will} · H{stats.health}
         </div>
       ) : null}
 
       <section>
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">Background</h3>
+        <h3 className="font-display text-sm tracking-[3px] text-text-secondary">Background</h3>
         <div className="mt-2 grid gap-3 sm:grid-cols-2">
           {backgrounds.map((b) => (
             <button
@@ -251,12 +247,12 @@ export function OfficerBuilder({
               type="button"
               onClick={() => selectBackground(b.id)}
               className={`rounded-md border p-3 text-left text-sm ${
-                backgroundId === b.id ? "border-accent bg-surface-raised" : "border-border bg-surface hover:border-accent"
+                backgroundId === b.id ? "border-corp-accent bg-corp-surface" : "border-corp-border bg-corp-surface hover:border-corp-accent"
               }`}
             >
-              <p className="font-medium text-foreground">{b.name}</p>
-              <p className="mt-1 text-xs text-muted">{b.flavor_text}</p>
-              <p className="mt-2 text-xs text-accent">
+              <p className="font-medium text-text-default">{b.name}</p>
+              <p className="mt-1 text-xs text-text-secondary">{b.flavor_text}</p>
+              <p className="mt-2 text-xs text-corp-accent">
                 Wähle {b.choice_stat_count} von: {b.choice_stat_options.map((s) => STAT_LABELS[s as ChoosableStat]).join(", ")}
               </p>
             </button>
@@ -266,7 +262,7 @@ export function OfficerBuilder({
 
       {background ? (
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">
+          <h3 className="font-display text-sm tracking-[3px] text-text-secondary">
             Stat-Bonus wählen ({chosenStatOptions.length}/{background.choice_stat_count})
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -281,8 +277,8 @@ export function OfficerBuilder({
                   onClick={() => toggleStatOption(stat)}
                   className={`rounded-full border px-3 py-1 text-sm ${
                     selected
-                      ? "border-accent bg-accent text-accent-foreground"
-                      : "border-border bg-surface text-foreground disabled:opacity-40"
+                      ? "border-corp-accent bg-corp-accent text-corp-on-accent"
+                      : "border-corp-border bg-corp-surface text-text-default disabled:opacity-40"
                   }`}
                 >
                   +1 {STAT_LABELS[stat as ChoosableStat]}
@@ -295,13 +291,13 @@ export function OfficerBuilder({
 
       {background ? (
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">
+          <h3 className="font-display text-sm tracking-[3px] text-text-secondary">
             Powers ({totalSelectedCount}/{rules.powerCount}, Core {selectedCoreCount}/{rules.coreMin}-{rules.coreMax})
           </h3>
 
           <div className="mt-3 grid gap-6 lg:grid-cols-2">
             <div>
-              <p className="mb-2 text-xs uppercase tracking-wide text-muted">Core Powers ({background.name})</p>
+              <p className="mb-2 text-xs uppercase tracking-wide text-text-secondary">Core Powers ({background.name})</p>
               <div className="flex flex-col gap-2">
                 {corePowers.map((power) => (
                   <PowerRow
@@ -323,12 +319,12 @@ export function OfficerBuilder({
             </div>
 
             <div>
-              <p className="mb-2 text-xs uppercase tracking-wide text-muted">Andere Powers</p>
+              <p className="mb-2 text-xs uppercase tracking-wide text-text-secondary">Andere Powers</p>
               <input
                 value={powerSearch}
                 onChange={(e) => setPowerSearch(e.target.value)}
                 placeholder="Suchen…"
-                className="mb-2 w-full rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+                className="mb-2 w-full rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
               />
               <div className="flex max-h-96 flex-col gap-2 overflow-y-auto pr-1">
                 {otherPowers.map((power) => (
@@ -355,7 +351,7 @@ export function OfficerBuilder({
 
       {background ? (
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">
+          <h3 className="font-display text-sm tracking-[3px] text-text-secondary">
             Gear ({gearSlotTotal}/{rules.gearSlots} Slots)
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -363,12 +359,12 @@ export function OfficerBuilder({
               value={gearSearch}
               onChange={(e) => setGearSearch(e.target.value)}
               placeholder="Gear suchen…"
-              className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+              className="flex-1 rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
             />
             <select
               value={gearCategory}
               onChange={(e) => setGearCategory(e.target.value)}
-              className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus:border-accent focus:outline-none"
+              className="rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default focus:border-corp-accent focus:outline-none"
             >
               <option value="all">Alle Kategorien</option>
               {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
@@ -387,17 +383,17 @@ export function OfficerBuilder({
                 return (
                   <div
                     key={id}
-                    className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-3 py-1.5 text-sm"
+                    className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm"
                   >
-                    <span className="text-foreground">
+                    <span className="text-text-default">
                       {item.name} × {qty}{" "}
-                      <span className="text-muted">({item.gear_slots * qty} Slots)</span>
+                      <span className="text-text-secondary">({item.gear_slots * qty} Slots)</span>
                     </span>
                     <div className="flex gap-1">
-                      <button type="button" onClick={() => removeGear(id)} className="px-2 text-muted hover:text-danger">
+                      <button type="button" onClick={() => removeGear(id)} className="px-2 text-text-secondary hover:text-danger">
                         −
                       </button>
-                      <button type="button" onClick={() => addGear(id)} className="px-2 text-muted hover:text-accent">
+                      <button type="button" onClick={() => addGear(id)} className="px-2 text-text-secondary hover:text-corp-accent">
                         +
                       </button>
                     </div>
@@ -413,11 +409,11 @@ export function OfficerBuilder({
                 key={item.id}
                 type="button"
                 onClick={() => addGear(item.id)}
-                className="flex items-center justify-between rounded-md border border-border bg-surface px-3 py-1.5 text-left text-sm hover:border-accent"
+                className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-left text-sm hover:border-corp-accent"
                 title={item.effect_text}
               >
-                <span className="text-foreground">{item.name}</span>
-                <span className="text-xs text-muted">
+                <span className="text-text-default">{item.name}</span>
+                <span className="text-xs text-text-secondary">
                   {item.gear_slots} Slot{item.gear_slots === 1 ? "" : "s"} · {CATEGORY_LABELS[item.category]}
                 </span>
               </button>
@@ -427,19 +423,14 @@ export function OfficerBuilder({
       ) : null}
 
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          disabled={!canSave || pending}
-          onClick={handleSave}
-          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-40"
-        >
+        <Button disabled={!canSave || pending} onClick={handleSave}>
           {pending ? "Speichere…" : "Speichern"}
-        </button>
-        {saved ? <span className="text-sm text-accent">Gespeichert.</span> : null}
+        </Button>
+        {saved ? <span className="text-sm text-corp-accent">Gespeichert.</span> : null}
         {error ? <span className="text-sm text-danger">{error}</span> : null}
         {!canSave && !error
           ? [statError, powerError, reductionError, gearError].filter(Boolean).map((msg) => (
-              <span key={msg} className="text-sm text-muted">
+              <span key={msg} className="text-sm text-text-secondary">
                 {msg}
               </span>
             ))
@@ -477,25 +468,25 @@ function PowerRow({
   return (
     <div
       className={`rounded-md border px-3 py-2 text-sm ${
-        selected ? "border-accent bg-surface-raised" : "border-border bg-surface"
+        selected ? "border-corp-accent bg-corp-surface" : "border-corp-border bg-corp-surface"
       }`}
     >
       <button type="button" onClick={onToggle} className="flex w-full items-center justify-between text-left">
-        <span className="text-foreground" title={power.full_text}>
+        <span className="text-text-default" title={power.full_text}>
           {power.name}
         </span>
-        <span className="text-xs text-muted">
+        <span className="text-xs text-text-secondary">
           {selected ? `Akt. ${activation}` : `Akt. ${power.activation_number}`} · Strain {power.strain}
         </span>
       </button>
       {selected && canReduce ? (
-        <label className="mt-1 flex items-center gap-1.5 text-xs text-muted">
+        <label className="mt-1 flex items-center gap-1.5 text-xs text-text-secondary">
           <input
             type="checkbox"
             checked={reduced}
             disabled={reductionLocked}
             onChange={onToggleReduced}
-            className="accent-[var(--accent)]"
+            className="accent-[var(--corp-accent)]"
           />
           Activation −1
         </label>

@@ -52,11 +52,11 @@ export default async function SessionsPage({
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <Link href={`/campaigns/${campaignId}`} className="text-xs text-muted hover:text-accent">
+      <Link href={`/campaigns/${campaignId}`} className="text-xs text-text-secondary hover:text-accent">
         ← {campaign.name}
       </Link>
-      <h1 className="mt-2 text-2xl font-semibold text-foreground">Session-Log</h1>
-      <p className="mt-1 text-sm text-muted">
+      <h1 className="mt-2 text-2xl font-semibold text-text-default">Session-Log</h1>
+      <p className="mt-1 text-sm text-text-secondary">
         Ein Eintrag pro Spielabend. Jeder Spieler trägt sein eigenes Ergebnis (XP, Credits, Loot, Verletzungen) ein.
       </p>
 
@@ -71,12 +71,12 @@ export default async function SessionsPage({
           const otherResults = sessionResults.filter((r) => r.crew_id !== myCrew?.id);
 
           return (
-            <article key={session.id} className="rounded-md border border-border bg-surface p-4">
+            <article key={session.id} className="rounded-md border border-border bg-bg-surface p-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="font-semibold text-foreground">{session.title}</h2>
-                <span className="text-xs text-muted">{session.session_date}</span>
+                <h2 className="font-semibold text-text-default">{session.title}</h2>
+                <span className="text-xs text-text-secondary">{session.session_date}</span>
               </div>
-              {session.notes ? <p className="mt-2 whitespace-pre-line text-sm text-muted">{session.notes}</p> : null}
+              {session.notes ? <p className="mt-2 whitespace-pre-line text-sm text-text-secondary">{session.notes}</p> : null}
 
               <div className="mt-3 flex flex-col gap-2">
                 {myCrew ? (
@@ -102,16 +102,16 @@ export default async function SessionsPage({
                 {otherResults.map((r) => {
                   const crew = crewById.get(r.crew_id);
                   return (
-                    <div key={r.id} className="rounded-md border border-border bg-surface-raised p-3 text-sm">
-                      <span className="font-medium text-foreground">{crew?.name ?? "?"}</span>
-                      <p className="mt-1 text-xs text-muted">
+                    <div key={r.id} className="rounded-md border border-border bg-bg-raised p-3 text-sm">
+                      <span className="font-medium text-text-default">{crew?.name ?? "?"}</span>
+                      <p className="mt-1 text-xs text-text-secondary">
                         {r.xp_delta >= 0 ? "+" : ""}
                         {r.xp_delta} XP · {r.credits_delta >= 0 ? "+" : ""}
                         {r.credits_delta}cr
                       </p>
-                      {r.loot_notes ? <p className="mt-1 text-xs text-muted">Loot: {r.loot_notes}</p> : null}
-                      {r.injury_notes ? <p className="mt-1 text-xs text-muted">Verletzungen: {r.injury_notes}</p> : null}
-                      {r.members_lost ? <p className="mt-1 text-xs text-muted">Verluste: {r.members_lost}</p> : null}
+                      {r.loot_notes ? <p className="mt-1 text-xs text-text-secondary">Loot: {r.loot_notes}</p> : null}
+                      {r.injury_notes ? <p className="mt-1 text-xs text-text-secondary">Verletzungen: {r.injury_notes}</p> : null}
+                      {r.members_lost ? <p className="mt-1 text-xs text-text-secondary">Verluste: {r.members_lost}</p> : null}
                     </div>
                   );
                 })}

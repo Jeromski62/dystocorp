@@ -53,70 +53,70 @@ export function CrewResultForm({
 
   if (!editing && existing) {
     return (
-      <div className="rounded-md border border-accent/40 bg-surface-raised p-3 text-sm">
+      <div className="rounded-md border border-accent/40 bg-bg-raised p-3 text-sm">
         <div className="flex items-center justify-between">
-          <span className="font-medium text-foreground">{crewName} (deine Crew)</span>
-          <button type="button" onClick={() => setEditing(true)} className="text-xs text-muted hover:text-accent">
+          <span className="font-medium text-text-default">{crewName} (deine Crew)</span>
+          <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-accent">
             Bearbeiten
           </button>
         </div>
-        <p className="mt-1 text-xs text-muted">
+        <p className="mt-1 text-xs text-text-secondary">
           {existing.xpDelta >= 0 ? "+" : ""}
           {existing.xpDelta} XP · {existing.creditsDelta >= 0 ? "+" : ""}
           {existing.creditsDelta}cr
         </p>
-        {existing.lootNotes ? <p className="mt-1 text-xs text-muted">Loot: {existing.lootNotes}</p> : null}
-        {existing.injuryNotes ? <p className="mt-1 text-xs text-muted">Verletzungen: {existing.injuryNotes}</p> : null}
-        {existing.membersLost ? <p className="mt-1 text-xs text-muted">Verluste: {existing.membersLost}</p> : null}
+        {existing.lootNotes ? <p className="mt-1 text-xs text-text-secondary">Loot: {existing.lootNotes}</p> : null}
+        {existing.injuryNotes ? <p className="mt-1 text-xs text-text-secondary">Verletzungen: {existing.injuryNotes}</p> : null}
+        {existing.membersLost ? <p className="mt-1 text-xs text-text-secondary">Verluste: {existing.membersLost}</p> : null}
       </div>
     );
   }
 
   return (
-    <div className="rounded-md border border-accent/40 bg-surface-raised p-3">
-      <p className="text-sm font-medium text-foreground">Ergebnis für {crewName} (deine Crew)</p>
+    <div className="rounded-md border border-accent/40 bg-bg-raised p-3">
+      <p className="text-sm font-medium text-text-default">Ergebnis für {crewName} (deine Crew)</p>
       <div className="mt-2 grid grid-cols-2 gap-2">
-        <label className="text-xs text-muted">
+        <label className="text-xs text-text-secondary">
           XP-Delta
           <input
             type="number"
             value={xpDelta}
             onChange={(e) => setXpDelta(Number(e.target.value))}
-            className="mt-0.5 w-full rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:border-accent focus:outline-none"
+            className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
           />
         </label>
-        <label className="text-xs text-muted">
+        <label className="text-xs text-text-secondary">
           Credits-Delta
           <input
             type="number"
             value={creditsDelta}
             onChange={(e) => setCreditsDelta(Number(e.target.value))}
-            className="mt-0.5 w-full rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:border-accent focus:outline-none"
+            className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
           />
         </label>
       </div>
-      <label className="mt-2 block text-xs text-muted">
+      <label className="mt-2 block text-xs text-text-secondary">
         Loot
         <input
           value={lootNotes}
           onChange={(e) => setLootNotes(e.target.value)}
-          className="mt-0.5 w-full rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:border-accent focus:outline-none"
+          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
         />
       </label>
-      <label className="mt-2 block text-xs text-muted">
+      <label className="mt-2 block text-xs text-text-secondary">
         Verletzungen
         <input
           value={injuryNotes}
           onChange={(e) => setInjuryNotes(e.target.value)}
-          className="mt-0.5 w-full rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:border-accent focus:outline-none"
+          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
         />
       </label>
-      <label className="mt-2 block text-xs text-muted">
+      <label className="mt-2 block text-xs text-text-secondary">
         Verluste (Soldiers etc.)
         <input
           value={membersLost}
           onChange={(e) => setMembersLost(e.target.value)}
-          className="mt-0.5 w-full rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:border-accent focus:outline-none"
+          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
         />
       </label>
       {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
@@ -130,7 +130,7 @@ export function CrewResultForm({
           {pending ? "Speichere…" : "Speichern"}
         </button>
         {existing ? (
-          <button type="button" onClick={() => setEditing(false)} className="text-sm text-muted hover:text-foreground">
+          <button type="button" onClick={() => setEditing(false)} className="text-sm text-text-secondary hover:text-text-default">
             Abbrechen
           </button>
         ) : null}

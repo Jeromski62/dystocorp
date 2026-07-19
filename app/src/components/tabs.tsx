@@ -7,7 +7,7 @@ export function Tabs({ tabs }: { tabs: { label: string; content: ReactNode }[] }
 
   return (
     <div>
-      <div className="flex gap-1 border-b border-border">
+      <div className="flex gap-1 border-b border-corp-border">
         {tabs.map((tab, i) => (
           <button
             key={tab.label}
@@ -15,8 +15,8 @@ export function Tabs({ tabs }: { tabs: { label: string; content: ReactNode }[] }
             onClick={() => setActive(i)}
             className={`px-4 py-2 text-sm font-medium ${
               active === i
-                ? "border-b-2 border-accent text-foreground"
-                : "text-muted hover:text-foreground"
+                ? "border-b-2 border-corp-accent text-text-default"
+                : "text-text-secondary hover:text-text-default"
             }`}
           >
             {tab.label}

@@ -11,8 +11,8 @@ export default async function ConfirmPage({
     <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-sm flex-col justify-center gap-6 px-6">
       <div>
         <p className="text-xs uppercase tracking-widest text-accent">DystoCorp Access Terminal</p>
-        <h1 className="mt-2 text-2xl font-semibold text-foreground">Login bestätigen</h1>
-        <p className="mt-2 text-sm text-muted">
+        <h1 className="mt-2 text-2xl font-semibold text-text-default">Login bestätigen</h1>
+        <p className="mt-2 text-sm text-text-secondary">
           Aus Sicherheitsgründen wird der Link erst durch einen Klick aktiviert (E-Mail-Scanner
           anderer Anbieter dürfen ihn nicht automatisch verbrauchen).
         </p>

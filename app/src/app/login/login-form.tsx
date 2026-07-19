@@ -8,7 +8,7 @@ export function LoginForm() {
 
   if (state?.success) {
     return (
-      <p className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-foreground">
+      <p className="rounded-md border border-border bg-bg-surface px-4 py-3 text-sm text-text-default">
         Link verschickt — check deinen Posteingang.
       </p>
     );
@@ -21,7 +21,7 @@ export function LoginForm() {
         name="email"
         required
         placeholder="du@beispiel.com"
-        className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+        className="rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
       />
       {state?.error ? <p className="text-sm text-danger">{state.error}</p> : null}
       <button

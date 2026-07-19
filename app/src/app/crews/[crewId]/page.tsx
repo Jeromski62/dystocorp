@@ -5,6 +5,7 @@ import { OfficerBuilder } from "./officer-builder";
 import { SoldierRecruiter } from "./soldier-recruiter";
 import { ShipPanel } from "./ship-panel";
 import { SOLDIER_RULES } from "@/lib/stargrave/constants";
+import { CorpEmblem } from "@/components/corp-emblem";
 
 export default async function CrewPage({
   params,
@@ -89,9 +90,14 @@ export default async function CrewPage({
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <p className="text-xs uppercase tracking-widest text-accent">{crew.corps?.name}</p>
-      <h1 className="mt-2 text-2xl font-semibold text-foreground">{crew.name}</h1>
-      <p className="mt-1 text-sm text-muted">
+      <div className="flex items-center gap-4">
+        <CorpEmblem name={crew.corps?.name ?? "?"} />
+        <div>
+          <p className="font-mono text-xs tracking-widest text-corp-accent">{crew.corps?.name}</p>
+          <h1 className="font-display text-2xl tracking-[2.5px] text-text-default">{crew.name}</h1>
+        </div>
+      </div>
+      <p className="mt-3 font-mono text-sm text-text-secondary">
         {crew.credits}cr · {crew.experience} XP
       </p>
 

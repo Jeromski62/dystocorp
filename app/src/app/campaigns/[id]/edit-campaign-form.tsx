@@ -31,12 +31,12 @@ export function EditCampaignForm({
     return (
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-foreground">{name}</h1>
-          <button type="button" onClick={() => setEditing(true)} className="text-xs text-muted hover:text-accent">
+          <h1 className="text-2xl font-semibold text-text-default">{name}</h1>
+          <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-accent">
             Bearbeiten
           </button>
         </div>
-        {description ? <p className="mt-1 text-sm text-muted">{description}</p> : null}
+        {description ? <p className="mt-1 text-sm text-text-secondary">{description}</p> : null}
       </div>
     );
   }
@@ -46,14 +46,14 @@ export function EditCampaignForm({
       <input
         value={nameValue}
         onChange={(e) => setNameValue(e.target.value)}
-        className="rounded-md border border-border bg-surface px-3 py-2 text-lg font-semibold text-foreground focus:border-accent focus:outline-none"
+        className="rounded-md border border-border bg-bg-surface px-3 py-2 text-lg font-semibold text-text-default focus:border-accent focus:outline-none"
       />
       <textarea
         value={descriptionValue}
         onChange={(e) => setDescriptionValue(e.target.value)}
         placeholder="Beschreibung (optional)"
         rows={2}
-        className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+        className="rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
       />
       {error ? <p className="text-sm text-danger">{error}</p> : null}
       <div className="flex gap-2">
@@ -72,7 +72,7 @@ export function EditCampaignForm({
             setNameValue(name);
             setDescriptionValue(description ?? "");
           }}
-          className="text-sm text-muted hover:text-foreground"
+          className="text-sm text-text-secondary hover:text-text-default"
         >
           Abbrechen
         </button>

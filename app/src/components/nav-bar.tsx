@@ -9,24 +9,24 @@ export async function NavBar() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="border-b border-border bg-surface">
+    <header className="border-b border-border bg-bg-surface">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
         <Link href="/campaigns" className="flex items-baseline gap-2">
-          <span className="text-sm font-semibold uppercase tracking-widest text-foreground">
+          <span className="font-display text-sm tracking-widest text-text-default">
             DystoCorp
           </span>
-          <span className="text-xs text-muted">Crew &amp; Campaign Manager</span>
+          <span className="text-xs text-text-secondary">Crew &amp; Campaign Manager</span>
         </Link>
         {user ? (
           <nav className="flex items-center gap-6 text-sm">
-            <Link href="/campaigns" className="text-muted hover:text-foreground">
+            <Link href="/campaigns" className="text-text-secondary hover:text-text-default">
               Kampagnen
             </Link>
-            <Link href="/powers" className="text-muted hover:text-foreground">
+            <Link href="/powers" className="text-text-secondary hover:text-text-default">
               Powers
             </Link>
             <form action={signOut}>
-              <button type="submit" className="text-muted hover:text-danger">
+              <button type="submit" className="text-text-secondary hover:text-danger">
                 Logout
               </button>
             </form>

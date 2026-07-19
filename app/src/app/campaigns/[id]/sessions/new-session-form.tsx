@@ -23,27 +23,27 @@ export function NewSessionForm({ campaignId }: { campaignId: string }) {
   }
 
   return (
-    <div className="rounded-md border border-border bg-surface p-4">
-      <h2 className="text-sm font-semibold text-foreground">Neuer Spielabend</h2>
+    <div className="rounded-md border border-border bg-bg-surface p-4">
+      <h2 className="text-sm font-semibold text-text-default">Neuer Spielabend</h2>
       <div className="mt-3 flex flex-col gap-2">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Titel (z.B. Missionsname)"
-          className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+          className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
         />
         <input
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+          className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default focus:border-accent focus:outline-none"
         />
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Notizen / Mission Report (optional)"
           rows={3}
-          className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+          className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
         />
         {error ? <p className="text-sm text-danger">{error}</p> : null}
         <button

@@ -13,13 +13,13 @@ export function CreateCampaignForm() {
         name="name"
         required
         placeholder="Kampagnenname"
-        className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+        className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
       />
       <textarea
         name="description"
         placeholder="Beschreibung (optional)"
         rows={2}
-        className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+        className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
       />
       {state?.error ? <p className="text-sm text-danger">{state.error}</p> : null}
       <button
