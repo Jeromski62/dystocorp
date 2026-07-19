@@ -7,6 +7,7 @@ import { ShipPanel } from "./ship-panel";
 import { SOLDIER_RULES } from "@/lib/stargrave/constants";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { EditCrewNameForm } from "./edit-crew-name-form";
+import { DeleteCrewButton } from "./delete-crew-button";
 
 export default async function CrewPage({
   params,
@@ -91,12 +92,15 @@ export default async function CrewPage({
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <div className="flex items-center gap-4">
-        <CorpEmblem name={crew.corps?.name ?? "?"} />
-        <div>
-          <p className="font-mono text-xs tracking-widest text-corp-accent">{crew.corps?.name}</p>
-          <EditCrewNameForm crewId={crewId} name={crew.name} />
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <CorpEmblem name={crew.corps?.name ?? "?"} />
+          <div>
+            <p className="font-mono text-xs tracking-widest text-corp-accent">{crew.corps?.name}</p>
+            <EditCrewNameForm crewId={crewId} name={crew.name} />
+          </div>
         </div>
+        <DeleteCrewButton crewId={crewId} crewName={crew.name} />
       </div>
       <p className="mt-3 font-mono text-sm text-text-secondary">
         {crew.credits}cr · {crew.experience} XP

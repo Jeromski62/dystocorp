@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { OFFICER_RULES, SOLDIER_RULES, type ChoosableStat, type OfficerRole } from "@/lib/stargrave/constants";
 import {
@@ -300,6 +301,20 @@ export async function setSoldierRobot(
 
   revalidatePath(`/crews/${crewId}`);
   return {};
+}
+
+export async function deleteCrew(crewId: string): Promise<{ error?: string }> {
+  const owned = await requireOwnedCrew(crewId);
+  if ("error" in owned) return owned;
+  const { supabase, crew } = owned;
+
+  const { error } = await supabase.from("crews").delete().eq("id", crewId);
+  if (error) return { error: error.message };
+
+  revalidatePath("/crews");
+  revalidatePath("/");
+  if (crew.campaign_id) revalidatePath(`/campaigns/${crew.campaign_id}`);
+  redirect("/crews");
 }
 
 export async function updateCrewName(crewId: string, name: string): Promise<{ error?: string }> {
