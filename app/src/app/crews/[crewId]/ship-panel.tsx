@@ -108,9 +108,12 @@ export function ShipPanel({
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <label className="text-xs uppercase tracking-wide text-text-secondary">Schiffsname</label>
+        <label htmlFor="ship-name" className="text-xs uppercase tracking-wide text-text-secondary">
+          Schiffsname
+        </label>
         <div className="mt-1 flex gap-2">
           <input
+            id="ship-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full max-w-sm rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
@@ -142,7 +145,11 @@ export function ShipPanel({
                 <span className="text-text-default">{u.ship_upgrade_types.name}</span>
                 <button
                   type="button"
-                  onClick={() => handleRemoveUpgrade(u.id)}
+                  onClick={() => {
+                    if (window.confirm(`"${u.ship_upgrade_types.name}" wirklich entfernen?`)) {
+                      handleRemoveUpgrade(u.id);
+                    }
+                  }}
                   disabled={pending}
                   className="text-xs text-text-secondary hover:text-danger"
                 >
@@ -188,7 +195,12 @@ export function ShipPanel({
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleRemoveHoldItem(item.id)}
+                  onClick={() => {
+                    const label = item.equipment_items?.name ?? item.custom_name ?? "Item";
+                    if (window.confirm(`"${label}" wirklich aus dem Hold entfernen?`)) {
+                      handleRemoveHoldItem(item.id);
+                    }
+                  }}
                   disabled={pending}
                   className="text-xs text-text-secondary hover:text-danger"
                 >

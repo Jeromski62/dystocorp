@@ -223,8 +223,11 @@ export function OfficerBuilder({
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <label className="text-xs uppercase tracking-wide text-text-secondary">Name</label>
+        <label htmlFor={`officer-name-${role}`} className="text-xs uppercase tracking-wide text-text-secondary">
+          Name
+        </label>
         <input
+          id={`officer-name-${role}`}
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="mt-1 block w-full max-w-sm rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
@@ -390,10 +393,20 @@ export function OfficerBuilder({
                       <span className="text-text-secondary">({item.gear_slots * qty} Slots)</span>
                     </span>
                     <div className="flex gap-1">
-                      <button type="button" onClick={() => removeGear(id)} className="px-2 text-text-secondary hover:text-danger">
+                      <button
+                        type="button"
+                        onClick={() => removeGear(id)}
+                        aria-label={`${item.name} entfernen`}
+                        className="px-2 text-text-secondary hover:text-danger"
+                      >
                         −
                       </button>
-                      <button type="button" onClick={() => addGear(id)} className="px-2 text-text-secondary hover:text-corp-accent">
+                      <button
+                        type="button"
+                        onClick={() => addGear(id)}
+                        aria-label={`${item.name} hinzufügen`}
+                        className="px-2 text-text-secondary hover:text-corp-accent"
+                      >
                         +
                       </button>
                     </div>

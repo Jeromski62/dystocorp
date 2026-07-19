@@ -110,7 +110,12 @@ export function SoldierRecruiter({
                 <button
                   type="button"
                   disabled={pending}
-                  onClick={() => handleRemove(s.id)}
+                  onClick={() => {
+                    const label = s.soldier_types.name + (s.name ? ` "${s.name}"` : "");
+                    if (window.confirm(`${label} wirklich entlassen?`)) {
+                      handleRemove(s.id);
+                    }
+                  }}
                   className="text-xs text-text-secondary hover:text-danger"
                 >
                   Entlassen
