@@ -46,6 +46,9 @@ export default async function CampaignDetailPage({
           Kampagnen-ID zum Einladen:
           <CopyId id={campaign.id} />
         </span>
+        <Link href={`/campaigns/${campaign.id}/missions`} className="text-accent hover:underline">
+          Missionen →
+        </Link>
         <Link href={`/campaigns/${campaign.id}/sessions`} className="text-accent hover:underline">
           Session-Log →
         </Link>

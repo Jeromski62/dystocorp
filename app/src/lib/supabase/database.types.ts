@@ -722,6 +722,54 @@ export type Database = {
           },
         ]
       }
+      missions: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          report_text: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          report_text?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          report_text?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "missions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       permanent_injury_types: {
         Row: {
           created_at: string
