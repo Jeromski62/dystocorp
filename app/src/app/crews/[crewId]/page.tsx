@@ -102,6 +102,7 @@ export default async function CrewPage({
               label: "Captain",
               content: (
                 <OfficerBuilder
+                  key="captain"
                   crewId={crewId}
                   role="captain"
                   backgrounds={typedBackgrounds}
@@ -126,6 +127,7 @@ export default async function CrewPage({
               label: "First Mate",
               content: (
                 <OfficerBuilder
+                  key="first_mate"
                   crewId={crewId}
                   role="first_mate"
                   backgrounds={typedBackgrounds}
