@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Orbitron, Geist_Mono } from "next/font/google";
+import { Inter, Rajdhani, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components/nav-bar";
 import { cn } from "@/lib/utils";
@@ -9,14 +9,15 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const orbitron = Orbitron({
-  variable: "--font-orbitron",
-  weight: ["500", "700", "900"],
+const rajdhani = Rajdhani({
+  variable: "--font-rajdhani",
+  weight: ["500", "600", "700"],
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
 });
 
@@ -33,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full dark antialiased", inter.variable, orbitron.variable, geistMono.variable)}
+      className={cn("h-full dark antialiased", inter.variable, rajdhani.variable, ibmPlexMono.variable)}
     >
       <body className="min-h-full flex flex-col">
         <NavBar />
