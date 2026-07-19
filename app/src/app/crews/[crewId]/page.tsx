@@ -6,6 +6,7 @@ import { SoldierRecruiter } from "./soldier-recruiter";
 import { ShipPanel } from "./ship-panel";
 import { SOLDIER_RULES } from "@/lib/stargrave/constants";
 import { CorpEmblem } from "@/components/corp-emblem";
+import { EditCrewNameForm } from "./edit-crew-name-form";
 
 export default async function CrewPage({
   params,
@@ -94,7 +95,7 @@ export default async function CrewPage({
         <CorpEmblem name={crew.corps?.name ?? "?"} />
         <div>
           <p className="font-mono text-xs tracking-widest text-corp-accent">{crew.corps?.name}</p>
-          <h1 className="font-display text-2xl tracking-[2.5px] text-text-default">{crew.name}</h1>
+          <EditCrewNameForm crewId={crewId} name={crew.name} />
         </div>
       </div>
       <p className="mt-3 font-mono text-sm text-text-secondary">

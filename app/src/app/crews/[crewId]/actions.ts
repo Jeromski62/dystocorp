@@ -22,7 +22,7 @@ async function requireOwnedCrew(crewId: string) {
 
   const { data: crew } = await supabase
     .from("crews")
-    .select("id, credits")
+    .select("id, credits, campaign_id")
     .eq("id", crewId)
     .eq("player_id", user.id)
     .maybeSingle();
@@ -299,6 +299,21 @@ export async function setSoldierRobot(
   if (error) return { error: error.message };
 
   revalidatePath(`/crews/${crewId}`);
+  return {};
+}
+
+export async function updateCrewName(crewId: string, name: string): Promise<{ error?: string }> {
+  const owned = await requireOwnedCrew(crewId);
+  if ("error" in owned) return owned;
+  const { supabase, crew } = owned;
+
+  if (!name.trim()) return { error: "Bitte einen Namen angeben." };
+
+  const { error } = await supabase.from("crews").update({ name: name.trim() }).eq("id", crewId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/crews/${crewId}`);
+  revalidatePath(`/campaigns/${crew.campaign_id}`);
   return {};
 }
 
