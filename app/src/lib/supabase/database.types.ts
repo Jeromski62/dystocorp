@@ -364,7 +364,7 @@ export type Database = {
           injury_notes: string | null
           loot_notes: string | null
           members_lost: string | null
-          session_log_entry_id: string
+          mission_id: string
           xp_delta: number
         }
         Insert: {
@@ -374,7 +374,7 @@ export type Database = {
           injury_notes?: string | null
           loot_notes?: string | null
           members_lost?: string | null
-          session_log_entry_id: string
+          mission_id: string
           xp_delta?: number
         }
         Update: {
@@ -384,7 +384,7 @@ export type Database = {
           injury_notes?: string | null
           loot_notes?: string | null
           members_lost?: string | null
-          session_log_entry_id?: string
+          mission_id?: string
           xp_delta?: number
         }
         Relationships: [
@@ -396,10 +396,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crew_session_results_session_log_entry_id_fkey"
-            columns: ["session_log_entry_id"]
+            foreignKeyName: "crew_session_results_mission_id_fkey"
+            columns: ["mission_id"]
             isOneToOne: false
-            referencedRelation: "session_log_entries"
+            referencedRelation: "missions"
             referencedColumns: ["id"]
           },
         ]
@@ -445,7 +445,7 @@ export type Database = {
       }
       crews: {
         Row: {
-          campaign_id: string
+          campaign_id: string | null
           corp_id: string
           created_at: string
           credits: number
@@ -458,7 +458,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          campaign_id: string
+          campaign_id?: string | null
           corp_id: string
           created_at?: string
           credits?: number
@@ -471,7 +471,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          campaign_id?: string
+          campaign_id?: string | null
           corp_id?: string
           created_at?: string
           credits?: number
@@ -730,6 +730,7 @@ export type Database = {
           description: string | null
           id: string
           report_text: string | null
+          session_date: string | null
           status: string
           title: string
         }
@@ -740,6 +741,7 @@ export type Database = {
           description?: string | null
           id?: string
           report_text?: string | null
+          session_date?: string | null
           status?: string
           title: string
         }
@@ -750,6 +752,7 @@ export type Database = {
           description?: string | null
           id?: string
           report_text?: string | null
+          session_date?: string | null
           status?: string
           title?: string
         }
@@ -856,51 +859,6 @@ export type Database = {
           types?: string[]
         }
         Relationships: []
-      }
-      session_log_entries: {
-        Row: {
-          campaign_id: string
-          created_at: string
-          created_by: string
-          id: string
-          notes: string | null
-          session_date: string
-          title: string
-        }
-        Insert: {
-          campaign_id: string
-          created_at?: string
-          created_by: string
-          id?: string
-          notes?: string | null
-          session_date: string
-          title: string
-        }
-        Update: {
-          campaign_id?: string
-          created_at?: string
-          created_by?: string
-          id?: string
-          notes?: string | null
-          session_date?: string
-          title?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "session_log_entries_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "session_log_entries_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       ship_hold_items: {
         Row: {
