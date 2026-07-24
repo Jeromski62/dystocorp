@@ -13,7 +13,7 @@ export default function LoginPage() {
           <span>[ONLINE]</span>
         </div>
 
-        <div className="flex flex-1 flex-col items-center justify-center gap-9">
+        <div className="flex flex-1 flex-col items-center justify-start gap-9 pt-[14vh]">
           <div className="text-center">
             <p className="font-display text-[38px] leading-none font-semibold tracking-[0.12em] text-text-default">
               DYSTO.CORP
