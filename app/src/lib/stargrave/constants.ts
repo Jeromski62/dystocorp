@@ -49,3 +49,18 @@ export const EQUIPMENT_CATEGORY_LABELS: Record<string, string> = {
   advanced_tech_2: "Advanced Tech II",
   alien_artefact: "Alien Artefact",
 };
+
+// Soldier gear slot cap per 05-crew-sheet-data-model.md: "Soldier 1 (bonus slot
+// only, campaign loot only)" — campaign loot = Advanced Weapon/Advanced Tech I+II
+// (0005_equipment_and_soldier_types.sql's category comment); Alien Artefact is
+// campaign loot too but is Captain/First-Mate only (08-campaigns.md), so it's
+// excluded here. Some individual Advanced Tech items carry their own
+// "Only Captain or First Mate" restriction text and must be filtered out too.
+export const SOLDIER_BONUS_GEAR_CATEGORIES = ["advanced_weapon", "advanced_tech_1", "advanced_tech_2"] as const;
+
+export function isSoldierEligibleGear(item: { category: string; restrictions: string | null }): boolean {
+  return (
+    (SOLDIER_BONUS_GEAR_CATEGORIES as readonly string[]).includes(item.category) &&
+    !(item.restrictions ?? "").includes("Captain or First Mate")
+  );
+}

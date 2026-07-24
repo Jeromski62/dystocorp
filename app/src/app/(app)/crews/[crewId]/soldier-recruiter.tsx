@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { addSoldier, removeSoldier, setSoldierBonusGear, setSoldierRobot } from "./actions";
-import { EQUIPMENT_CATEGORY_LABELS, SOLDIER_RULES } from "@/lib/stargrave/constants";
+import { EQUIPMENT_CATEGORY_LABELS, SOLDIER_RULES, isSoldierEligibleGear } from "@/lib/stargrave/constants";
 import { StatusBadge } from "@/components/status-badge";
 import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
 
@@ -19,7 +19,7 @@ type SoldierType = {
   cost_cr: number;
 };
 
-type EquipmentItem = { id: string; name: string; category: string };
+type EquipmentItem = { id: string; name: string; category: string; restrictions: string | null };
 
 type Soldier = {
   id: string;
@@ -51,10 +51,13 @@ export function SoldierRecruiter({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
+  // Soldier bonus slot is "campaign loot only" and excludes Captain/First-Mate-only
+  // items (e.g. Alien Artefacts) — see isSoldierEligibleGear.
+  const eligibleEquipment = equipment.filter(isSoldierEligibleGear);
   const equipmentByCategory = Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([category, label]) => ({
     category,
     label,
-    items: equipment.filter((item) => item.category === category),
+    items: eligibleEquipment.filter((item) => item.category === category),
   }));
 
   const specialistCount = soldiers.filter((s) => s.soldier_types.table_type === "specialist").length;

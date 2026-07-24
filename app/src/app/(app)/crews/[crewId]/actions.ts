@@ -3,7 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { OFFICER_RULES, SOLDIER_RULES, type ChoosableStat, type OfficerRole } from "@/lib/stargrave/constants";
+import {
+  isSoldierEligibleGear,
+  OFFICER_RULES,
+  SOLDIER_RULES,
+  type ChoosableStat,
+  type OfficerRole,
+} from "@/lib/stargrave/constants";
 import {
   computeActivationNumber,
   computeGearSlotTotal,
@@ -311,6 +317,17 @@ export async function setSoldierBonusGear(
   const owned = await requireOwnedCrew(crewId);
   if ("error" in owned) return owned;
   const { supabase } = owned;
+
+  if (equipmentItemId) {
+    const { data: item } = await supabase
+      .from("equipment_items")
+      .select("category, restrictions")
+      .eq("id", equipmentItemId)
+      .maybeSingle();
+    if (!item || !isSoldierEligibleGear(item)) {
+      return { error: "Diese Ausrüstung ist nicht als Soldier-Bonusgear erlaubt (nur Campaign Loot, kein Alien Artefact)." };
+    }
+  }
 
   const { error } = await supabase
     .from("soldiers")
