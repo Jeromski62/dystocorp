@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export async function updateCampaign(
@@ -25,4 +26,38 @@ export async function updateCampaign(
   revalidatePath(`/campaigns/${campaignId}`);
   revalidatePath("/campaigns");
   return {};
+}
+
+export async function setCampaignArchived(campaignId: string, archived: boolean): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Nicht eingeloggt." };
+
+  const { error } = await supabase
+    .from("campaigns")
+    .update({ archived_at: archived ? new Date().toISOString() : null })
+    .eq("id", campaignId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/campaigns/${campaignId}`);
+  revalidatePath("/campaigns");
+  return {};
+}
+
+export async function deleteCampaign(campaignId: string): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Nicht eingeloggt." };
+
+  const { error } = await supabase.from("campaigns").delete().eq("id", campaignId);
+  if (error) return { error: error.message };
+
+  revalidatePath("/campaigns");
+  revalidatePath("/crews");
+  revalidatePath("/");
+  redirect("/campaigns");
 }

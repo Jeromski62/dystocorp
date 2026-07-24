@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CopyId } from "./copy-id";
 import { EditCampaignForm } from "./edit-campaign-form";
+import { CampaignDangerZone } from "./campaign-danger-zone";
 import { corpThemeSlug } from "@/lib/corp-theme";
 
 export default async function CampaignDetailPage({
@@ -18,7 +19,7 @@ export default async function CampaignDetailPage({
 
   const { data: campaign } = await supabase
     .from("campaigns")
-    .select("id, name, description")
+    .select("id, name, description, archived_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -38,9 +39,19 @@ export default async function CampaignDetailPage({
   return (
     <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <p className="font-mono text-[10px] tracking-[0.08em] text-text-subtle uppercase">Kampagnen /</p>
-        <div className="mt-1">
-          <EditCampaignForm campaignId={campaign.id} name={campaign.name} description={campaign.description} />
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="font-mono text-[10px] tracking-[0.08em] text-text-subtle uppercase">Kampagnen /</p>
+            <div className="mt-1">
+              <EditCampaignForm campaignId={campaign.id} name={campaign.name} description={campaign.description} />
+            </div>
+            {campaign.archived_at ? (
+              <span className="mt-2 inline-block border border-border px-2 py-0.5 font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">
+                Archiviert
+              </span>
+            ) : null}
+          </div>
+          <CampaignDangerZone campaignId={campaign.id} campaignName={campaign.name} archived={!!campaign.archived_at} />
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-4 font-mono text-xs text-text-secondary">

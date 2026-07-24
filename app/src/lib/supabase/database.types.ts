@@ -137,6 +137,7 @@ export type Database = {
       }
       campaigns: {
         Row: {
+          archived_at: string | null
           created_at: string
           created_by: string
           description: string | null
@@ -144,6 +145,7 @@ export type Database = {
           name: string
         }
         Insert: {
+          archived_at?: string | null
           created_at?: string
           created_by: string
           description?: string | null
@@ -151,6 +153,7 @@ export type Database = {
           name: string
         }
         Update: {
+          archived_at?: string | null
           created_at?: string
           created_by?: string
           description?: string | null

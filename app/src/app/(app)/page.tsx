@@ -32,12 +32,12 @@ export default async function HomePage() {
     supabase.from("players").select("display_name").eq("id", user!.id).maybeSingle(),
     supabase
       .from("campaign_members")
-      .select("campaign_id, campaigns(id, name, description)")
+      .select("campaign_id, campaigns(id, name, description, archived_at)")
       .eq("player_id", user!.id)
       .order("joined_at", { ascending: false }),
   ]);
 
-  const latestCampaign = memberships?.[0]?.campaigns ?? null;
+  const latestCampaign = memberships?.find((m) => m.campaigns && !m.campaigns.archived_at)?.campaigns ?? null;
   const campaignIds = (memberships ?? []).map((m) => m.campaign_id);
 
   const [{ data: latestMissions }, { data: crews }] = await Promise.all([
