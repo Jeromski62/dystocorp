@@ -22,7 +22,7 @@ export default async function ConfirmPage({
         <form action={confirmMagicLink} className="flex flex-col gap-3">
           <input type="hidden" name="token_hash" value={token_hash} />
           <input type="hidden" name="type" value={type} />
-          <input type="hidden" name="next" value={next ?? "/campaigns"} />
+          <input type="hidden" name="next" value={next ?? "/"} />
           <button
             type="submit"
             className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90"

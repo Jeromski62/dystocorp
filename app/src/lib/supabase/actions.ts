@@ -28,7 +28,7 @@ export async function signInWithMagicLink(_prevState: unknown, formData: FormDat
 export async function confirmMagicLink(formData: FormData) {
   const token_hash = String(formData.get("token_hash") ?? "");
   const type = String(formData.get("type") ?? "") as EmailOtpType;
-  const next = String(formData.get("next") ?? "/campaigns");
+  const next = String(formData.get("next") ?? "/");
 
   if (!token_hash || !type) {
     redirect("/auth/auth-code-error");
