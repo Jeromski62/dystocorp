@@ -2,7 +2,13 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { saveOfficer } from "./actions";
-import { OFFICER_RULES, EQUIPMENT_CATEGORY_LABELS, type ChoosableStat, type OfficerRole } from "@/lib/stargrave/constants";
+import {
+  OFFICER_RULES,
+  EQUIPMENT_CATEGORY_LABELS,
+  isCampaignLootCategory,
+  type ChoosableStat,
+  type OfficerRole,
+} from "@/lib/stargrave/constants";
 import { Button } from "@/components/button";
 import {
   computeActivationNumber,
@@ -59,6 +65,7 @@ const STAT_LABELS: Record<ChoosableStat, string> = {
 export function OfficerBuilder({
   crewId,
   role,
+  inCampaign,
   backgrounds,
   corePowersByBackground,
   powers,
@@ -67,6 +74,7 @@ export function OfficerBuilder({
 }: {
   crewId: string;
   role: OfficerRole;
+  inCampaign: boolean;
   backgrounds: Background[];
   corePowersByBackground: Record<string, string[]>;
   powers: Power[];
@@ -108,7 +116,11 @@ export function OfficerBuilder({
   const selectedCoreCount = selectedPowerIds.filter((id) => corePowerIdSet.has(id)).length;
   const totalSelectedCount = selectedPowerIds.length;
 
-  const filteredEquipment = equipment.filter((item) => {
+  // Advanced Weapon/Tech/Alien Artefact are campaign loot (rulebook p.77
+  // "Counting Loot") -- only obtainable, and thus only choosable, once this
+  // crew is actually playing in a campaign.
+  const availableEquipment = inCampaign ? equipment : equipment.filter((item) => !isCampaignLootCategory(item.category));
+  const filteredEquipment = availableEquipment.filter((item) => {
     if (gearCategory !== "all" && item.category !== gearCategory) return false;
     return item.name.toLowerCase().includes(gearSearch.toLowerCase());
   });
@@ -347,6 +359,12 @@ export function OfficerBuilder({
           <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">
             Gear ({gearSlotTotal}/{rules.gearSlots} Slots)
           </h3>
+          {!inCampaign ? (
+            <p className="mt-1 text-xs text-text-secondary">
+              Advanced Weapon/Technology und Alien Artefact sind Campaign Loot — erst verfügbar, sobald diese Crew in
+              einer Kampagne mitspielt.
+            </p>
+          ) : null}
           <div className="mt-2 flex flex-wrap gap-2">
             <input
               value={gearSearch}
@@ -360,7 +378,9 @@ export function OfficerBuilder({
               className="rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default focus:border-corp-accent focus:outline-none"
             >
               <option value="all">Alle Kategorien</option>
-              {Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([key, label]) => (
+              {Object.entries(EQUIPMENT_CATEGORY_LABELS)
+                .filter(([key]) => inCampaign || !isCampaignLootCategory(key))
+                .map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
                 </option>

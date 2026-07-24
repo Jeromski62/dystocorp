@@ -50,6 +50,21 @@ export const EQUIPMENT_CATEGORY_LABELS: Record<string, string> = {
   alien_artefact: "Alien Artefact",
 };
 
+// "Campaign loot" categories per COUNTING LOOT (rulebook p.77): "In one-off
+// games of Stargrave, loot is only used to determine the winner. In a
+// campaign, however, loot is a crucial element in the progression and
+// improvement of a crew." These four categories are only ever obtained by
+// rolling on the loot tables during a campaign — a standalone crew (no
+// campaign_id) has no legitimate way to acquire them, for Captain/First Mate
+// gear same as for the soldier bonus slot (SOLDIER_BONUS_GEAR_CATEGORIES,
+// which additionally excludes Alien Artefact since that's Captain/First-Mate
+// only — not relevant here since this list is used for exactly those roles).
+export const CAMPAIGN_LOOT_CATEGORIES = ["advanced_weapon", "advanced_tech_1", "advanced_tech_2", "alien_artefact"] as const;
+
+export function isCampaignLootCategory(category: string): boolean {
+  return (CAMPAIGN_LOOT_CATEGORIES as readonly string[]).includes(category);
+}
+
 // Soldier gear slot cap per 05-crew-sheet-data-model.md: "Soldier 1 (bonus slot
 // only, campaign loot only)" — campaign loot = Advanced Weapon/Advanced Tech I+II
 // (0005_equipment_and_soldier_types.sql's category comment); Alien Artefact is

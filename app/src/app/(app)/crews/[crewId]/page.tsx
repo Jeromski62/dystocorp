@@ -178,6 +178,7 @@ export default async function CrewPage({
                   key="captain"
                   crewId={crewId}
                   role="captain"
+                  inCampaign={!!crew.campaign_id}
                   backgrounds={typedBackgrounds}
                   corePowersByBackground={corePowersByBackground}
                   powers={powers ?? []}
@@ -203,6 +204,7 @@ export default async function CrewPage({
                   key="first_mate"
                   crewId={crewId}
                   role="first_mate"
+                  inCampaign={!!crew.campaign_id}
                   backgrounds={typedBackgrounds}
                   corePowersByBackground={corePowersByBackground}
                   powers={powers ?? []}

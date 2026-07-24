@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
+  isCampaignLootCategory,
   isSoldierEligibleGear,
   OFFICER_RULES,
   SOLDIER_RULES,
@@ -58,7 +59,7 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
 
   const { data: crew } = await supabase
     .from("crews")
-    .select("id, player_id")
+    .select("id, player_id, campaign_id")
     .eq("id", input.crewId)
     .maybeSingle();
   if (!crew || crew.player_id !== user.id) {
@@ -104,11 +105,14 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
 
   const { data: gearRows } = await supabase
     .from("equipment_items")
-    .select("id, key, gear_slots")
+    .select("id, key, gear_slots, category")
     .in("id", Array.from(new Set(input.gearItemIds)));
   const gearById = new Map((gearRows ?? []).map((g) => [g.id, g]));
   if (input.gearItemIds.some((id) => !gearById.has(id))) {
     return { error: "Ein Gear-Item wurde nicht gefunden." };
+  }
+  if (!crew.campaign_id && input.gearItemIds.some((id) => isCampaignLootCategory(gearById.get(id)!.category))) {
+    return { error: "Advanced Weapon/Technology und Alien Artefact sind Campaign Loot -- nur in einer Kampagne verfügbar." };
   }
 
   const gearSlotTotal = computeGearSlotTotal(
