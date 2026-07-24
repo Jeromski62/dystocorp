@@ -32,6 +32,7 @@ type Soldier = {
   name: string | null;
   is_robot: boolean;
   current_health: number;
+  bonus_gear: { id: string; name: string } | null;
   soldier_types: SoldierType | null;
 };
 
@@ -115,7 +116,12 @@ export function CrewReadonlyView({
                       <div className="mt-2.5">
                         <SoldierStatGrid stats={type} />
                       </div>
-                      <GearTags items={gearByType[type.id] ?? []} />
+                      <GearTags
+                        items={[
+                          ...(gearByType[type.id] ?? []),
+                          ...(s.bonus_gear ? [{ name: `${s.bonus_gear.name} (Bonus)`, quantity: 1 }] : []),
+                        ]}
+                      />
                     </>
                   ) : null}
                 </div>

@@ -303,6 +303,26 @@ export async function setSoldierRobot(
   return {};
 }
 
+export async function setSoldierBonusGear(
+  crewId: string,
+  soldierId: string,
+  equipmentItemId: string | null
+): Promise<{ error?: string }> {
+  const owned = await requireOwnedCrew(crewId);
+  if ("error" in owned) return owned;
+  const { supabase } = owned;
+
+  const { error } = await supabase
+    .from("soldiers")
+    .update({ bonus_gear_item_id: equipmentItemId })
+    .eq("id", soldierId)
+    .eq("crew_id", crewId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/crews/${crewId}`);
+  return {};
+}
+
 export async function deleteCrew(crewId: string): Promise<{ error?: string }> {
   const owned = await requireOwnedCrew(crewId);
   if ("error" in owned) return owned;

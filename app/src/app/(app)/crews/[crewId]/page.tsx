@@ -74,7 +74,9 @@ export default async function CrewPage({
     supabase.from("first_mate_gear").select("equipment_item_id, first_mates!inner(crew_id)").eq("first_mates.crew_id", crewId),
     supabase
       .from("soldiers")
-      .select("id, name, is_robot, current_health, soldier_types(id, name, table_type, move, fight, shoot, armour, will, health, cost_cr)")
+      .select(
+        "id, name, is_robot, current_health, bonus_gear_item_id, soldier_types(id, name, table_type, move, fight, shoot, armour, will, health, cost_cr), bonus_gear:equipment_items(id, name)"
+      )
       .eq("crew_id", crewId)
       .order("sort_order"),
     supabase.from("ship_upgrade_types").select("id, key, name, cost_cr, effect_text, max_purchases"),
@@ -222,6 +224,7 @@ export default async function CrewPage({
                   credits={crew.credits}
                   maxSpecialists={maxSpecialists}
                   gearByType={gearByType}
+                  equipment={(equipment ?? []).map((e) => ({ id: e.id, name: e.name, category: e.category }))}
                 />
               ),
             },

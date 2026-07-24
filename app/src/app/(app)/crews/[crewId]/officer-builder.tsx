@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { saveOfficer } from "./actions";
-import { OFFICER_RULES, type ChoosableStat, type OfficerRole } from "@/lib/stargrave/constants";
+import { OFFICER_RULES, EQUIPMENT_CATEGORY_LABELS, type ChoosableStat, type OfficerRole } from "@/lib/stargrave/constants";
 import { Button } from "@/components/button";
 import {
   computeActivationNumber,
@@ -54,16 +54,6 @@ const STAT_LABELS: Record<ChoosableStat, string> = {
   fight: "Fight",
   shoot: "Shoot",
   health: "Health",
-};
-
-const CATEGORY_LABELS: Record<string, string> = {
-  equipment: "Equipment",
-  weapon: "Waffen",
-  armour: "Rüstung",
-  advanced_weapon: "Advanced Weapon",
-  advanced_tech_1: "Advanced Tech I",
-  advanced_tech_2: "Advanced Tech II",
-  alien_artefact: "Alien Artefact",
 };
 
 export function OfficerBuilder({
@@ -370,7 +360,7 @@ export function OfficerBuilder({
               className="rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default focus:border-corp-accent focus:outline-none"
             >
               <option value="all">Alle Kategorien</option>
-              {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+              {Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
                 </option>
@@ -427,7 +417,7 @@ export function OfficerBuilder({
               >
                 <span className="text-text-default">{item.name}</span>
                 <span className="text-xs text-text-secondary">
-                  {item.gear_slots} Slot{item.gear_slots === 1 ? "" : "s"} · {CATEGORY_LABELS[item.category]}
+                  {item.gear_slots} Slot{item.gear_slots === 1 ? "" : "s"} · {EQUIPMENT_CATEGORY_LABELS[item.category]}
                 </span>
               </button>
             ))}

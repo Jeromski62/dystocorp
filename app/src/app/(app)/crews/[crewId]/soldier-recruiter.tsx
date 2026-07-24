@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addSoldier, removeSoldier, setSoldierRobot } from "./actions";
-import { SOLDIER_RULES } from "@/lib/stargrave/constants";
+import { addSoldier, removeSoldier, setSoldierBonusGear, setSoldierRobot } from "./actions";
+import { EQUIPMENT_CATEGORY_LABELS, SOLDIER_RULES } from "@/lib/stargrave/constants";
 import { StatusBadge } from "@/components/status-badge";
 import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
 
@@ -19,11 +19,15 @@ type SoldierType = {
   cost_cr: number;
 };
 
+type EquipmentItem = { id: string; name: string; category: string };
+
 type Soldier = {
   id: string;
   name: string | null;
   is_robot: boolean;
   current_health: number;
+  bonus_gear_item_id: string | null;
+  bonus_gear: { id: string; name: string } | null;
   soldier_types: SoldierType;
 };
 
@@ -34,6 +38,7 @@ export function SoldierRecruiter({
   credits,
   maxSpecialists,
   gearByType,
+  equipment,
 }: {
   crewId: string;
   soldierTypes: SoldierType[];
@@ -41,9 +46,16 @@ export function SoldierRecruiter({
   credits: number;
   maxSpecialists: number;
   gearByType: Record<string, { name: string; quantity: number }[]>;
+  equipment: EquipmentItem[];
 }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  const equipmentByCategory = Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([category, label]) => ({
+    category,
+    label,
+    items: equipment.filter((item) => item.category === category),
+  }));
 
   const specialistCount = soldiers.filter((s) => s.soldier_types.table_type === "specialist").length;
   const canRecruitMore = soldiers.length < SOLDIER_RULES.maxSoldiers;
@@ -67,6 +79,12 @@ export function SoldierRecruiter({
   function handleRobotToggle(soldierId: string, isRobot: boolean) {
     startTransition(async () => {
       await setSoldierRobot(crewId, soldierId, isRobot);
+    });
+  }
+
+  function handleBonusGearChange(soldierId: string, equipmentItemId: string) {
+    startTransition(async () => {
+      await setSoldierBonusGear(crewId, soldierId, equipmentItemId || null);
     });
   }
 
@@ -107,6 +125,28 @@ export function SoldierRecruiter({
                   <SoldierStatGrid stats={s.soldier_types} />
                 </div>
                 <GearTags items={gearByType[s.soldier_types.id] ?? []} />
+
+                <label className="mt-2.5 flex items-center gap-2 font-mono text-[14px] text-text-secondary">
+                  Bonus-Ausrüstung
+                  <select
+                    value={s.bonus_gear_item_id ?? ""}
+                    onChange={(e) => handleBonusGearChange(s.id, e.target.value)}
+                    className="rounded-md border border-corp-border bg-corp-surface px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+                  >
+                    <option value="">— keine —</option>
+                    {equipmentByCategory.map(({ category, label, items }) =>
+                      items.length > 0 ? (
+                        <optgroup key={category} label={label}>
+                          {items.map((item) => (
+                            <option key={item.id} value={item.id}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ) : null
+                    )}
+                  </select>
+                </label>
 
                 <div className="mt-2.5 flex items-center gap-3">
                   <label className="flex items-center gap-1.5 font-mono text-[14px] text-text-secondary">

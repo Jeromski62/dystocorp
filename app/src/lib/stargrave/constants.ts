@@ -39,3 +39,13 @@ export const SOLDIER_RULES = {
   maxSoldiers: 8,
   maxSpecialistsDefault: 4,
 };
+
+export const EQUIPMENT_CATEGORY_LABELS: Record<string, string> = {
+  equipment: "Equipment",
+  weapon: "Waffen",
+  armour: "Rüstung",
+  advanced_weapon: "Advanced Weapon",
+  advanced_tech_1: "Advanced Tech I",
+  advanced_tech_2: "Advanced Tech II",
+  alien_artefact: "Alien Artefact",
+};
