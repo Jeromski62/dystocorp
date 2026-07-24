@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { saveCrewMissionResult } from "./actions";
+import { Button } from "@/components/button";
 
 type ExistingResult = {
   xpDelta: number;
@@ -121,14 +122,9 @@ export function CrewMissionResultForm({
       </label>
       {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
       <div className="mt-2 flex gap-2">
-        <button
-          type="button"
-          disabled={pending}
-          onClick={handleSave}
-          className="rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
-        >
+        <Button type="button" disabled={pending} onClick={handleSave}>
           {pending ? "Speichere…" : "Speichern"}
-        </button>
+        </Button>
         {existing ? (
           <button type="button" onClick={() => setEditing(false)} className="text-sm text-text-secondary hover:text-text-default">
             Abbrechen

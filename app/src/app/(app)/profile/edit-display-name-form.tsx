@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateDisplayName } from "./actions";
+import { Button } from "@/components/button";
 
 export function EditDisplayNameForm({ name }: { name: string }) {
   const [nameValue, setNameValue] = useState(name);
@@ -35,14 +36,9 @@ export function EditDisplayNameForm({ name }: { name: string }) {
       />
       {error ? <p className="text-sm text-danger">{error}</p> : null}
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          disabled={pending || !nameValue.trim()}
-          onClick={handleSave}
-          className="self-start rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-40"
-        >
+        <Button type="button" variant="cta" disabled={pending || !nameValue.trim()} onClick={handleSave} className="self-start">
           {pending ? "Speichere…" : "Speichern"}
-        </button>
+        </Button>
         {saved ? <span className="text-sm text-accent">Gespeichert.</span> : null}
       </div>
     </div>

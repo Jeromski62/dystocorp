@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/button";
 
 export default function AuthCodeErrorPage() {
   return (
@@ -8,11 +9,8 @@ export default function AuthCodeErrorPage() {
         Dieser Link ist abgelaufen oder wurde bereits verwendet. Fordere einen neuen
         Anmeldelink an.
       </p>
-      <Link
-        href="/login"
-        className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90"
-      >
-        Zurück zum Login
+      <Link href="/login">
+        <Button variant="cta">Zurück zum Login</Button>
       </Link>
     </div>
   );

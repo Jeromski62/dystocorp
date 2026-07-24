@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { createMission } from "./actions";
+import { Button } from "@/components/button";
 
 export function NewMissionForm({ campaignId }: { campaignId: string }) {
   const [title, setTitle] = useState("");
@@ -39,14 +40,9 @@ export function NewMissionForm({ campaignId }: { campaignId: string }) {
           className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
         />
         {error ? <p className="text-sm text-danger">{error}</p> : null}
-        <button
-          type="button"
-          disabled={pending || !title.trim()}
-          onClick={handleSubmit}
-          className="self-start rounded-md bg-corp-accent px-4 py-2 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
-        >
+        <Button type="button" disabled={pending || !title.trim()} onClick={handleSubmit} className="self-start">
           {pending ? "Speichere…" : "Mission anlegen"}
-        </button>
+        </Button>
       </div>
     </div>
   );

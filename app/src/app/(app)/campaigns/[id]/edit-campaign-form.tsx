@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateCampaign } from "./actions";
+import { Button } from "@/components/button";
 
 export function EditCampaignForm({
   campaignId,
@@ -57,14 +58,9 @@ export function EditCampaignForm({
       />
       {error ? <p className="text-sm text-danger">{error}</p> : null}
       <div className="flex gap-2">
-        <button
-          type="button"
-          disabled={pending}
-          onClick={handleSave}
-          className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
-        >
+        <Button type="button" disabled={pending} onClick={handleSave} className="self-start">
           {pending ? "Speichere…" : "Speichern"}
-        </button>
+        </Button>
         <button
           type="button"
           onClick={() => {

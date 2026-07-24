@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/supabase/actions";
 import { EditDisplayNameForm } from "./edit-display-name-form";
+import { Button } from "@/components/button";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -61,12 +62,9 @@ export default async function ProfilePage() {
             <div className="flex flex-1 flex-col gap-4 p-4">
               <EditDisplayNameForm name={player?.display_name ?? ""} />
               <form action={signOut} className="mt-auto pt-2">
-                <button
-                  type="submit"
-                  className="w-full border border-accent/40 px-4 py-3 font-display text-sm font-semibold tracking-[0.06em] text-accent uppercase transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:bg-accent/10"
-                >
+                <Button type="submit" variant="ghost" className="w-full">
                   Abmelden
-                </button>
+                </Button>
               </form>
             </div>
           </div>

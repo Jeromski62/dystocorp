@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { startMission, submitMissionReport, updateMission } from "./actions";
 import { CrewMissionResultForm } from "./crew-mission-result-form";
+import { Button } from "@/components/button";
 
 type MissionStatus = "planned" | "ongoing" | "report";
 
@@ -123,14 +124,9 @@ export function MissionCard({
             className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
           />
           <div className="flex gap-2">
-            <button
-              type="button"
-              disabled={pending}
-              onClick={saveEdit}
-              className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
-            >
+            <Button type="button" disabled={pending} onClick={saveEdit} className="self-start">
               {pending ? "Speichere…" : "Speichern"}
-            </button>
+            </Button>
             <button
               type="button"
               onClick={() => {
@@ -151,14 +147,9 @@ export function MissionCard({
       {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
 
       {mission.status === "planned" && !editing ? (
-        <button
-          type="button"
-          disabled={pending}
-          onClick={handleStartMission}
-          className="mt-3 rounded-md border border-corp-accent px-3 py-1.5 text-sm font-medium text-corp-accent hover:bg-corp-accent hover:text-corp-on-accent disabled:opacity-40"
-        >
+        <Button type="button" disabled={pending} onClick={handleStartMission} className="mt-3">
           Spiel beginnt
-        </button>
+        </Button>
       ) : null}
 
       {mission.status === "ongoing" && !editing ? (
@@ -172,27 +163,18 @@ export function MissionCard({
               className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
             />
             <div className="flex gap-2">
-              <button
-                type="button"
-                disabled={pending || !reportText.trim()}
-                onClick={saveReport}
-                className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
-              >
+              <Button type="button" disabled={pending || !reportText.trim()} onClick={saveReport} className="self-start">
                 {pending ? "Speichere…" : "Bericht speichern"}
-              </button>
+              </Button>
               <button type="button" onClick={() => setReportOpen(false)} className="text-sm text-text-secondary hover:text-text-default">
                 Abbrechen
               </button>
             </div>
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={() => setReportOpen(true)}
-            className="mt-3 rounded-md border border-corp-accent px-3 py-1.5 text-sm font-medium text-corp-accent hover:bg-corp-accent hover:text-corp-on-accent"
-          >
+          <Button type="button" onClick={() => setReportOpen(true)} className="mt-3">
             Bericht schreiben
-          </button>
+          </Button>
         )
       ) : null}
 
@@ -206,14 +188,9 @@ export function MissionCard({
               className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
             />
             <div className="flex gap-2">
-              <button
-                type="button"
-                disabled={pending || !reportText.trim()}
-                onClick={saveReport}
-                className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
-              >
+              <Button type="button" disabled={pending || !reportText.trim()} onClick={saveReport} className="self-start">
                 {pending ? "Speichere…" : "Speichern"}
-              </button>
+              </Button>
               <button type="button" onClick={() => setReportOpen(false)} className="text-sm text-text-secondary hover:text-text-default">
                 Abbrechen
               </button>

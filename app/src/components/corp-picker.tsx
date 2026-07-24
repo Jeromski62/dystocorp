@@ -1,5 +1,6 @@
 import { CorpEmblem } from "@/components/corp-emblem";
 import { corpThemeSlug } from "@/lib/corp-theme";
+import { Button } from "@/components/button";
 
 type Corp = { id: string; key: string; name: string; sector: string; lore_markdown: string };
 
@@ -39,12 +40,7 @@ export function CorpPicker({
               {corp.lore_markdown}
             </p>
             <form action={createAction.bind(null, corp.id)} className="mt-4">
-              <button
-                type="submit"
-                className="rounded-md bg-corp-accent px-4 py-2 text-sm font-medium text-corp-on-accent hover:opacity-90"
-              >
-                Crew bei {corp.name} gründen
-              </button>
+              <Button type="submit">Crew bei {corp.name} gründen</Button>
             </form>
           </article>
         ))}
