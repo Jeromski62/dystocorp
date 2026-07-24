@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { addSoldier, removeSoldier, setSoldierRobot } from "./actions";
 import { SOLDIER_RULES } from "@/lib/stargrave/constants";
 import { StatusBadge } from "@/components/status-badge";
+import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
 
 type SoldierType = {
   id: string;
@@ -32,12 +33,14 @@ export function SoldierRecruiter({
   soldiers,
   credits,
   maxSpecialists,
+  gearByType,
 }: {
   crewId: string;
   soldierTypes: SoldierType[];
   soldiers: Soldier[];
   credits: number;
   maxSpecialists: number;
+  gearByType: Record<string, { name: string; quantity: number }[]>;
 }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -87,31 +90,25 @@ export function SoldierRecruiter({
         <p className="mb-2 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Trupp-Register</p>
         {soldiers.length > 0 ? (
           <div className="border border-corp-border">
-            <div className="grid grid-cols-[1.6fr_1fr_0.7fr_0.7fr_0.7fr_1fr] gap-2 border-b border-corp-border bg-corp-surface px-3 py-2 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
-              <span>Einheit</span>
-              <span>Typ</span>
-              <span>FGT</span>
-              <span>SHT</span>
-              <span>HP</span>
-              <span>Status</span>
-            </div>
             {soldiers.map((s) => (
-              <div
-                key={s.id}
-                className="grid grid-cols-[1.6fr_1fr_0.7fr_0.7fr_0.7fr_1fr] items-center gap-2 border-b border-corp-border/60 bg-corp-surface px-3 py-2.5 text-sm text-text-default last:border-b-0"
-              >
-                <span className="font-medium">
-                  {s.soldier_types.name}
-                  {s.name ? <span className="text-text-secondary"> &quot;{s.name}&quot;</span> : null}
-                </span>
-                <span className="font-mono text-[14px] text-text-secondary">{s.soldier_types.table_type === "specialist" ? "Specialist" : "Standard"}</span>
-                <span className="font-mono text-[15px]">+{s.soldier_types.fight}</span>
-                <span className="font-mono text-[15px]">+{s.soldier_types.shoot}</span>
-                <span className="font-mono text-[15px]">{s.soldier_types.health}</span>
-                <div className="flex items-center gap-2">
+              <div key={s.id} className="border-b border-corp-border/60 bg-corp-surface px-3 py-3 last:border-b-0">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-medium text-text-default">
+                    {s.soldier_types.name}
+                    {s.name ? <span className="text-text-secondary"> &quot;{s.name}&quot;</span> : null}
+                    <span className="ml-2 font-mono text-[14px] text-text-secondary uppercase">
+                      {s.soldier_types.table_type === "specialist" ? "Specialist" : "Standard"}
+                    </span>
+                  </span>
                   <StatusBadge currentHealth={s.current_health} health={s.soldier_types.health} />
                 </div>
-                <div className="col-span-6 -mt-1 flex items-center gap-3 pt-1">
+
+                <div className="mt-2.5">
+                  <SoldierStatGrid stats={s.soldier_types} />
+                </div>
+                <GearTags items={gearByType[s.soldier_types.id] ?? []} />
+
+                <div className="mt-2.5 flex items-center gap-3">
                   <label className="flex items-center gap-1.5 font-mono text-[14px] text-text-secondary">
                     <input
                       type="checkbox"
@@ -143,20 +140,13 @@ export function SoldierRecruiter({
         )}
       </section>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="flex flex-col gap-6">
         {(["standard", "specialist"] as const).map((tableType) => (
           <section key={tableType}>
             <p className="mb-2 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
               {tableType === "standard" ? "Standard" : "Specialist"}
             </p>
             <div className="border border-corp-border">
-              <div className="grid grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.8fr] gap-2 border-b border-corp-border bg-corp-surface px-3 py-1.5 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
-                <span>Typ</span>
-                <span>FGT</span>
-                <span>SHT</span>
-                <span>HP</span>
-                <span>Kosten</span>
-              </div>
               {soldierTypes
                 .filter((t) => t.table_type === tableType)
                 .map((t) => {
@@ -171,13 +161,16 @@ export function SoldierRecruiter({
                       type="button"
                       disabled={disabled}
                       onClick={() => handleAdd(t.id)}
-                      className="grid w-full grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.8fr] items-center gap-2 border-b border-corp-border/60 bg-corp-surface px-3 py-2 text-left text-sm last:border-b-0 hover:bg-corp-accent/[0.06] disabled:opacity-40"
+                      className="block w-full border-b border-corp-border/60 bg-corp-surface px-3 py-3 text-left last:border-b-0 hover:bg-corp-accent/[0.06] disabled:opacity-40"
                     >
-                      <span className="font-medium text-text-default">{t.name}</span>
-                      <span className="font-mono text-[14px] text-text-secondary">+{t.fight}</span>
-                      <span className="font-mono text-[14px] text-text-secondary">+{t.shoot}</span>
-                      <span className="font-mono text-[14px] text-text-secondary">{t.health}</span>
-                      <span className="font-mono text-[15px] text-corp-accent">{t.cost_cr === 0 ? "FREE" : `${t.cost_cr} CR`}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-text-default">{t.name}</span>
+                        <span className="font-mono text-[15px] text-corp-accent">{t.cost_cr === 0 ? "FREE" : `${t.cost_cr} CR`}</span>
+                      </div>
+                      <div className="mt-2.5">
+                        <SoldierStatGrid stats={t} />
+                      </div>
+                      <GearTags items={gearByType[t.id] ?? []} />
                     </button>
                   );
                 })}

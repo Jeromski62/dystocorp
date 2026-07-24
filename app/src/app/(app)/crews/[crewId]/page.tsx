@@ -48,6 +48,7 @@ export default async function CrewPage({
     { data: shipUpgradeTypes },
     { data: crewShipUpgrades },
     { data: holdItems },
+    { data: soldierTypeGear },
   ] = await Promise.all([
     supabase.from("backgrounds").select("id, name, flavor_text, fixed_stat_mods, choice_stat_count, choice_stat_options"),
     supabase.from("background_core_powers").select("background_id, power_id"),
@@ -85,7 +86,14 @@ export default async function CrewPage({
       .from("ship_hold_items")
       .select("id, equipment_item_id, custom_name, quantity, notes, equipment_items(id, name)")
       .eq("crew_id", crewId),
+    supabase.from("soldier_type_gear").select("soldier_type_id, quantity, equipment_items(name)"),
   ]);
+
+  const gearByType: Record<string, { name: string; quantity: number }[]> = {};
+  for (const g of soldierTypeGear ?? []) {
+    if (!g.equipment_items) continue;
+    (gearByType[g.soldier_type_id] ??= []).push({ name: g.equipment_items.name, quantity: g.quantity });
+  }
 
   const typedBackgrounds = (backgrounds ?? []).map((b) => ({
     ...b,
@@ -121,6 +129,7 @@ export default async function CrewPage({
           typeof CrewReadonlyView
         >[0]["crewShipUpgrades"]}
         holdItems={holdItems ?? []}
+        gearByType={gearByType}
       />
     );
   }
@@ -212,6 +221,7 @@ export default async function CrewPage({
                   >[0]["soldiers"]}
                   credits={crew.credits}
                   maxSpecialists={maxSpecialists}
+                  gearByType={gearByType}
                 />
               ),
             },

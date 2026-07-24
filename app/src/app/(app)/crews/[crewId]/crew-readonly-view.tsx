@@ -1,5 +1,7 @@
 import { CorpEmblem } from "@/components/corp-emblem";
 import { CaptainDossier } from "./captain-dossier";
+import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
+import { StatusBadge } from "@/components/status-badge";
 
 type Officer = {
   name: string;
@@ -13,22 +15,28 @@ type Officer = {
   current_health: number;
 };
 
+type SoldierType = {
+  id: string;
+  name: string;
+  table_type: string;
+  move: number;
+  fight: number;
+  shoot: number;
+  armour: number;
+  will: number;
+  health: number;
+};
+
 type Soldier = {
   id: string;
   name: string | null;
   is_robot: boolean;
   current_health: number;
-  soldier_types: { name: string; table_type: string; fight: number; shoot: number; health: number } | null;
+  soldier_types: SoldierType | null;
 };
 
 type ShipUpgrade = { id: string; ship_upgrade_types: { name: string } | null };
 type HoldItem = { id: string; custom_name: string | null; quantity: number; equipment_items: { name: string } | null };
-
-function soldierStatus(current: number, max: number) {
-  if (current <= 0) return { label: "AUSSER GEFECHT", className: "text-status-out" };
-  if (current < max) return { label: "VERLETZT", className: "text-status-injured" };
-  return { label: "BEREIT", className: "text-status-active" };
-}
 
 // Read-only counterpart to the crew edit UI (CrewPage), shown to campaign
 // teammates viewing someone else's crew — only the owning player gets the
@@ -42,6 +50,7 @@ export function CrewReadonlyView({
   soldiers,
   crewShipUpgrades,
   holdItems,
+  gearByType,
 }: {
   crew: { name: string; credits: number; experience: number; ship_name: string | null; corps: { name: string } | null };
   captain: Officer | null;
@@ -51,6 +60,7 @@ export function CrewReadonlyView({
   soldiers: Soldier[];
   crewShipUpgrades: ShipUpgrade[];
   holdItems: HoldItem[];
+  gearByType: Record<string, { name: string; quantity: number }[]>;
 }) {
   return (
     <div className="hud-grid min-h-screen">
@@ -85,33 +95,32 @@ export function CrewReadonlyView({
           {soldiers.length === 0 ? (
             <p className="px-4 py-6 font-mono text-sm text-text-secondary">Keine Soldaten rekrutiert.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <div className="grid min-w-[500px] grid-cols-[2fr_1fr_0.7fr_0.7fr_0.7fr_1fr] gap-2 border-b border-border px-4 py-2 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
-                <span>Einheit</span>
-                <span>Typ</span>
-                <span>FGT</span>
-                <span>SHT</span>
-                <span>HP</span>
-                <span>Status</span>
-              </div>
-              {soldiers.map((s) => {
-                const type = s.soldier_types;
-                const status = soldierStatus(s.current_health, type?.health ?? s.current_health);
-                return (
-                  <div
-                    key={s.id}
-                    className="grid min-w-[500px] grid-cols-[2fr_1fr_0.7fr_0.7fr_0.7fr_1fr] items-center gap-2 border-b border-border/60 px-4 py-2.5 text-sm text-text-default last:border-b-0"
-                  >
-                    <span className="font-medium">{s.name || type?.name || "Soldat"}</span>
-                    <span className="font-mono text-[15px] text-text-mid">{type?.name ?? "—"}</span>
-                    <span>{type ? `+${type.fight}` : "—"}</span>
-                    <span>{type ? `+${type.shoot}` : "—"}</span>
-                    <span>{s.current_health}</span>
-                    <span className={`font-mono text-[14px] ${status.className}`}>● {status.label}</span>
+            soldiers.map((s) => {
+              const type = s.soldier_types;
+              return (
+                <div key={s.id} className="border-b border-border/60 px-4 py-3 last:border-b-0">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-medium text-text-default">
+                      {s.name || type?.name || "Soldat"}
+                      {type ? (
+                        <span className="ml-2 font-mono text-[14px] text-text-secondary uppercase">
+                          {type.table_type === "specialist" ? "Specialist" : "Standard"}
+                        </span>
+                      ) : null}
+                    </span>
+                    <StatusBadge currentHealth={s.current_health} health={type?.health ?? s.current_health} />
                   </div>
-                );
-              })}
-            </div>
+                  {type ? (
+                    <>
+                      <div className="mt-2.5">
+                        <SoldierStatGrid stats={type} />
+                      </div>
+                      <GearTags items={gearByType[type.id] ?? []} />
+                    </>
+                  ) : null}
+                </div>
+              );
+            })
           )}
         </section>
 
