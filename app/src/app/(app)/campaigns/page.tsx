@@ -30,7 +30,8 @@ export default async function CampaignsPage() {
         Jede Kampagne bündelt eure Crews. Alle Mitspieler sind gleichberechtigt.
       </p>
 
-      <div className="mt-8 flex flex-col gap-3">
+      <h2 className="mt-8 text-xs uppercase tracking-widest text-text-secondary">Laufende Kampagnen</h2>
+      <div className="mt-3 flex flex-col gap-3">
         {activeCampaigns.length === 0 ? (
           <p className="rounded-md border border-dashed border-border px-4 py-6 text-sm text-text-secondary">
             Noch keine Kampagne. Leg unten eine an oder tritt einer bei.
