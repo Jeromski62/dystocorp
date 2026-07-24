@@ -160,10 +160,11 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
     const isCore = corePowerIds.has(powerId);
     const reduced = input.reducedPowerIds.includes(powerId);
     const printed = powerById.get(powerId)!.activation_number;
+    const offset = isCore ? rules.coreActivationOffset : rules.nonCoreActivationOffset;
     return {
       power_id: powerId,
       is_core: isCore,
-      activation_number: computeActivationNumber(printed, isCore, rules.nonCoreActivationOffset, reduced),
+      activation_number: computeActivationNumber(printed, offset, reduced),
       reduced,
     };
   });

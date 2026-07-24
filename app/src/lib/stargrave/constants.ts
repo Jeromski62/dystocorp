@@ -10,12 +10,18 @@ export type StatLine = {
 export type ChoosableStat = "move" | "fight" | "shoot" | "health";
 
 export const OFFICER_RULES = {
+  // Activation number offsets per rulebook p.19 (Captain) / p.22 (First Mate):
+  // captain core = printed as-is, non-core = printed+2; first mate core =
+  // printed+2, non-core = printed+4 ("not only do first mates have fewer
+  // starting powers, but they aren't quite as good at using the ones they
+  // do have"). Core powers are NOT free of an offset for first mates.
   captain: {
     baseStats: { move: 6, fight: 3, shoot: 2, armour: 9, will: 3, health: 16 } as StatLine,
     startLevel: 15,
     powerCount: 5,
     coreMin: 3,
     coreMax: 4,
+    coreActivationOffset: 0,
     nonCoreActivationOffset: 2,
     maxReductions: 2,
     gearSlots: 6,
@@ -26,6 +32,7 @@ export const OFFICER_RULES = {
     powerCount: 4,
     coreMin: 2,
     coreMax: 3,
+    coreActivationOffset: 2,
     nonCoreActivationOffset: 4,
     maxReductions: 0,
     gearSlots: 5,

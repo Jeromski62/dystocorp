@@ -309,13 +309,12 @@ export function OfficerBuilder({
                     key={power.id}
                     power={power}
                     selected={selectedPowerIds.includes(power.id)}
-                    isCore
                     reduced={reducedPowerIds.includes(power.id)}
                     canReduce={rules.maxReductions > 0}
                     reductionLocked={
                       !reducedPowerIds.includes(power.id) && reducedPowerIds.length >= rules.maxReductions
                     }
-                    activationOffset={0}
+                    activationOffset={rules.coreActivationOffset}
                     onToggle={() => toggleCorePower(power.id)}
                     onToggleReduced={() => toggleReduced(power.id)}
                   />
@@ -337,7 +336,6 @@ export function OfficerBuilder({
                     key={power.id}
                     power={power}
                     selected={selectedPowerIds.includes(power.id)}
-                    isCore={false}
                     reduced={reducedPowerIds.includes(power.id)}
                     canReduce={rules.maxReductions > 0}
                     reductionLocked={
@@ -466,7 +464,6 @@ export function OfficerBuilder({
 function PowerRow({
   power,
   selected,
-  isCore,
   reduced,
   canReduce,
   reductionLocked,
@@ -476,7 +473,6 @@ function PowerRow({
 }: {
   power: Power;
   selected: boolean;
-  isCore: boolean;
   reduced: boolean;
   canReduce: boolean;
   reductionLocked: boolean;
@@ -484,9 +480,7 @@ function PowerRow({
   onToggle: () => void;
   onToggleReduced: () => void;
 }) {
-  const activation = selected
-    ? computeActivationNumber(power.activation_number, isCore, activationOffset, reduced)
-    : null;
+  const activation = selected ? computeActivationNumber(power.activation_number, activationOffset, reduced) : null;
 
   return (
     <div

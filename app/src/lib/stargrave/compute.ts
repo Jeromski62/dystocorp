@@ -17,13 +17,8 @@ export function computeStatLine(
   return stats;
 }
 
-export function computeActivationNumber(
-  printed: number,
-  isCore: boolean,
-  nonCoreOffset: number,
-  reduced: boolean
-): number {
-  const base = isCore ? printed : printed + nonCoreOffset;
+export function computeActivationNumber(printed: number, offset: number, reduced: boolean): number {
+  const base = printed + offset;
   return reduced ? base - 1 : base;
 }
 
