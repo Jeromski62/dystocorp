@@ -23,6 +23,7 @@ export default async function CampaignsPage() {
   const archivedCampaigns = campaigns.filter((c) => c.archived_at);
 
   return (
+    <div className="hud-grid min-h-screen">
     <div className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Kampagnen</h1>
       <p className="mt-1 text-sm text-text-secondary">
@@ -79,6 +80,7 @@ export default async function CampaignsPage() {
           <JoinCampaignForm />
         </section>
       </div>
+    </div>
     </div>
   );
 }

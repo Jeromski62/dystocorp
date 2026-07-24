@@ -12,6 +12,7 @@ export default async function CorpsPage() {
     .order("sort_order");
 
   return (
+    <div className="hud-grid min-h-screen">
     <div className="mx-auto max-w-3xl px-6 py-12">
       <Link href="/setting" className="text-xs text-text-secondary hover:text-accent">
         ← Setting
@@ -36,6 +37,7 @@ export default async function CorpsPage() {
           </Link>
         ))}
       </div>
+    </div>
     </div>
   );
 }

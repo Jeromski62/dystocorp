@@ -13,9 +13,10 @@ export function CorpPicker({
   createAction: (corpId: string) => Promise<void>;
 }) {
   return (
+    <div className="hud-grid min-h-screen">
     <div className="mx-auto max-w-3xl px-6 py-12">
       {eyebrow ? <p className="text-xs uppercase tracking-widest text-accent">{eyebrow}</p> : null}
-      <h1 className="mt-2 text-2xl font-semibold text-text-default">Mega Corp wählen</h1>
+      <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Mega Corp wählen</h1>
       <p className="mt-2 text-sm text-text-secondary">
         Reine Optik/Lore — hat keinen Einfluss auf Stats, Powers oder Gear.
       </p>
@@ -48,6 +49,7 @@ export function CorpPicker({
           </article>
         ))}
       </div>
+    </div>
     </div>
   );
 }

@@ -22,6 +22,7 @@ export default async function CorpDetailPage({
 
   return (
     <div data-corp={corpThemeSlug(corp.key)} className="bg-corp-bg min-h-screen">
+      <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <Link href="/setting/corps" className="text-xs text-text-secondary hover:text-corp-accent">
           ← Corps
@@ -43,6 +44,7 @@ export default async function CorpDetailPage({
         >
           Employee Details →
         </Link>
+      </div>
       </div>
     </div>
   );

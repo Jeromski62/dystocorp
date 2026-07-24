@@ -16,6 +16,7 @@ export default async function CorpEmployeesPage({
 
   return (
     <div data-corp={corpThemeSlug(corp.key)} className="bg-corp-bg min-h-screen">
+      <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <Link href={`/setting/corps/${corp.id}`} className="text-xs text-text-secondary hover:text-corp-accent">
           ← {corp.name}
@@ -24,6 +25,7 @@ export default async function CorpEmployeesPage({
         <p className="mt-4 rounded-md border border-dashed border-border px-4 py-6 text-sm text-text-secondary">
           Kommt noch — hier entstehen NPC-Profile von {corp.name}.
         </p>
+      </div>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ export default async function WeaponsPage() {
     .order("category, name");
 
   return (
+    <div className="hud-grid min-h-screen">
     <div className="mx-auto max-w-4xl px-6 py-12">
       <Link href="/rules" className="text-xs text-text-secondary hover:text-accent">
         ← Regeln
@@ -22,6 +23,7 @@ export default async function WeaponsPage() {
       <div className="mt-8">
         <WeaponBrowser items={items ?? []} />
       </div>
+    </div>
     </div>
   );
 }

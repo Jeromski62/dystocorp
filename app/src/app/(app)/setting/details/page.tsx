@@ -2,6 +2,7 @@ import Link from "next/link";
 
 export default function SettingDetailsPage() {
   return (
+    <div className="hud-grid min-h-screen">
     <div className="mx-auto max-w-3xl px-6 py-12">
       <Link href="/setting" className="text-xs text-text-secondary hover:text-accent">
         ← Setting
@@ -10,6 +11,7 @@ export default function SettingDetailsPage() {
       <p className="mt-4 rounded-md border border-dashed border-border px-4 py-6 text-sm text-text-secondary">
         Kommt noch — hier entsteht die Hintergrundgeschichte der DystoCorp-Welt.
       </p>
+    </div>
     </div>
   );
 }
