@@ -8,34 +8,39 @@ export async function NavBar() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const linkClass =
+    "font-display text-[12.5px] font-semibold tracking-[0.06em] uppercase text-text-secondary transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:text-text-default";
+
   return (
     <header className="border-b border-border bg-bg-surface">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <Link href="/" className="flex items-baseline gap-2">
-          <span className="font-display text-sm tracking-widest text-text-default">
-            DystoCorp
+        <Link href="/" className="flex items-baseline gap-2.5">
+          <span className="font-display text-base font-bold tracking-[0.04em] text-text-default">
+            DYSTO.CORP_
           </span>
-          <span className="text-xs text-text-secondary">Crew &amp; Campaign Manager</span>
+          <span className="hidden font-mono text-[9px] tracking-[0.08em] text-text-subtle sm:inline">
+            CREW &amp; CAMPAIGN MGR
+          </span>
         </Link>
         {user ? (
-          <nav className="flex items-center gap-6 text-sm">
-            <Link href="/crews" className="text-text-secondary hover:text-text-default">
+          <nav className="flex items-center gap-6">
+            <Link href="/crews" className={linkClass}>
               Meine Crews
             </Link>
-            <Link href="/campaigns" className="text-text-secondary hover:text-text-default">
+            <Link href="/campaigns" className={linkClass}>
               Kampagnen
             </Link>
-            <Link href="/rules" className="text-text-secondary hover:text-text-default">
+            <Link href="/rules" className={linkClass}>
               Regeln
             </Link>
-            <Link href="/setting" className="text-text-secondary hover:text-text-default">
+            <Link href="/setting" className={linkClass}>
               Setting
             </Link>
-            <Link href="/profile" className="text-text-secondary hover:text-text-default">
+            <Link href="/profile" className={linkClass}>
               Profil
             </Link>
             <form action={signOut}>
-              <button type="submit" className="text-text-secondary hover:text-danger">
+              <button type="submit" className={`${linkClass} hover:text-accent`}>
                 Logout
               </button>
             </form>

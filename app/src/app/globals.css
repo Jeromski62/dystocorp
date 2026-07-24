@@ -7,26 +7,34 @@
 :root {
   /* base — neutral layer (app chrome: login, campaigns, powers lookup) */
   --bg-body: #000000;
-  --bg-surface: #111111;
-  --bg-raised: #1a1a1a;
-  --border: #333333;
-  --text-default: #fafaf8;
-  --text-secondary: #8e92a8;
-  --text-subtle: #6f7285;
+  --bg-surface: #0d0d10;
+  --bg-raised: #0a0a0c;
+  --bg-input: #141414;
+  --border: rgba(255, 255, 255, 0.12);
+  --text-default: #f4f4f2;
+  --text-mid: #c8cad3;
+  --text-secondary: #8b8f9e;
+  --text-subtle: #5c5f6d;
 
-  /* status (corp-independent) */
+  /* status (corp-independent — a fixed semantic palette, not tied to corp identity) */
+  --status-active: #53d37d;
   --status-injured: #d4bb5f;
   --status-out: #777777;
   --danger: #ef4444;
 
   /* neutral accent — used only outside crew contexts (spec has no base accent) */
-  --accent: #fe4958;
+  --accent: #fb3b4e;
   --accent-foreground: #2a0006;
 
-  /* radii */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* solid white "magic-link"-style CTA — the one non-corp-accent primary action color */
+  --cta-bg: #ffffff;
+  --cta-bg-hover: #e8e8e6;
+  --cta-foreground: #000000;
+
+  /* radii — terminal look is sharp everywhere: cards, buttons, inputs, pills */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
 
   /* motion */
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -91,15 +99,21 @@
   --color-bg-body: var(--bg-body);
   --color-bg-surface: var(--bg-surface);
   --color-bg-raised: var(--bg-raised);
+  --color-bg-input: var(--bg-input);
   --color-border: var(--border);
   --color-text-default: var(--text-default);
+  --color-text-mid: var(--text-mid);
   --color-text-secondary: var(--text-secondary);
   --color-text-subtle: var(--text-subtle);
+  --color-status-active: var(--status-active);
   --color-status-injured: var(--status-injured);
   --color-status-out: var(--status-out);
   --color-danger: var(--danger);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-cta-bg: var(--cta-bg);
+  --color-cta-bg-hover: var(--cta-bg-hover);
+  --color-cta-foreground: var(--cta-foreground);
   --color-corp-accent: var(--corp-accent);
   --color-corp-bg: var(--corp-bg);
   --color-corp-surface: var(--corp-surface);
@@ -160,15 +174,34 @@ body {
   text-transform: uppercase;
 }
 
-/* schematic/HUD backdrop — evenly spaced hairlines, per the login gateway concept */
+/* schematic/HUD backdrop — evenly spaced hairline grid, per the terminal redesign */
 .hud-grid {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.06) 0,
-    rgba(255, 255, 255, 0.06) 1px,
-    transparent 1px,
-    transparent 64px
-  );
+  background-color: var(--bg-body);
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 64px
+    ),
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.028) 0,
+      rgba(255, 255, 255, 0.028) 1px,
+      transparent 1px,
+      transparent 64px
+    );
+}
+
+@keyframes dcflare {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 *:focus-visible {
