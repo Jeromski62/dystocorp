@@ -1,6 +1,24 @@
-// Placeholder emblem until the real corp logo assets are wired in: a
-// corp-accent tile with the corp's initial, sized per the styleguide (44-56px).
-export function CorpEmblem({ name, size = 48 }: { name: string; size?: number }) {
+import Image from "next/image";
+
+const CORP_LOGOS: Record<string, string> = {
+  yugure: "/corps/yugure.png",
+  bionexx: "/corps/bionexx.png",
+};
+
+// Real corp logo (cropped to just the icon mark, see assets/logos/ + memory)
+// when we know the corp's design slug; falls back to an initial-letter tile
+// for anything else (e.g. corps without dedicated art yet).
+export function CorpEmblem({ name, slug, size = 48 }: { name: string; slug?: string; size?: number }) {
+  const logoSrc = slug ? CORP_LOGOS[slug] : undefined;
+
+  if (logoSrc) {
+    return (
+      <div className="flex flex-shrink-0 items-center justify-center" style={{ width: size, height: size }}>
+        <Image src={logoSrc} alt={name} width={size} height={size} className="h-full w-full object-contain" />
+      </div>
+    );
+  }
+
   return (
     <div
       className="flex flex-shrink-0 items-center justify-center rounded-sm bg-corp-accent font-display text-corp-on-accent"

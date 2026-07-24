@@ -10,6 +10,7 @@ import { EditCrewNameForm } from "./edit-crew-name-form";
 import { DeleteCrewButton } from "./delete-crew-button";
 import { CaptainDossier } from "./captain-dossier";
 import { CrewReadonlyView } from "./crew-readonly-view";
+import { corpThemeSlug } from "@/lib/corp-theme";
 
 export default async function CrewPage({
   params,
@@ -24,13 +25,14 @@ export default async function CrewPage({
 
   const { data: crew } = await supabase
     .from("crews")
-    .select("id, name, player_id, campaign_id, credits, experience, ship_name, corps(name)")
+    .select("id, name, player_id, campaign_id, credits, experience, ship_name, corps(key, name)")
     .eq("id", crewId)
     .maybeSingle();
 
   if (!crew) notFound();
 
   const isOwner = crew.player_id === user?.id;
+  const corpSlug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
 
   const [
     { data: backgrounds },
@@ -141,6 +143,7 @@ export default async function CrewPage({
         >[0]["crewShipUpgrades"]}
         holdItems={holdItems ?? []}
         gearByType={gearByType}
+        corpSlug={corpSlug}
       />
     );
   }
@@ -150,7 +153,7 @@ export default async function CrewPage({
       <div className="mx-auto max-w-4xl px-6 py-12">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
-          <CorpEmblem name={crew.corps?.name ?? "?"} />
+          <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
           <div>
             <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
             <EditCrewNameForm crewId={crewId} name={crew.name} />

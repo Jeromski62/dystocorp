@@ -28,7 +28,7 @@ export default async function CorpsPage() {
             data-corp={corpThemeSlug(corp.key)}
             className="flex items-start gap-3 rounded-md border border-corp-border bg-bg-surface p-4 hover:border-corp-accent"
           >
-            <CorpEmblem name={corp.name} />
+            <CorpEmblem name={corp.name} slug={corpThemeSlug(corp.key)} />
             <div>
               <p className="font-mono text-xs uppercase tracking-wide text-corp-accent">{corp.sector}</p>
               <h2 className="font-display text-lg tracking-[2px] text-text-default">{corp.name}</h2>

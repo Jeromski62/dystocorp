@@ -29,7 +29,7 @@ export default async function CorpDetailPage({
         </Link>
 
         <div className="mt-4 flex items-center gap-4">
-          <CorpEmblem name={corp.name} size={56} />
+          <CorpEmblem name={corp.name} slug={corpThemeSlug(corp.key)} size={56} />
           <div>
             <p className="font-mono text-xs uppercase tracking-wide text-corp-accent">{corp.sector}</p>
             <h1 className="font-display text-2xl tracking-[2.5px] text-text-default">{corp.name}</h1>

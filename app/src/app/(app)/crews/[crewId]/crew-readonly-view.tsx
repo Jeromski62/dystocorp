@@ -52,6 +52,7 @@ export function CrewReadonlyView({
   crewShipUpgrades,
   holdItems,
   gearByType,
+  corpSlug,
 }: {
   crew: { name: string; credits: number; experience: number; ship_name: string | null; corps: { name: string } | null };
   captain: Officer | null;
@@ -62,12 +63,13 @@ export function CrewReadonlyView({
   crewShipUpgrades: ShipUpgrade[];
   holdItems: HoldItem[];
   gearByType: Record<string, { name: string; quantity: number }[]>;
+  corpSlug?: string;
 }) {
   return (
     <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-4xl px-6 py-12">
         <div className="flex items-center gap-4">
-          <CorpEmblem name={crew.corps?.name ?? "?"} />
+          <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
           <div>
             <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
             <h1 className="font-display text-2xl tracking-[2.5px] text-text-default">{crew.name}</h1>
