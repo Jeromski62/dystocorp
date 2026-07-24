@@ -29,21 +29,21 @@ export function NewMissionForm({ campaignId }: { campaignId: string }) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Titel"
-          className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
+          className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
         />
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Was steht an? (optional)"
           rows={2}
-          className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
+          className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
         />
         {error ? <p className="text-sm text-danger">{error}</p> : null}
         <button
           type="button"
           disabled={pending || !title.trim()}
           onClick={handleSubmit}
-          className="self-start rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-40"
+          className="self-start rounded-md bg-corp-accent px-4 py-2 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
         >
           {pending ? "Speichere…" : "Mission anlegen"}
         </button>

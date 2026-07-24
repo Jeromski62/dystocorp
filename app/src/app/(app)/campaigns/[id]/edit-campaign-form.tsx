@@ -32,7 +32,7 @@ export function EditCampaignForm({
       <div>
         <div className="flex items-center gap-3">
           <h1 className="font-display text-2xl font-semibold tracking-[0.1em] text-text-default uppercase">{name}</h1>
-          <button type="button" onClick={() => setEditing(true)} className="font-mono text-xs text-text-secondary hover:text-accent">
+          <button type="button" onClick={() => setEditing(true)} className="font-mono text-xs text-text-secondary hover:text-corp-accent">
             Bearbeiten
           </button>
         </div>
@@ -46,14 +46,14 @@ export function EditCampaignForm({
       <input
         value={nameValue}
         onChange={(e) => setNameValue(e.target.value)}
-        className="rounded-md border border-border bg-bg-surface px-3 py-2 text-lg font-semibold text-text-default focus:border-accent focus:outline-none"
+        className="rounded-md border border-border bg-bg-surface px-3 py-2 text-lg font-semibold text-text-default focus:border-corp-accent focus:outline-none"
       />
       <textarea
         value={descriptionValue}
         onChange={(e) => setDescriptionValue(e.target.value)}
         placeholder="Beschreibung (optional)"
         rows={2}
-        className="rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
+        className="rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
       />
       {error ? <p className="text-sm text-danger">{error}</p> : null}
       <div className="flex gap-2">
@@ -61,7 +61,7 @@ export function EditCampaignForm({
           type="button"
           disabled={pending}
           onClick={handleSave}
-          className="self-start rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-40"
+          className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
         >
           {pending ? "Speichere…" : "Speichern"}
         </button>

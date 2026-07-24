@@ -71,7 +71,7 @@ export default async function MissionsPage({
   return (
     <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <Link href={`/campaigns/${campaignId}`} className="font-mono text-xs text-text-secondary hover:text-accent">
+        <Link href={`/campaigns/${campaignId}`} className="font-mono text-xs text-text-secondary hover:text-corp-accent">
           ← {campaign.name}
         </Link>
         <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.16em] text-text-default uppercase">Missionen</h1>

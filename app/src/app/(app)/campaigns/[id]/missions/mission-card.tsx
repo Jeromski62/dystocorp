@@ -83,7 +83,7 @@ export function MissionCard({
       ? "border border-status-active/40 text-status-active"
       : mission.status === "report"
         ? "border border-border text-text-secondary"
-        : "border border-accent/40 text-accent";
+        : "border border-corp-accent/40 text-corp-accent";
 
   const myResult = myCrew ? (results.find((r) => r.crew_id === myCrew.id) ?? null) : null;
   const otherResults = results.filter((r) => r.crew_id !== myCrew?.id);
@@ -102,7 +102,7 @@ export function MissionCard({
           {mission.session_date ? <span className="font-mono text-[11px] text-text-secondary">{mission.session_date}</span> : null}
         </div>
         {!editing ? (
-          <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-accent">
+          <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-corp-accent">
             Bearbeiten
           </button>
         ) : null}
@@ -113,21 +113,21 @@ export function MissionCard({
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default focus:border-accent focus:outline-none"
+            className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
           />
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Was steht an? (optional)"
             rows={2}
-            className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
+            className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
           />
           <div className="flex gap-2">
             <button
               type="button"
               disabled={pending}
               onClick={saveEdit}
-              className="self-start rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-40"
+              className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
             >
               {pending ? "Speichere…" : "Speichern"}
             </button>
@@ -155,7 +155,7 @@ export function MissionCard({
           type="button"
           disabled={pending}
           onClick={handleStartMission}
-          className="mt-3 rounded-md border border-accent px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent hover:text-accent-foreground disabled:opacity-40"
+          className="mt-3 rounded-md border border-corp-accent px-3 py-1.5 text-sm font-medium text-corp-accent hover:bg-corp-accent hover:text-corp-on-accent disabled:opacity-40"
         >
           Spiel beginnt
         </button>
@@ -169,14 +169,14 @@ export function MissionCard({
               onChange={(e) => setReportText(e.target.value)}
               placeholder="Wie ist es gelaufen?"
               rows={4}
-              className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
+              className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
             />
             <div className="flex gap-2">
               <button
                 type="button"
                 disabled={pending || !reportText.trim()}
                 onClick={saveReport}
-                className="self-start rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-40"
+                className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
               >
                 {pending ? "Speichere…" : "Bericht speichern"}
               </button>
@@ -189,7 +189,7 @@ export function MissionCard({
           <button
             type="button"
             onClick={() => setReportOpen(true)}
-            className="mt-3 rounded-md border border-accent px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent hover:text-accent-foreground"
+            className="mt-3 rounded-md border border-corp-accent px-3 py-1.5 text-sm font-medium text-corp-accent hover:bg-corp-accent hover:text-corp-on-accent"
           >
             Bericht schreiben
           </button>
@@ -203,14 +203,14 @@ export function MissionCard({
               value={reportText}
               onChange={(e) => setReportText(e.target.value)}
               rows={4}
-              className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default focus:border-accent focus:outline-none"
+              className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
             />
             <div className="flex gap-2">
               <button
                 type="button"
                 disabled={pending || !reportText.trim()}
                 onClick={saveReport}
-                className="self-start rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-40"
+                className="self-start rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
               >
                 {pending ? "Speichere…" : "Speichern"}
               </button>
@@ -222,7 +222,7 @@ export function MissionCard({
         ) : (
           <div className="mt-3">
             <p className="whitespace-pre-line text-sm text-text-default">{mission.report_text}</p>
-            <button type="button" onClick={() => setReportOpen(true)} className="mt-2 text-xs text-text-secondary hover:text-accent">
+            <button type="button" onClick={() => setReportOpen(true)} className="mt-2 text-xs text-text-secondary hover:text-corp-accent">
               Bericht bearbeiten
             </button>
           </div>

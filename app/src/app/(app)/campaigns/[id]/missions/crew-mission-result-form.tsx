@@ -53,10 +53,10 @@ export function CrewMissionResultForm({
 
   if (!editing && existing) {
     return (
-      <div className="rounded-md border border-accent/40 bg-bg-raised p-3 text-sm">
+      <div className="rounded-md border border-corp-accent/40 bg-bg-raised p-3 text-sm">
         <div className="flex items-center justify-between">
           <span className="font-medium text-text-default">{crewName} (deine Crew)</span>
-          <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-accent">
+          <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-corp-accent">
             Bearbeiten
           </button>
         </div>
@@ -73,7 +73,7 @@ export function CrewMissionResultForm({
   }
 
   return (
-    <div className="rounded-md border border-accent/40 bg-bg-raised p-3">
+    <div className="rounded-md border border-corp-accent/40 bg-bg-raised p-3">
       <p className="text-sm font-medium text-text-default">Ergebnis für {crewName} (deine Crew)</p>
       <div className="mt-2 grid grid-cols-2 gap-2">
         <label className="text-xs text-text-secondary">
@@ -82,7 +82,7 @@ export function CrewMissionResultForm({
             type="number"
             value={xpDelta}
             onChange={(e) => setXpDelta(Number(e.target.value))}
-            className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
+            className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
           />
         </label>
         <label className="text-xs text-text-secondary">
@@ -91,7 +91,7 @@ export function CrewMissionResultForm({
             type="number"
             value={creditsDelta}
             onChange={(e) => setCreditsDelta(Number(e.target.value))}
-            className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
+            className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
           />
         </label>
       </div>
@@ -100,7 +100,7 @@ export function CrewMissionResultForm({
         <input
           value={lootNotes}
           onChange={(e) => setLootNotes(e.target.value)}
-          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
+          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
         />
       </label>
       <label className="mt-2 block text-xs text-text-secondary">
@@ -108,7 +108,7 @@ export function CrewMissionResultForm({
         <input
           value={injuryNotes}
           onChange={(e) => setInjuryNotes(e.target.value)}
-          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
+          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
         />
       </label>
       <label className="mt-2 block text-xs text-text-secondary">
@@ -116,7 +116,7 @@ export function CrewMissionResultForm({
         <input
           value={membersLost}
           onChange={(e) => setMembersLost(e.target.value)}
-          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-accent focus:outline-none"
+          className="mt-0.5 w-full rounded-md border border-border bg-bg-body px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
         />
       </label>
       {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
@@ -125,7 +125,7 @@ export function CrewMissionResultForm({
           type="button"
           disabled={pending}
           onClick={handleSave}
-          className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-40"
+          className="rounded-md bg-corp-accent px-3 py-1.5 text-sm font-medium text-corp-on-accent hover:opacity-90 disabled:opacity-40"
         >
           {pending ? "Speichere…" : "Speichern"}
         </button>
