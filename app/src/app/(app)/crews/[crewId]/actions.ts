@@ -284,10 +284,27 @@ export async function addSoldier(
 export async function removeSoldier(crewId: string, soldierId: string): Promise<{ error?: string }> {
   const owned = await requireOwnedCrew(crewId);
   if ("error" in owned) return owned;
-  const { supabase } = owned;
+  const { supabase, crew } = owned;
+
+  const { data: soldier } = await supabase
+    .from("soldiers")
+    .select("id, soldier_types(cost_cr)")
+    .eq("id", soldierId)
+    .eq("crew_id", crewId)
+    .maybeSingle();
+  if (!soldier) return { error: "Soldier nicht gefunden." };
 
   const { error } = await supabase.from("soldiers").delete().eq("id", soldierId).eq("crew_id", crewId);
   if (error) return { error: error.message };
+
+  const refund = soldier.soldier_types?.cost_cr ?? 0;
+  if (refund > 0) {
+    const { error: creditError } = await supabase
+      .from("crews")
+      .update({ credits: crew.credits + refund })
+      .eq("id", crewId);
+    if (creditError) return { error: creditError.message };
+  }
 
   revalidatePath(`/crews/${crewId}`);
   return {};
@@ -458,7 +475,15 @@ export async function addShipUpgrade(
 export async function removeShipUpgrade(crewId: string, crewShipUpgradeId: string): Promise<{ error?: string }> {
   const owned = await requireOwnedCrew(crewId);
   if ("error" in owned) return owned;
-  const { supabase } = owned;
+  const { supabase, crew } = owned;
+
+  const { data: upgrade } = await supabase
+    .from("crew_ship_upgrades")
+    .select("id, ship_upgrade_types(cost_cr)")
+    .eq("id", crewShipUpgradeId)
+    .eq("crew_id", crewId)
+    .maybeSingle();
+  if (!upgrade) return { error: "Upgrade nicht gefunden." };
 
   const { error } = await supabase
     .from("crew_ship_upgrades")
@@ -466,6 +491,15 @@ export async function removeShipUpgrade(crewId: string, crewShipUpgradeId: strin
     .eq("id", crewShipUpgradeId)
     .eq("crew_id", crewId);
   if (error) return { error: error.message };
+
+  const refund = upgrade.ship_upgrade_types?.cost_cr ?? 0;
+  if (refund > 0) {
+    const { error: creditError } = await supabase
+      .from("crews")
+      .update({ credits: crew.credits + refund })
+      .eq("id", crewId);
+    if (creditError) return { error: creditError.message };
+  }
 
   revalidatePath(`/crews/${crewId}`);
   return {};
