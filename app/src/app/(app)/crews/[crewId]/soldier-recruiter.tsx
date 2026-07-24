@@ -2,7 +2,12 @@
 
 import { useState, useTransition } from "react";
 import { addSoldier, removeSoldier, setSoldierBonusGear, setSoldierRobot } from "./actions";
-import { EQUIPMENT_CATEGORY_LABELS, SOLDIER_RULES, isSoldierEligibleGear } from "@/lib/stargrave/constants";
+import {
+  EQUIPMENT_CATEGORY_LABELS,
+  SOLDIER_RULES,
+  isSoldierEligibleGear,
+  type SoldierGearContext,
+} from "@/lib/stargrave/constants";
 import { StatusBadge } from "@/components/status-badge";
 import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
 
@@ -19,7 +24,7 @@ type SoldierType = {
   cost_cr: number;
 };
 
-type EquipmentItem = { id: string; name: string; category: string; restrictions: string | null };
+type EquipmentItem = { id: string; name: string; category: string; restrictions: string | null; base_weapon_type: string | null };
 
 type Soldier = {
   id: string;
@@ -31,6 +36,8 @@ type Soldier = {
   soldier_types: SoldierType;
 };
 
+const EMPTY_CONTEXT: SoldierGearContext = { weaponKeys: [], hasDeck: false, hasPicks: false };
+
 export function SoldierRecruiter({
   crewId,
   soldierTypes,
@@ -38,6 +45,7 @@ export function SoldierRecruiter({
   credits,
   maxSpecialists,
   gearByType,
+  weaponContextByType,
   equipment,
 }: {
   crewId: string;
@@ -46,19 +54,26 @@ export function SoldierRecruiter({
   credits: number;
   maxSpecialists: number;
   gearByType: Record<string, { name: string; quantity: number }[]>;
+  weaponContextByType: Record<string, SoldierGearContext>;
   equipment: EquipmentItem[];
 }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  // Soldier bonus slot is "campaign loot only" and excludes Captain/First-Mate-only
-  // items (e.g. Alien Artefacts) — see isSoldierEligibleGear.
-  const eligibleEquipment = equipment.filter(isSoldierEligibleGear);
-  const equipmentByCategory = Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([category, label]) => ({
-    category,
-    label,
-    items: eligibleEquipment.filter((item) => item.category === category),
-  }));
+  // Soldier bonus slot is "campaign loot only", excludes Captain/First-Mate-only
+  // items (e.g. Alien Artefacts), and further depends on this specific soldier
+  // type's starting gear (Advanced Weapons must match a weapon type they
+  // already carry; Deck/Picks items need that type to carry a Deck/Picks) —
+  // see isSoldierEligibleGear.
+  function equipmentByCategoryFor(soldierTypeId: string) {
+    const context = weaponContextByType[soldierTypeId] ?? EMPTY_CONTEXT;
+    const eligibleEquipment = equipment.filter((item) => isSoldierEligibleGear(item, context));
+    return Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([category, label]) => ({
+      category,
+      label,
+      items: eligibleEquipment.filter((item) => item.category === category),
+    }));
+  }
 
   const specialistCount = soldiers.filter((s) => s.soldier_types.table_type === "specialist").length;
   const canRecruitMore = soldiers.length < SOLDIER_RULES.maxSoldiers;
@@ -137,7 +152,7 @@ export function SoldierRecruiter({
                     className="rounded-md border border-corp-border bg-corp-surface px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
                   >
                     <option value="">— keine —</option>
-                    {equipmentByCategory.map(({ category, label, items }) =>
+                    {equipmentByCategoryFor(s.soldier_types.id).map(({ category, label, items }) =>
                       items.length > 0 ? (
                         <optgroup key={category} label={label}>
                           {items.map((item) => (

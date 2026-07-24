@@ -55,7 +55,7 @@ export default async function CrewPage({
     supabase.from("powers").select("id, name, activation_number, strain, full_text").order("name"),
     supabase
       .from("equipment_items")
-      .select("id, key, name, category, gear_slots, cost_cr, effect_text, restrictions")
+      .select("id, key, name, category, gear_slots, cost_cr, effect_text, restrictions, base_weapon_type")
       .order("category, name"),
     supabase.from("soldier_types").select("id, name, table_type, move, fight, shoot, armour, will, health, cost_cr"),
     supabase
@@ -91,13 +91,19 @@ export default async function CrewPage({
       .from("ship_hold_items")
       .select("id, equipment_item_id, custom_name, quantity, notes, equipment_items(id, name)")
       .eq("crew_id", crewId),
-    supabase.from("soldier_type_gear").select("soldier_type_id, quantity, equipment_items(name)"),
+    supabase.from("soldier_type_gear").select("soldier_type_id, quantity, equipment_items(name, key, category)"),
   ]);
 
   const gearByType: Record<string, { name: string; quantity: number }[]> = {};
+  const weaponContextByType: Record<string, { weaponKeys: string[]; hasDeck: boolean; hasPicks: boolean }> = {};
   for (const g of soldierTypeGear ?? []) {
     if (!g.equipment_items) continue;
     (gearByType[g.soldier_type_id] ??= []).push({ name: g.equipment_items.name, quantity: g.quantity });
+
+    const ctx = (weaponContextByType[g.soldier_type_id] ??= { weaponKeys: [], hasDeck: false, hasPicks: false });
+    if (g.equipment_items.category === "weapon") ctx.weaponKeys.push(g.equipment_items.key);
+    if (g.equipment_items.key === "deck") ctx.hasDeck = true;
+    if (g.equipment_items.key === "picks") ctx.hasPicks = true;
   }
 
   const typedBackgrounds = (backgrounds ?? []).map((b) => ({
@@ -227,11 +233,13 @@ export default async function CrewPage({
                   credits={crew.credits}
                   maxSpecialists={maxSpecialists}
                   gearByType={gearByType}
+                  weaponContextByType={weaponContextByType}
                   equipment={(equipment ?? []).map((e) => ({
                     id: e.id,
                     name: e.name,
                     category: e.category,
                     restrictions: e.restrictions,
+                    base_weapon_type: e.base_weapon_type,
                   }))}
                 />
               ),

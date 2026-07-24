@@ -58,9 +58,31 @@ export const EQUIPMENT_CATEGORY_LABELS: Record<string, string> = {
 // "Only Captain or First Mate" restriction text and must be filtered out too.
 export const SOLDIER_BONUS_GEAR_CATEGORIES = ["advanced_weapon", "advanced_tech_1", "advanced_tech_2"] as const;
 
-export function isSoldierEligibleGear(item: { category: string; restrictions: string | null }): boolean {
-  return (
-    (SOLDIER_BONUS_GEAR_CATEGORIES as readonly string[]).includes(item.category) &&
-    !(item.restrictions ?? "").includes("Captain or First Mate")
-  );
+// A soldier's starting-gear context, needed to check the two per-item
+// restrictions below: which base weapon `key`s they carry (08-campaigns.md:
+// "bei Soldiers muss die Advanced-Version denselben Waffentyp ersetzen"), and
+// whether their kit includes a Deck/Picks ("Only for figures who may normally
+// carry a Deck/Picks" — 0013_seed_base_equipment_and_soldier_types.sql).
+export type SoldierGearContext = {
+  weaponKeys: string[];
+  hasDeck: boolean;
+  hasPicks: boolean;
+};
+
+export function isSoldierEligibleGear(
+  item: { category: string; restrictions: string | null; base_weapon_type: string | null },
+  context: SoldierGearContext
+): boolean {
+  if (!(SOLDIER_BONUS_GEAR_CATEGORIES as readonly string[]).includes(item.category)) return false;
+
+  const restrictions = item.restrictions ?? "";
+  if (restrictions.includes("Captain or First Mate")) return false;
+  if (restrictions.includes("carry a Deck") && !context.hasDeck) return false;
+  if (restrictions.includes("carry Picks") && !context.hasPicks) return false;
+
+  if (item.category === "advanced_weapon" && item.base_weapon_type && !context.weaponKeys.includes(item.base_weapon_type)) {
+    return false;
+  }
+
+  return true;
 }

@@ -319,13 +319,30 @@ export async function setSoldierBonusGear(
   const { supabase } = owned;
 
   if (equipmentItemId) {
-    const { data: item } = await supabase
-      .from("equipment_items")
-      .select("category, restrictions")
-      .eq("id", equipmentItemId)
-      .maybeSingle();
-    if (!item || !isSoldierEligibleGear(item)) {
-      return { error: "Diese Ausrüstung ist nicht als Soldier-Bonusgear erlaubt (nur Campaign Loot, kein Alien Artefact)." };
+    const [{ data: item }, { data: soldier }] = await Promise.all([
+      supabase.from("equipment_items").select("category, restrictions, base_weapon_type").eq("id", equipmentItemId).maybeSingle(),
+      supabase.from("soldiers").select("soldier_type_id").eq("id", soldierId).eq("crew_id", crewId).maybeSingle(),
+    ]);
+    if (!item || !soldier) return { error: "Ungültige Auswahl." };
+
+    const { data: startingGear } = await supabase
+      .from("soldier_type_gear")
+      .select("equipment_items(key, category)")
+      .eq("soldier_type_id", soldier.soldier_type_id);
+
+    const context = { weaponKeys: [] as string[], hasDeck: false, hasPicks: false };
+    for (const g of startingGear ?? []) {
+      if (!g.equipment_items) continue;
+      if (g.equipment_items.category === "weapon") context.weaponKeys.push(g.equipment_items.key);
+      if (g.equipment_items.key === "deck") context.hasDeck = true;
+      if (g.equipment_items.key === "picks") context.hasPicks = true;
+    }
+
+    if (!isSoldierEligibleGear(item, context)) {
+      return {
+        error:
+          "Diese Ausrüstung ist für diesen Soldier nicht erlaubt (nur Campaign Loot, passender Waffentyp, kein Alien Artefact).",
+      };
     }
   }
 
