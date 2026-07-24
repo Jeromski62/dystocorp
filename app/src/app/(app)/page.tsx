@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/button";
 import { Clock } from "@/components/clock";
 import { RainCanvas } from "@/components/rain-canvas";
-import { corpRainTint, corpThemeSlug } from "@/lib/corp-theme";
+import { corpThemeSlug } from "@/lib/corp-theme";
 
 type CrewRow = {
   id: string;
@@ -87,7 +87,7 @@ export default async function HomePage() {
 
   return (
     <div className="hud-grid relative min-h-screen overflow-hidden">
-      <RainCanvas tint={corpRainTint(newestCrewSlug)} />
+      <RainCanvas />
 
       <div className="relative z-[1] flex min-h-screen flex-col">
         <div className="flex flex-wrap items-stretch border-b border-border bg-black/40 font-mono text-[10.5px] tracking-[0.05em] text-text-secondary">

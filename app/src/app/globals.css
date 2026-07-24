@@ -22,9 +22,12 @@
   --status-out: #777777;
   --danger: #ef4444;
 
-  /* neutral accent — used only outside crew contexts (spec has no base accent) */
-  --accent: #fb3b4e;
-  --accent-foreground: #2a0006;
+  /* neutral accent — generic chrome outside any Yūgure/BioNexx-scoped page.
+     White/black, not a corp color: red/green must stay confined to
+     [data-corp] contexts (a Yūgure crew or a campaign the viewer plays
+     Yūgure in), never bleed into app-wide chrome like nav/forms/focus rings. */
+  --accent: #f4f4f2;
+  --accent-foreground: #000000;
 
   /* solid white "magic-link"-style CTA — the one non-corp-accent primary action color */
   --cta-bg: #ffffff;
