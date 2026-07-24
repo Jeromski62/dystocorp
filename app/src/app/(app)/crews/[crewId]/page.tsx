@@ -226,6 +226,7 @@ export default async function CrewPage({
               content: (
                 <SoldierRecruiter
                   crewId={crewId}
+                  inCampaign={!!crew.campaign_id}
                   soldierTypes={typedSoldierTypes}
                   soldiers={(soldiers ?? []).filter((s) => s.soldier_types !== null) as Parameters<
                     typeof SoldierRecruiter

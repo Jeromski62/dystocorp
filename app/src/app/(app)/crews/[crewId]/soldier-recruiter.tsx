@@ -40,6 +40,7 @@ const EMPTY_CONTEXT: SoldierGearContext = { weaponKeys: [], hasDeck: false, hasP
 
 export function SoldierRecruiter({
   crewId,
+  inCampaign,
   soldierTypes,
   soldiers,
   credits,
@@ -49,6 +50,7 @@ export function SoldierRecruiter({
   equipment,
 }: {
   crewId: string;
+  inCampaign: boolean;
   soldierTypes: SoldierType[];
   soldiers: Soldier[];
   credits: number;
@@ -144,27 +146,33 @@ export function SoldierRecruiter({
                 </div>
                 <GearTags items={gearByType[s.soldier_types.id] ?? []} />
 
-                <label className="mt-2.5 flex items-center gap-2 font-mono text-[14px] text-text-secondary">
-                  Bonus-Ausrüstung
-                  <select
-                    value={s.bonus_gear_item_id ?? ""}
-                    onChange={(e) => handleBonusGearChange(s.id, e.target.value)}
-                    className="rounded-md border border-corp-border bg-corp-surface px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
-                  >
-                    <option value="">— keine —</option>
-                    {equipmentByCategoryFor(s.soldier_types.id).map(({ category, label, items }) =>
-                      items.length > 0 ? (
-                        <optgroup key={category} label={label}>
-                          {items.map((item) => (
-                            <option key={item.id} value={item.id}>
-                              {item.name}
-                            </option>
-                          ))}
-                        </optgroup>
-                      ) : null
-                    )}
-                  </select>
-                </label>
+                {inCampaign ? (
+                  <label className="mt-2.5 flex items-center gap-2 font-mono text-[14px] text-text-secondary">
+                    Bonus-Ausrüstung
+                    <select
+                      value={s.bonus_gear_item_id ?? ""}
+                      onChange={(e) => handleBonusGearChange(s.id, e.target.value)}
+                      className="rounded-md border border-corp-border bg-corp-surface px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+                    >
+                      <option value="">— keine —</option>
+                      {equipmentByCategoryFor(s.soldier_types.id).map(({ category, label, items }) =>
+                        items.length > 0 ? (
+                          <optgroup key={category} label={label}>
+                            {items.map((item) => (
+                              <option key={item.id} value={item.id}>
+                                {item.name}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ) : null
+                      )}
+                    </select>
+                  </label>
+                ) : (
+                  <p className="mt-2.5 font-mono text-[14px] text-text-subtle">
+                    Bonus-Ausrüstung (Campaign Loot) nur verfügbar, sobald diese Crew in einer Kampagne mitspielt.
+                  </p>
+                )}
 
                 <div className="mt-2.5 flex items-center gap-3">
                   <label className="flex items-center gap-1.5 font-mono text-[14px] text-text-secondary">

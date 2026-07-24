@@ -316,7 +316,13 @@ export async function setSoldierBonusGear(
 ): Promise<{ error?: string }> {
   const owned = await requireOwnedCrew(crewId);
   if ("error" in owned) return owned;
-  const { supabase } = owned;
+  const { supabase, crew } = owned;
+
+  if (equipmentItemId && !crew.campaign_id) {
+    return {
+      error: "Der Bonus-Slot ist Campaign Loot -- nur für Crews verfügbar, die in einer Kampagne mitspielen.",
+    };
+  }
 
   if (equipmentItemId) {
     const [{ data: item }, { data: soldier }] = await Promise.all([
