@@ -28,7 +28,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-1.5 bg-cta-bg px-4 py-4 font-display text-[19px] font-semibold tracking-[0.08em] text-cta-foreground uppercase transition-[background-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] [box-shadow:0_0_0_1px_rgba(255,255,255,0.9),0_0_26px_rgba(255,255,255,0.22)] hover:bg-cta-bg-hover hover:[box-shadow:0_0_0_1px_#fff,0_0_36px_rgba(255,255,255,0.42)] disabled:opacity-50"
+        className="mt-1.5 flex h-11 items-center justify-center bg-cta-bg px-4 font-display text-[19px] font-semibold tracking-[0.08em] text-cta-foreground uppercase transition-[background-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] [box-shadow:0_0_0_1px_rgba(255,255,255,0.9),0_0_26px_rgba(255,255,255,0.22)] hover:bg-cta-bg-hover hover:[box-shadow:0_0_0_1px_#fff,0_0_36px_rgba(255,255,255,0.42)] disabled:opacity-50"
       >
         {pending ? "Sende Link…" : "Magic Link senden"}
       </button>

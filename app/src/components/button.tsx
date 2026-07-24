@@ -11,11 +11,11 @@ export function Button({ variant = "primary", className = "", ...props }: Button
   const base =
     "inline-flex items-center justify-center gap-2 rounded-sm px-4 font-display text-sm font-semibold tracking-wide uppercase transition-[background-color,opacity,border-color] duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] disabled:opacity-40";
   const variants = {
-    primary: "h-12 bg-corp-accent text-corp-on-accent hover:opacity-90",
-    ghost: "h-12 border border-corp-border text-text-default hover:border-corp-accent",
+    primary: "h-11 bg-corp-accent text-corp-on-accent hover:opacity-90",
+    ghost: "h-11 border border-corp-border text-text-default hover:border-corp-accent",
     // solid white "magic-link"-style CTA — the app's one non-corp-accent
     // primary action color (login, dashboard's "+ Neue Crew" etc.)
-    cta: "h-12 bg-cta-bg text-cta-foreground hover:bg-cta-bg-hover",
+    cta: "h-11 bg-cta-bg text-cta-foreground hover:bg-cta-bg-hover",
   };
 
   return <button className={`${base} ${variants[variant]} ${className}`} {...props} />;
