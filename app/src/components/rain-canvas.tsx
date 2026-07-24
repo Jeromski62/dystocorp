@@ -49,6 +49,10 @@ const DEFAULT_OPTIONS = {
   dropletsRate: 40,
   dropletsSize: [1.5, 3.2] as [number, number],
   dropletsCleaningRadiusMultiplier: 0.4,
+  // continuously fades the static "fogged glass" droplet layer so it settles
+  // into a steady state instead of accumulating forever (looked like a chalky
+  // film building up over long-running sessions before this was added)
+  dropletsDecay: 0.0035,
   raining: true,
   globalTimeScale: 1,
   trailRate: 1,
@@ -95,7 +99,6 @@ class Raindrops {
   dropColor: HTMLImageElement;
   dropletsPixelDensity = 1;
   dropletsCounter = 0;
-  textureCleaningIterations = 0;
   lastRender: number | null = null;
   options: typeof DEFAULT_OPTIONS;
   ctx: CanvasRenderingContext2D;
@@ -241,12 +244,12 @@ class Raindrops {
   }
 
   updateDroplets(timeScale: number) {
-    if (this.textureCleaningIterations > 0) {
-      this.textureCleaningIterations -= 1 * timeScale;
-      this.dropletsCtx.globalCompositeOperation = "destination-out";
-      this.dropletsCtx.fillStyle = `rgba(0,0,0,${0.05 * timeScale})`;
-      this.dropletsCtx.fillRect(0, 0, this.width * this.dropletsPixelDensity, this.height * this.dropletsPixelDensity);
-    }
+    // fade the accumulated droplet texture a little every frame, so it
+    // settles at a steady state instead of building up indefinitely
+    this.dropletsCtx.globalCompositeOperation = "destination-out";
+    this.dropletsCtx.fillStyle = `rgba(0,0,0,${this.options.dropletsDecay * timeScale})`;
+    this.dropletsCtx.fillRect(0, 0, this.width * this.dropletsPixelDensity, this.height * this.dropletsPixelDensity);
+
     if (this.options.raining) {
       this.dropletsCounter += this.options.dropletsRate * timeScale * this.areaMultiplier();
       times(this.dropletsCounter, () => {
