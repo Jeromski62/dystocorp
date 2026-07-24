@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function RulesPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-text-default">Regeln</h1>
+      <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Regeln</h1>
       <p className="mt-1 text-sm text-text-secondary">Nachschlagewerke für Powers und Ausrüstung.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">

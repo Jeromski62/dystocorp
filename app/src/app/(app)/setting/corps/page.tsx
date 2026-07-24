@@ -16,7 +16,7 @@ export default async function CorpsPage() {
       <Link href="/setting" className="text-xs text-text-secondary hover:text-accent">
         ← Setting
       </Link>
-      <h1 className="mt-2 text-2xl font-semibold text-text-default">Corps</h1>
+      <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Corps</h1>
       <p className="mt-1 text-sm text-text-secondary">Die Mega Corps der DystoCorp-Welt.</p>
 
       <div className="mt-8 flex flex-col gap-4">

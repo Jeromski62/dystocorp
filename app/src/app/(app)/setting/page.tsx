@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function SettingPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-text-default">Setting</h1>
+      <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Setting</h1>
       <p className="mt-1 text-sm text-text-secondary">Hintergrund und Lore der DystoCorp-Welt.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">

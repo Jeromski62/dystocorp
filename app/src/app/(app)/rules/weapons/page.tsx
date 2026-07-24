@@ -16,7 +16,7 @@ export default async function WeaponsPage() {
       <Link href="/rules" className="text-xs text-text-secondary hover:text-accent">
         ← Regeln
       </Link>
-      <h1 className="mt-2 text-2xl font-semibold text-text-default">Weapon Profiles &amp; Rules</h1>
+      <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Weapon Profiles &amp; Rules</h1>
       <p className="mt-1 text-sm text-text-secondary">Waffen, Advanced Weapons und Rüstung aus dem Ausrüstungskatalog.</p>
 
       <div className="mt-8">
