@@ -6,6 +6,8 @@ import { EditCampaignForm } from "./edit-campaign-form";
 import { CampaignDangerZone } from "./campaign-danger-zone";
 import { ImportCrewCard } from "./import-crew-card";
 import { corpThemeSlug } from "@/lib/corp-theme";
+import { crewStatus } from "@/lib/crew-status";
+import { CrewCard } from "@/components/crew-card";
 
 export default async function CampaignDetailPage({
   params,
@@ -30,7 +32,9 @@ export default async function CampaignDetailPage({
     supabase.from("campaign_members").select("player_id, players(display_name)"),
     supabase
       .from("crews")
-      .select("id, name, player_id, credits, experience, corps(key, name), captains(name, level), first_mates(name)")
+      .select(
+        "id, name, player_id, credits, experience, corps(key, name), captains(name, level, current_health, health), first_mates(name)"
+      )
       .eq("campaign_id", id),
     supabase.from("missions").select("id", { count: "exact", head: true }).eq("campaign_id", id),
   ]);
@@ -105,27 +109,17 @@ export default async function CampaignDetailPage({
           <div className="mt-2 grid gap-3 sm:grid-cols-2">
             {(crews ?? []).map((crew) => {
               const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
+              const status = crewStatus(crew.captains);
               return (
-                <Link
-                  key={crew.id}
-                  href={`/crews/${crew.id}`}
-                  data-corp={slug}
-                  className={`border p-4 transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
-                    slug
-                      ? "border-corp-accent/30 border-t-2 border-t-corp-accent bg-corp-surface hover:border-corp-accent/60"
-                      : "border-border bg-bg-surface hover:border-accent"
-                  }`}
-                >
-                  <p className="font-mono text-xs tracking-wide text-corp-accent uppercase">{crew.corps?.name}</p>
-                  <p className="mt-1 font-display text-lg font-semibold text-text-default uppercase">{crew.name}</p>
-                  <p className="mt-1 font-mono text-xs text-text-secondary">
+                <CrewCard key={crew.id} href={`/crews/${crew.id}`} corpSlug={slug} corpName={crew.corps?.name} name={crew.name} status={status}>
+                  <p>
                     {crew.captains?.name ?? "—"}
                     {crew.captains ? ` · LV ${crew.captains.level}` : ""} · {crew.first_mates?.name ?? "—"}
                   </p>
-                  <p className="mt-2 font-mono text-xs text-text-secondary">
+                  <p className="mt-1.5">
                     {crew.credits.toLocaleString("de-DE")} CR · {crew.experience} XP
                   </p>
-                </Link>
+                </CrewCard>
               );
             })}
 

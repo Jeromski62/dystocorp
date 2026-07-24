@@ -4,6 +4,7 @@ import { Button } from "@/components/button";
 import { Clock } from "@/components/clock";
 import { RainCanvas } from "@/components/rain-canvas";
 import { corpThemeSlug } from "@/lib/corp-theme";
+import { crewStatus } from "@/lib/crew-status";
 
 type CrewRow = {
   id: string;
@@ -12,15 +13,6 @@ type CrewRow = {
   corps: { key: string; name: string } | null;
   captains: { name: string; level: number; current_health: number; health: number } | null;
 };
-
-// A fixed semantic palette (green/gold/grey), independent of corp identity —
-// see --status-active/--status-injured/--status-out in globals.css.
-function crewStatus(captain: CrewRow["captains"]) {
-  if (!captain) return { label: "AKTIV", className: "text-status-active" };
-  if (captain.current_health <= 0) return { label: "AUSSER GEFECHT", className: "text-status-out" };
-  if (captain.current_health < captain.health) return { label: "VERLETZT", className: "text-status-injured" };
-  return { label: "AKTIV", className: "text-status-active" };
-}
 
 export default async function HomePage() {
   const supabase = await createClient();
