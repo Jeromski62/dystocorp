@@ -90,7 +90,7 @@ export default async function HomePage() {
       <RainCanvas />
 
       <div className="relative z-[1] flex min-h-screen flex-col">
-        <div className="flex flex-wrap items-stretch border-b border-border bg-black/40 font-mono text-[10.5px] tracking-[0.05em] text-text-secondary">
+        <div className="flex flex-wrap items-stretch border-b border-border bg-black/40 font-mono text-[14px] tracking-[0.05em] text-text-secondary">
           <span className="border-r border-border px-4 py-2 text-text-default">SYS_OP_1.09</span>
           <span className="border-r border-border px-4 py-2 text-accent">[ONLINE]</span>
           <span className="border-r border-border px-4 py-2">{(player?.display_name || user!.email)?.toUpperCase()}</span>
@@ -107,17 +107,17 @@ export default async function HomePage() {
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-6 py-8 md:px-10">
           <div className="flex items-end justify-between">
             <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Übersicht</h1>
-            <span className="font-mono text-[10px] tracking-[0.08em] text-text-subtle">{"// LAGEZENTRUM_v7.2"}</span>
+            <span className="font-mono text-[14px] tracking-[0.08em] text-text-subtle">{"// LAGEZENTRUM_v7.2"}</span>
           </div>
 
           <div className="grid gap-3.5 sm:grid-cols-3">
             <section className="border border-border bg-black/40 p-4">
-              <p className="font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">Laufende Kampagne</p>
+              <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Laufende Kampagne</p>
               {latestCampaign ? (
                 <Link href={`/campaigns/${latestCampaign.id}`} className="mt-2 block hover:text-accent">
                   <p className="font-display text-lg font-semibold text-text-default">{latestCampaign.name}</p>
                   {latestCampaign.description ? (
-                    <p className="mt-1 font-mono text-[10px] text-text-subtle">{latestCampaign.description}</p>
+                    <p className="mt-1 font-mono text-[14px] text-text-subtle">{latestCampaign.description}</p>
                   ) : null}
                 </Link>
               ) : (
@@ -129,9 +129,9 @@ export default async function HomePage() {
 
             <section className="border border-border bg-black/40 p-4">
               <div className="flex items-center justify-between">
-                <p className="font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">Neueste Mission</p>
+                <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Neueste Mission</p>
                 {latestMission ? (
-                  <span className="border border-border px-1.5 py-0.5 font-mono text-[8.5px] text-text-secondary uppercase">
+                  <span className="border border-border px-1.5 py-0.5 font-mono text-[14px] text-text-secondary uppercase">
                     {latestMission.status}
                   </span>
                 ) : null}
@@ -139,7 +139,7 @@ export default async function HomePage() {
               {latestMission ? (
                 <Link href={`/campaigns/${latestMission.campaign_id}/missions`} className="mt-2 block hover:text-accent">
                   <p className="font-display text-lg font-semibold text-text-default">{latestMission.title}</p>
-                  <p className="mt-1 font-mono text-[10px] text-text-subtle">{latestMission.campaigns?.name}</p>
+                  <p className="mt-1 font-mono text-[14px] text-text-subtle">{latestMission.campaigns?.name}</p>
                 </Link>
               ) : (
                 <p className="mt-2 font-mono text-xs text-text-secondary">Noch keine Mission geplant.</p>
@@ -150,11 +150,11 @@ export default async function HomePage() {
               data-corp={newestCrewSlug}
               className={`border border-border p-4 ${newestCrewSlug ? "border-t-2 border-t-corp-accent bg-corp-surface/40" : "bg-black/40"}`}
             >
-              <p className="font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">Neueste Crew</p>
+              <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Neueste Crew</p>
               {newestCrew ? (
                 <Link href={`/crews/${newestCrew.id}`} className="mt-2 block hover:opacity-90">
                   <p className="font-display text-lg font-semibold text-text-default">{newestCrew.name}</p>
-                  <div className="mt-1.5 flex gap-3.5 font-mono text-[10px] text-text-secondary">
+                  <div className="mt-1.5 flex gap-3.5 font-mono text-[14px] text-text-secondary">
                     {newestCrew.captains ? <span>LV {newestCrew.captains.level}</span> : null}
                     <span className="text-corp-accent">{newestCrew.credits.toLocaleString("de-DE")} CR</span>
                   </div>
@@ -169,17 +169,17 @@ export default async function HomePage() {
 
           <section className="flex flex-1 flex-col border border-border bg-black/40">
             <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
-              <span className="font-mono text-[10px] tracking-[0.08em] text-text-secondary uppercase">
+              <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
                 Crew-Register // Aktive Einheiten
               </span>
-              <span className="font-mono text-[10px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
+              <span className="font-mono text-[14px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
             </div>
 
             {crewList.length === 0 ? (
               <p className="px-4 py-6 font-mono text-xs text-text-secondary">Noch keine Crew registriert.</p>
             ) : (
               <div className="overflow-x-auto">
-                <div className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] gap-2 border-b border-border px-4 py-2 font-mono text-[9px] tracking-[0.05em] text-text-subtle uppercase">
+                <div className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] gap-2 border-b border-border px-4 py-2 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
                   <span>Crew</span>
                   <span>Corp</span>
                   <span>Captain</span>
@@ -198,14 +198,14 @@ export default async function HomePage() {
                       className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] items-center gap-2 border-b border-border/60 px-4 py-2.5 text-sm text-text-default last:border-b-0 hover:bg-corp-accent/[0.06]"
                     >
                       <span className="font-medium tracking-[0.02em]">{crew.name}</span>
-                      <span className="flex items-center gap-1.5 font-mono text-[11px] text-corp-accent">
+                      <span className="flex items-center gap-1.5 font-mono text-[15px] text-corp-accent">
                         <span className="h-1.5 w-1.5 rounded-full bg-corp-accent" />
                         {crew.corps?.name.toUpperCase() ?? "—"}
                       </span>
-                      <span className="font-mono text-[11px] text-text-mid">{crew.captains?.name ?? "—"}</span>
+                      <span className="font-mono text-[15px] text-text-mid">{crew.captains?.name ?? "—"}</span>
                       <span>{crew.captains?.level ?? "—"}</span>
-                      <span className="font-mono text-[11px]">{crew.credits.toLocaleString("de-DE")}</span>
-                      <span className={`font-mono text-[10px] ${status.className}`}>● {status.label}</span>
+                      <span className="font-mono text-[15px]">{crew.credits.toLocaleString("de-DE")}</span>
+                      <span className={`font-mono text-[14px] ${status.className}`}>● {status.label}</span>
                     </Link>
                   );
                 })}
@@ -221,7 +221,7 @@ export default async function HomePage() {
               <Button variant="ghost">＋ Kampagne beitreten</Button>
             </Link>
             <span className="flex-1" />
-            <Link href="/powers" className="font-mono text-[11px] text-text-secondary hover:text-text-default">
+            <Link href="/powers" className="font-mono text-[15px] text-text-secondary hover:text-text-default">
               POWER-DATENBANK →
             </Link>
           </div>

@@ -69,7 +69,7 @@ export function SoldierRecruiter({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-wrap gap-6 border border-corp-border bg-corp-surface px-4 py-3 font-mono text-[11px] text-text-secondary uppercase">
+      <div className="flex flex-wrap gap-6 border border-corp-border bg-corp-surface px-4 py-3 font-mono text-[15px] text-text-secondary uppercase">
         <span>
           Budget <b className="text-corp-accent">{credits.toLocaleString("de-DE")}</b> CR
         </span>
@@ -84,10 +84,10 @@ export function SoldierRecruiter({
       {error ? <p className="font-mono text-sm text-danger">{error}</p> : null}
 
       <section>
-        <p className="mb-2 font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">Trupp-Register</p>
+        <p className="mb-2 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Trupp-Register</p>
         {soldiers.length > 0 ? (
           <div className="border border-corp-border">
-            <div className="grid grid-cols-[1.6fr_1fr_0.7fr_0.7fr_0.7fr_1fr] gap-2 border-b border-corp-border bg-corp-surface px-3 py-2 font-mono text-[8.5px] tracking-[0.05em] text-text-subtle uppercase">
+            <div className="grid grid-cols-[1.6fr_1fr_0.7fr_0.7fr_0.7fr_1fr] gap-2 border-b border-corp-border bg-corp-surface px-3 py-2 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
               <span>Einheit</span>
               <span>Typ</span>
               <span>FGT</span>
@@ -104,15 +104,15 @@ export function SoldierRecruiter({
                   {s.soldier_types.name}
                   {s.name ? <span className="text-text-secondary"> &quot;{s.name}&quot;</span> : null}
                 </span>
-                <span className="font-mono text-[10px] text-text-secondary">{s.soldier_types.table_type === "specialist" ? "Specialist" : "Standard"}</span>
-                <span className="font-mono text-[11px]">+{s.soldier_types.fight}</span>
-                <span className="font-mono text-[11px]">+{s.soldier_types.shoot}</span>
-                <span className="font-mono text-[11px]">{s.soldier_types.health}</span>
+                <span className="font-mono text-[14px] text-text-secondary">{s.soldier_types.table_type === "specialist" ? "Specialist" : "Standard"}</span>
+                <span className="font-mono text-[15px]">+{s.soldier_types.fight}</span>
+                <span className="font-mono text-[15px]">+{s.soldier_types.shoot}</span>
+                <span className="font-mono text-[15px]">{s.soldier_types.health}</span>
                 <div className="flex items-center gap-2">
                   <StatusBadge currentHealth={s.current_health} health={s.soldier_types.health} />
                 </div>
                 <div className="col-span-6 -mt-1 flex items-center gap-3 pt-1">
-                  <label className="flex items-center gap-1.5 font-mono text-[10px] text-text-secondary">
+                  <label className="flex items-center gap-1.5 font-mono text-[14px] text-text-secondary">
                     <input
                       type="checkbox"
                       checked={s.is_robot}
@@ -130,7 +130,7 @@ export function SoldierRecruiter({
                         handleRemove(s.id);
                       }
                     }}
-                    className="font-mono text-[10px] text-text-secondary hover:text-danger"
+                    className="font-mono text-[14px] text-text-secondary hover:text-danger"
                   >
                     Entlassen
                   </button>
@@ -146,11 +146,11 @@ export function SoldierRecruiter({
       <div className="grid gap-6 sm:grid-cols-2">
         {(["standard", "specialist"] as const).map((tableType) => (
           <section key={tableType}>
-            <p className="mb-2 font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">
+            <p className="mb-2 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
               {tableType === "standard" ? "Standard" : "Specialist"}
             </p>
             <div className="border border-corp-border">
-              <div className="grid grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.8fr] gap-2 border-b border-corp-border bg-corp-surface px-3 py-1.5 font-mono text-[8px] tracking-[0.05em] text-text-subtle uppercase">
+              <div className="grid grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.8fr] gap-2 border-b border-corp-border bg-corp-surface px-3 py-1.5 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
                 <span>Typ</span>
                 <span>FGT</span>
                 <span>SHT</span>
@@ -174,10 +174,10 @@ export function SoldierRecruiter({
                       className="grid w-full grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.8fr] items-center gap-2 border-b border-corp-border/60 bg-corp-surface px-3 py-2 text-left text-sm last:border-b-0 hover:bg-corp-accent/[0.06] disabled:opacity-40"
                     >
                       <span className="font-medium text-text-default">{t.name}</span>
-                      <span className="font-mono text-[10px] text-text-secondary">+{t.fight}</span>
-                      <span className="font-mono text-[10px] text-text-secondary">+{t.shoot}</span>
-                      <span className="font-mono text-[10px] text-text-secondary">{t.health}</span>
-                      <span className="font-mono text-[11px] text-corp-accent">{t.cost_cr === 0 ? "FREE" : `${t.cost_cr} CR`}</span>
+                      <span className="font-mono text-[14px] text-text-secondary">+{t.fight}</span>
+                      <span className="font-mono text-[14px] text-text-secondary">+{t.shoot}</span>
+                      <span className="font-mono text-[14px] text-text-secondary">{t.health}</span>
+                      <span className="font-mono text-[15px] text-corp-accent">{t.cost_cr === 0 ? "FREE" : `${t.cost_cr} CR`}</span>
                     </button>
                   );
                 })}

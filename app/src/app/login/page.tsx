@@ -8,17 +8,17 @@ export default function LoginPage() {
       <RainCanvas className="z-[6]" />
       <LensFlare />
       <div className="relative z-[1] mx-auto flex min-h-screen max-w-sm flex-col px-6">
-        <div className="flex items-center justify-between pt-6 font-mono text-[11px] tracking-[0.06em] text-text-default">
+        <div className="flex items-center justify-between pt-6 font-mono text-[15px] tracking-[0.06em] text-text-default">
           <span className="font-semibold">SYS_OP_1.09</span>
           <span>[ONLINE]</span>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-start gap-9 pt-[14vh]">
           <div className="text-center">
-            <p className="font-display text-[38px] leading-none font-semibold tracking-[0.12em] text-text-default">
+            <p className="font-display text-[44px] leading-none font-semibold tracking-[0.12em] text-text-default">
               DYSTO.CORP
             </p>
-            <p className="mt-3.5 font-mono text-[11px] tracking-[0.1em] text-text-secondary">
+            <p className="mt-3.5 font-mono text-[15px] tracking-[0.1em] text-text-secondary">
               CREW_DATABASE_GATEWAY_v7.2
             </p>
           </div>
@@ -26,7 +26,7 @@ export default function LoginPage() {
           <LoginForm />
         </div>
 
-        <p className="pb-6 text-center font-mono text-[9.5px] tracking-[0.12em] text-text-subtle">
+        <p className="pb-6 text-center font-mono text-[14px] tracking-[0.12em] text-text-subtle">
           D_CORP_SICHERHEITSPROTOKOLLE_AKTIV
         </p>
       </div>

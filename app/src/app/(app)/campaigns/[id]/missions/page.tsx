@@ -87,7 +87,7 @@ export default async function MissionsPage({
 
         {history.length > 0 ? (
           <div className="mt-12">
-            <h2 className="font-mono text-[10px] tracking-[0.08em] text-text-secondary uppercase">{"// Verlauf"}</h2>
+            <h2 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Verlauf"}</h2>
             <div className="mt-4 flex flex-col gap-4">{history.map(renderCard)}</div>
           </div>
         ) : null}

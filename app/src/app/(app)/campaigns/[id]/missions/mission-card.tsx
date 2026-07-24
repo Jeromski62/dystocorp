@@ -96,10 +96,10 @@ export function MissionCard({
           {!editing ? (
             <h2 className="font-display text-lg font-semibold tracking-[0.03em] text-text-default uppercase">{mission.title}</h2>
           ) : null}
-          <span className={`px-2 py-[3px] font-mono text-[10px] tracking-[0.05em] uppercase ${badgeClass}`}>
+          <span className={`px-2 py-[3px] font-mono text-[14px] tracking-[0.05em] uppercase ${badgeClass}`}>
             {STATUS_LABEL[mission.status]}
           </span>
-          {mission.session_date ? <span className="font-mono text-[11px] text-text-secondary">{mission.session_date}</span> : null}
+          {mission.session_date ? <span className="font-mono text-[15px] text-text-secondary">{mission.session_date}</span> : null}
         </div>
         {!editing ? (
           <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-corp-accent">
@@ -231,7 +231,7 @@ export function MissionCard({
 
       {mission.status !== "planned" ? (
         <div className="mt-4 flex flex-col gap-2 border-t border-border pt-3">
-          <h3 className="font-mono text-[10px] tracking-[0.08em] text-text-secondary uppercase">{"// Crew-Ergebnisse"}</h3>
+          <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Crew-Ergebnisse"}</h3>
           {myCrew ? (
             <CrewMissionResultForm
               campaignId={campaignId}

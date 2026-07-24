@@ -40,15 +40,15 @@ export default async function ProfilePage() {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="border border-border bg-bg-surface p-3">
-                <p className="font-mono text-[8.5px] tracking-[0.06em] text-text-secondary uppercase">Crews</p>
+                <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Crews</p>
                 <p className="mt-1 font-display text-lg font-bold text-text-default">{crewCount ?? 0}</p>
               </div>
               <div className="border border-border bg-bg-surface p-3">
-                <p className="font-mono text-[8.5px] tracking-[0.06em] text-text-secondary uppercase">Kampagnen</p>
+                <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Kampagnen</p>
                 <p className="mt-1 font-display text-lg font-bold text-text-default">{campaignIds.length}</p>
               </div>
               <div className="border border-border bg-bg-surface p-3">
-                <p className="font-mono text-[8.5px] tracking-[0.06em] text-text-secondary uppercase">Missionen</p>
+                <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Missionen</p>
                 <p className="mt-1 font-display text-lg font-bold text-status-active">{missionsDoneCount ?? 0}</p>
               </div>
             </div>
@@ -56,7 +56,7 @@ export default async function ProfilePage() {
 
           <div className="flex flex-col border border-border bg-bg-surface">
             <div className="border-b border-border px-4 py-2.5">
-              <span className="font-mono text-[9.5px] tracking-[0.08em] text-text-secondary uppercase">Konto-Optionen</span>
+              <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Konto-Optionen</span>
             </div>
             <div className="flex flex-1 flex-col gap-4 p-4">
               <EditDisplayNameForm name={player?.display_name ?? ""} />

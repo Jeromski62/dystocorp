@@ -23,7 +23,7 @@ export function MobileNav({ identity }: { identity: string }) {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="font-mono text-[11px] tracking-[0.08em] text-text-secondary uppercase hover:text-text-default"
+          className="font-mono text-[15px] tracking-[0.08em] text-text-secondary uppercase hover:text-text-default"
         >
           {open ? "Schließen ✕" : "Menü ≡"}
         </button>
@@ -39,8 +39,8 @@ export function MobileNav({ identity }: { identity: string }) {
                 onClick={() => setOpen(false)}
                 className={
                   active
-                    ? "block border-l-2 border-accent bg-accent/[0.08] px-4 py-3 font-display text-[13px] font-semibold tracking-[0.06em] text-text-default uppercase"
-                    : "block border-l-2 border-transparent px-4 py-3 font-display text-[13px] font-semibold tracking-[0.06em] text-text-secondary uppercase hover:text-text-default"
+                    ? "block border-l-2 border-accent bg-accent/[0.08] px-4 py-3 font-display text-[16px] font-semibold tracking-[0.06em] text-text-default uppercase"
+                    : "block border-l-2 border-transparent px-4 py-3 font-display text-[16px] font-semibold tracking-[0.06em] text-text-secondary uppercase hover:text-text-default"
                 }
               >
                 {item.label}
@@ -50,7 +50,7 @@ export function MobileNav({ identity }: { identity: string }) {
           <Link
             href="/profile"
             onClick={() => setOpen(false)}
-            className="block border-t border-border px-4 py-3 font-mono text-[11px] tracking-[0.06em] text-text-secondary uppercase hover:text-text-default"
+            className="block border-t border-border px-4 py-3 font-mono text-[15px] tracking-[0.06em] text-text-secondary uppercase hover:text-text-default"
           >
             {identity} · Profil
           </Link>

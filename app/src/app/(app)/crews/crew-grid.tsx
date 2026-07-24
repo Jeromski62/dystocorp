@@ -36,7 +36,7 @@ export function CrewGrid({ crews }: { crews: Crew[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] tracking-[0.06em] uppercase">
+      <div className="flex flex-wrap items-center gap-2 font-mono text-[14px] tracking-[0.06em] uppercase">
         <button
           type="button"
           onClick={() => setFilter("all")}
@@ -82,12 +82,12 @@ export function CrewGrid({ crews }: { crews: Crew[] }) {
             >
               <div className="flex items-baseline justify-between">
                 <span className="font-display text-lg font-semibold tracking-[0.03em] text-text-default uppercase">{crew.name}</span>
-                <span className={`font-mono text-[9px] ${status.className}`}>● {status.label}</span>
+                <span className={`font-mono text-[14px] ${status.className}`}>● {status.label}</span>
               </div>
-              <p className="mt-1 font-mono text-[10px] text-text-secondary uppercase">
+              <p className="mt-1 font-mono text-[14px] text-text-secondary uppercase">
                 {crew.corps?.name ?? "—"} · {crew.campaigns?.name ?? "Ohne Kampagne"}
               </p>
-              <div className="mt-3.5 flex gap-4 font-mono text-[11px] text-text-secondary">
+              <div className="mt-3.5 flex gap-4 font-mono text-[15px] text-text-secondary">
                 {crew.captains ? (
                   <span>
                     LV <b className="text-text-default">{crew.captains.level}</b>

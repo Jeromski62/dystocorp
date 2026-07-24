@@ -28,7 +28,7 @@ export default async function CrewsPage() {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="flex items-baseline gap-3">
             <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Meine Crews</h1>
-            <span className="font-mono text-[10px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
+            <span className="font-mono text-[14px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
           </div>
           <Link href="/crews/new">
             <Button variant="cta">＋ Neue Crew</Button>

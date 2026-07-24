@@ -41,12 +41,12 @@ export default async function CampaignDetailPage({
       <div className="mx-auto max-w-3xl px-6 py-12">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="font-mono text-[10px] tracking-[0.08em] text-text-subtle uppercase">Kampagnen /</p>
+            <p className="font-mono text-[14px] tracking-[0.08em] text-text-subtle uppercase">Kampagnen /</p>
             <div className="mt-1">
               <EditCampaignForm campaignId={campaign.id} name={campaign.name} description={campaign.description} />
             </div>
             {campaign.archived_at ? (
-              <span className="mt-2 inline-block border border-border px-2 py-0.5 font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">
+              <span className="mt-2 inline-block border border-border px-2 py-0.5 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
                 Archiviert
               </span>
             ) : null}
@@ -66,21 +66,21 @@ export default async function CampaignDetailPage({
 
         <div className="mt-6 grid grid-cols-3 gap-3">
           <div className="border border-border bg-bg-surface p-3.5">
-            <p className="font-mono text-[8.5px] tracking-[0.06em] text-text-secondary uppercase">Crews</p>
+            <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Crews</p>
             <p className="mt-1 font-display text-lg font-bold text-text-default">{String(crews?.length ?? 0).padStart(2, "0")}</p>
           </div>
           <div className="border border-border bg-bg-surface p-3.5">
-            <p className="font-mono text-[8.5px] tracking-[0.06em] text-text-secondary uppercase">Missionen</p>
+            <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Missionen</p>
             <p className="mt-1 font-display text-lg font-bold text-text-default">{String(missionCount ?? 0).padStart(2, "0")}</p>
           </div>
           <div className="border border-border bg-bg-surface p-3.5">
-            <p className="font-mono text-[8.5px] tracking-[0.06em] text-text-secondary uppercase">Mitspieler</p>
+            <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Mitspieler</p>
             <p className="mt-1 font-display text-lg font-bold text-text-default">{String(members?.length ?? 0).padStart(2, "0")}</p>
           </div>
         </div>
 
         <section className="mt-8">
-          <h2 className="font-mono text-[10px] tracking-[0.08em] text-text-secondary uppercase">{"// Mitspieler"}</h2>
+          <h2 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Mitspieler"}</h2>
           <ul className="mt-2 flex flex-wrap gap-2 font-mono text-xs">
             {(members ?? []).map((m) => (
               <li key={m.player_id} className="border border-border bg-bg-surface px-3 py-1 text-text-default">
@@ -91,7 +91,7 @@ export default async function CampaignDetailPage({
         </section>
 
         <section className="mt-8">
-          <h2 className="font-mono text-[10px] tracking-[0.08em] text-text-secondary uppercase">{"// Teilnehmende Crews"}</h2>
+          <h2 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Teilnehmende Crews"}</h2>
           <div className="mt-2 grid gap-3 sm:grid-cols-2">
             {(crews ?? []).map((crew) => {
               const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;

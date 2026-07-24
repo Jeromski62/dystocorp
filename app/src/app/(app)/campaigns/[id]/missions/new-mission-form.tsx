@@ -23,7 +23,7 @@ export function NewMissionForm({ campaignId }: { campaignId: string }) {
 
   return (
     <div className="rounded-md border border-border bg-bg-surface p-4">
-      <h2 className="font-mono text-[10px] tracking-[0.08em] text-text-secondary uppercase">{"// Nächste Mission planen"}</h2>
+      <h2 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Nächste Mission planen"}</h2>
       <div className="mt-3 flex flex-col gap-2">
         <input
           value={title}
