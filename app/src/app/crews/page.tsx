@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { corpThemeSlug } from "@/lib/corp-theme";
+import { Button } from "@/components/button";
+import Link from "next/link";
+import { CrewGrid } from "./crew-grid";
 
 export default async function CrewsPage() {
   const supabase = await createClient();
@@ -10,40 +11,36 @@ export default async function CrewsPage() {
 
   const { data: crews } = await supabase
     .from("crews")
-    .select("id, name, credits, experience, corps(key, name), campaigns(id, name)")
+    .select(
+      "id, name, credits, corps(key, name), campaigns(id, name), captains(level, current_health, health), soldiers(count)"
+    )
     .eq("player_id", user!.id)
     .order("created_at", { ascending: false });
 
+  const crewList = (crews ?? []).map((c) => ({
+    ...c,
+    unitCount: (c.soldiers as unknown as { count: number }[])?.[0]?.count ?? 0,
+  }));
+
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-text-default">Meine Crews</h1>
-      <p className="mt-1 text-sm text-text-secondary">
-        Alle deine Crews, campaign-übergreifend — auch Crews ohne Kampagne zum Ausprobieren.
-      </p>
-
-      <div className="mt-8 grid gap-3 sm:grid-cols-2">
-        {(crews ?? []).map((crew) => (
-          <Link
-            key={crew.id}
-            href={`/crews/${crew.id}`}
-            data-corp={crew.corps ? corpThemeSlug(crew.corps.key) : undefined}
-            className="rounded-md border border-corp-border bg-bg-surface p-4 hover:border-corp-accent"
-          >
-            <p className="font-mono text-xs uppercase tracking-wide text-corp-accent">{crew.corps?.name}</p>
-            <p className="mt-1 font-medium text-text-default">{crew.name}</p>
-            <p className="mt-1 text-xs text-text-secondary">{crew.campaigns?.name ?? "Ohne Kampagne"}</p>
-            <p className="mt-2 font-mono text-xs text-text-secondary">
-              {crew.credits}cr · {crew.experience} XP
-            </p>
+    <div className="hud-grid min-h-[calc(100vh-4rem)]">
+      <div className="mx-auto max-w-3xl px-6 py-12">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="flex items-baseline gap-3">
+            <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Meine Crews</h1>
+            <span className="font-mono text-[10px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
+          </div>
+          <Link href="/crews/new">
+            <Button variant="cta">＋ Neue Crew</Button>
           </Link>
-        ))}
+        </div>
+        <p className="mt-1 font-mono text-xs text-text-secondary">
+          Alle deine Crews, campaign-übergreifend — auch Crews ohne Kampagne zum Ausprobieren.
+        </p>
 
-        <Link
-          href="/crews/new"
-          className="flex flex-col items-center justify-center rounded-md border border-dashed border-border p-4 text-center text-sm text-text-secondary hover:border-accent hover:text-text-default"
-        >
-          + Neue Crew erstellen
-        </Link>
+        <div className="mt-8">
+          <CrewGrid crews={crewList} />
+        </div>
       </div>
     </div>
   );

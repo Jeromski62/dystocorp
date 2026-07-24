@@ -80,7 +80,7 @@ export function MissionCard({
 
   const badgeClass =
     mission.status === "ongoing"
-      ? "bg-accent text-accent-foreground"
+      ? "border border-status-active/40 text-status-active"
       : mission.status === "report"
         ? "border border-border text-text-secondary"
         : "border border-accent/40 text-accent";
@@ -90,11 +90,15 @@ export function MissionCard({
   const crewById = new Map(crews.map((c) => [c.id, c]));
 
   return (
-    <article className="rounded-md border border-border bg-bg-surface p-4">
+    <article className="border border-border bg-bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          {!editing ? <h2 className="font-semibold text-text-default">{mission.title}</h2> : null}
-          <span className={`rounded-sm px-2 py-[3px] font-mono text-[11px] ${badgeClass}`}>{STATUS_LABEL[mission.status]}</span>
+        <div className="flex items-center gap-2.5">
+          {!editing ? (
+            <h2 className="font-display text-lg font-semibold tracking-[0.03em] text-text-default uppercase">{mission.title}</h2>
+          ) : null}
+          <span className={`px-2 py-[3px] font-mono text-[10px] tracking-[0.05em] uppercase ${badgeClass}`}>
+            {STATUS_LABEL[mission.status]}
+          </span>
           {mission.session_date ? <span className="font-mono text-[11px] text-text-secondary">{mission.session_date}</span> : null}
         </div>
         {!editing ? (
@@ -227,7 +231,7 @@ export function MissionCard({
 
       {mission.status !== "planned" ? (
         <div className="mt-4 flex flex-col gap-2 border-t border-border pt-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-text-secondary">Crew-Ergebnisse</h3>
+          <h3 className="font-mono text-[10px] tracking-[0.08em] text-text-secondary uppercase">{"// Crew-Ergebnisse"}</h3>
           {myCrew ? (
             <CrewMissionResultForm
               campaignId={campaignId}

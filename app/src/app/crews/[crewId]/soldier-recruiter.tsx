@@ -68,73 +68,95 @@ export function SoldierRecruiter({
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap gap-4 rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
-        <span>{credits}cr verfügbar</span>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-wrap gap-6 border border-corp-border bg-corp-surface px-4 py-3 font-mono text-[11px] text-text-secondary uppercase">
         <span>
-          {soldiers.length}/{SOLDIER_RULES.maxSoldiers} Soldiers
+          Budget <b className="text-corp-accent">{credits.toLocaleString("de-DE")}</b> CR
         </span>
         <span>
-          {specialistCount}/{maxSpecialists} Specialists
+          Soldiers <b className="text-text-default">{soldiers.length}</b>/{SOLDIER_RULES.maxSoldiers}
+        </span>
+        <span>
+          Specialists <b className="text-text-default">{specialistCount}</b>/{maxSpecialists}
         </span>
       </div>
 
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
+      {error ? <p className="font-mono text-sm text-danger">{error}</p> : null}
 
-      {soldiers.length > 0 ? (
-        <div className="flex flex-col gap-2">
-          {soldiers.map((s) => (
-            <div
-              key={s.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm"
-            >
-              <div>
-                <span className="font-medium text-text-default">{s.soldier_types.name}</span>
-                {s.name ? <span className="text-text-secondary"> &quot;{s.name}&quot;</span> : null}
-                <span className="ml-2 font-mono text-xs text-text-secondary">
-                  M{s.soldier_types.move} F+{s.soldier_types.fight} S+{s.soldier_types.shoot} A
-                  {s.soldier_types.armour} W+{s.soldier_types.will} H{s.soldier_types.health}
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <StatusBadge currentHealth={s.current_health} health={s.soldier_types.health} />
-                <label className="flex items-center gap-1 text-xs text-text-secondary">
-                  <input
-                    type="checkbox"
-                    checked={s.is_robot}
-                    onChange={(e) => handleRobotToggle(s.id, e.target.checked)}
-                    className="accent-[var(--corp-accent)]"
-                  />
-                  Robot
-                </label>
-                <button
-                  type="button"
-                  disabled={pending}
-                  onClick={() => {
-                    const label = s.soldier_types.name + (s.name ? ` "${s.name}"` : "");
-                    if (window.confirm(`${label} wirklich entlassen?`)) {
-                      handleRemove(s.id);
-                    }
-                  }}
-                  className="text-xs text-text-secondary hover:text-danger"
-                >
-                  Entlassen
-                </button>
-              </div>
+      <section>
+        <p className="mb-2 font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">Trupp-Register</p>
+        {soldiers.length > 0 ? (
+          <div className="border border-corp-border">
+            <div className="grid grid-cols-[1.6fr_1fr_0.7fr_0.7fr_0.7fr_1fr] gap-2 border-b border-corp-border bg-corp-surface px-3 py-2 font-mono text-[8.5px] tracking-[0.05em] text-text-subtle uppercase">
+              <span>Einheit</span>
+              <span>Typ</span>
+              <span>FGT</span>
+              <span>SHT</span>
+              <span>HP</span>
+              <span>Status</span>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm text-text-secondary">Noch keine Soldiers rekrutiert.</p>
-      )}
+            {soldiers.map((s) => (
+              <div
+                key={s.id}
+                className="grid grid-cols-[1.6fr_1fr_0.7fr_0.7fr_0.7fr_1fr] items-center gap-2 border-b border-corp-border/60 bg-corp-surface px-3 py-2.5 text-sm text-text-default last:border-b-0"
+              >
+                <span className="font-medium">
+                  {s.soldier_types.name}
+                  {s.name ? <span className="text-text-secondary"> &quot;{s.name}&quot;</span> : null}
+                </span>
+                <span className="font-mono text-[10px] text-text-secondary">{s.soldier_types.table_type === "specialist" ? "Specialist" : "Standard"}</span>
+                <span className="font-mono text-[11px]">+{s.soldier_types.fight}</span>
+                <span className="font-mono text-[11px]">+{s.soldier_types.shoot}</span>
+                <span className="font-mono text-[11px]">{s.soldier_types.health}</span>
+                <div className="flex items-center gap-2">
+                  <StatusBadge currentHealth={s.current_health} health={s.soldier_types.health} />
+                </div>
+                <div className="col-span-6 -mt-1 flex items-center gap-3 pt-1">
+                  <label className="flex items-center gap-1.5 font-mono text-[10px] text-text-secondary">
+                    <input
+                      type="checkbox"
+                      checked={s.is_robot}
+                      onChange={(e) => handleRobotToggle(s.id, e.target.checked)}
+                      className="accent-[var(--corp-accent)]"
+                    />
+                    Robot
+                  </label>
+                  <button
+                    type="button"
+                    disabled={pending}
+                    onClick={() => {
+                      const label = s.soldier_types.name + (s.name ? ` "${s.name}"` : "");
+                      if (window.confirm(`${label} wirklich entlassen?`)) {
+                        handleRemove(s.id);
+                      }
+                    }}
+                    className="font-mono text-[10px] text-text-secondary hover:text-danger"
+                  >
+                    Entlassen
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="font-mono text-sm text-text-secondary">Noch keine Soldiers rekrutiert.</p>
+        )}
+      </section>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         {(["standard", "specialist"] as const).map((tableType) => (
-          <div key={tableType}>
-            <p className="mb-2 text-xs uppercase tracking-wide text-text-secondary">
+          <section key={tableType}>
+            <p className="mb-2 font-mono text-[9px] tracking-[0.08em] text-text-secondary uppercase">
               {tableType === "standard" ? "Standard" : "Specialist"}
             </p>
-            <div className="flex flex-col gap-1.5">
+            <div className="border border-corp-border">
+              <div className="grid grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.8fr] gap-2 border-b border-corp-border bg-corp-surface px-3 py-1.5 font-mono text-[8px] tracking-[0.05em] text-text-subtle uppercase">
+                <span>Typ</span>
+                <span>FGT</span>
+                <span>SHT</span>
+                <span>HP</span>
+                <span>Kosten</span>
+              </div>
               {soldierTypes
                 .filter((t) => t.table_type === tableType)
                 .map((t) => {
@@ -149,15 +171,18 @@ export function SoldierRecruiter({
                       type="button"
                       disabled={disabled}
                       onClick={() => handleAdd(t.id)}
-                      className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-left text-sm hover:border-corp-accent disabled:opacity-40"
+                      className="grid w-full grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.8fr] items-center gap-2 border-b border-corp-border/60 bg-corp-surface px-3 py-2 text-left text-sm last:border-b-0 hover:bg-corp-accent/[0.06] disabled:opacity-40"
                     >
-                      <span className="text-text-default">{t.name}</span>
-                      <span className="text-xs text-text-secondary">{t.cost_cr === 0 ? "Free" : `${t.cost_cr}cr`}</span>
+                      <span className="font-medium text-text-default">{t.name}</span>
+                      <span className="font-mono text-[10px] text-text-secondary">+{t.fight}</span>
+                      <span className="font-mono text-[10px] text-text-secondary">+{t.shoot}</span>
+                      <span className="font-mono text-[10px] text-text-secondary">{t.health}</span>
+                      <span className="font-mono text-[11px] text-corp-accent">{t.cost_cr === 0 ? "FREE" : `${t.cost_cr} CR`}</span>
                     </button>
                   );
                 })}
             </div>
-          </div>
+          </section>
         ))}
       </div>
     </div>

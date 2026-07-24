@@ -8,6 +8,7 @@ import { SOLDIER_RULES } from "@/lib/stargrave/constants";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { EditCrewNameForm } from "./edit-crew-name-form";
 import { DeleteCrewButton } from "./delete-crew-button";
+import { CaptainDossier } from "./captain-dossier";
 
 export default async function CrewPage({
   params,
@@ -47,7 +48,11 @@ export default async function CrewPage({
     supabase.from("powers").select("id, name, activation_number, strain, full_text").order("name"),
     supabase.from("equipment_items").select("id, key, name, category, gear_slots, cost_cr, effect_text").order("category, name"),
     supabase.from("soldier_types").select("id, name, table_type, move, fight, shoot, armour, will, health, cost_cr"),
-    supabase.from("captains").select("id, name, background_id, chosen_stat_options").eq("crew_id", crewId).maybeSingle(),
+    supabase
+      .from("captains")
+      .select("id, name, background_id, chosen_stat_options, level, move, fight, shoot, armour, will, health, current_health")
+      .eq("crew_id", crewId)
+      .maybeSingle(),
     supabase.from("captain_powers").select("power_id, is_core, reduced, captains!inner(crew_id)").eq("captains.crew_id", crewId),
     supabase.from("captain_gear").select("equipment_item_id, captains!inner(crew_id)").eq("captains.crew_id", crewId),
     supabase.from("first_mates").select("id, name, background_id, chosen_stat_options").eq("crew_id", crewId).maybeSingle(),
@@ -90,21 +95,30 @@ export default async function CrewPage({
     ? SOLDIER_RULES.maxSpecialistsDefault + 1
     : SOLDIER_RULES.maxSpecialistsDefault;
 
+  const captainBackgroundName = captain ? typedBackgrounds.find((b) => b.id === captain.background_id)?.name ?? null : null;
+
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
+    <div className="hud-grid min-h-[calc(100vh-4rem)]">
+      <div className="mx-auto max-w-4xl px-6 py-12">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <CorpEmblem name={crew.corps?.name ?? "?"} />
           <div>
-            <p className="font-mono text-xs tracking-widest text-corp-accent">{crew.corps?.name}</p>
+            <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
             <EditCrewNameForm crewId={crewId} name={crew.name} />
           </div>
         </div>
         <DeleteCrewButton crewId={crewId} crewName={crew.name} />
       </div>
       <p className="mt-3 font-mono text-sm text-text-secondary">
-        {crew.credits}cr · {crew.experience} XP
+        {crew.credits.toLocaleString("de-DE")} CR · {crew.experience} XP
       </p>
+
+      {captain ? (
+        <div className="mt-6 max-w-md">
+          <CaptainDossier captain={captain} backgroundName={captainBackgroundName} />
+        </div>
+      ) : null}
 
       <div className="mt-8">
         <Tabs
@@ -191,6 +205,7 @@ export default async function CrewPage({
             },
           ]}
         />
+      </div>
       </div>
     </div>
   );

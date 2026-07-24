@@ -242,7 +242,7 @@ export function OfficerBuilder({
       ) : null}
 
       <section>
-        <h3 className="font-display text-sm tracking-[3px] text-text-secondary">Background</h3>
+        <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">Background</h3>
         <div className="mt-2 grid gap-3 sm:grid-cols-2">
           {backgrounds.map((b) => (
             <button
@@ -265,7 +265,7 @@ export function OfficerBuilder({
 
       {background ? (
         <section>
-          <h3 className="font-display text-sm tracking-[3px] text-text-secondary">
+          <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">
             Stat-Bonus wählen ({chosenStatOptions.length}/{background.choice_stat_count})
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -294,7 +294,7 @@ export function OfficerBuilder({
 
       {background ? (
         <section>
-          <h3 className="font-display text-sm tracking-[3px] text-text-secondary">
+          <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">
             Powers ({totalSelectedCount}/{rules.powerCount}, Core {selectedCoreCount}/{rules.coreMin}-{rules.coreMax})
           </h3>
 
@@ -354,7 +354,7 @@ export function OfficerBuilder({
 
       {background ? (
         <section>
-          <h3 className="font-display text-sm tracking-[3px] text-text-secondary">
+          <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">
             Gear ({gearSlotTotal}/{rules.gearSlots} Slots)
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">

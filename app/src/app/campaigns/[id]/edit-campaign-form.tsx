@@ -30,13 +30,13 @@ export function EditCampaignForm({
   if (!editing) {
     return (
       <div>
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-text-default">{name}</h1>
-          <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-accent">
+        <div className="flex items-center gap-3">
+          <h1 className="font-display text-2xl font-semibold tracking-[0.1em] text-text-default uppercase">{name}</h1>
+          <button type="button" onClick={() => setEditing(true)} className="font-mono text-xs text-text-secondary hover:text-accent">
             Bearbeiten
           </button>
         </div>
-        {description ? <p className="mt-1 text-sm text-text-secondary">{description}</p> : null}
+        {description ? <p className="mt-1 font-mono text-sm text-text-secondary">{description}</p> : null}
       </div>
     );
   }

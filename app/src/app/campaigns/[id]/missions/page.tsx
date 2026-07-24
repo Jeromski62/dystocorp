@@ -69,27 +69,29 @@ export default async function MissionsPage({
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
-      <Link href={`/campaigns/${campaignId}`} className="text-xs text-text-secondary hover:text-accent">
-        ← {campaign.name}
-      </Link>
-      <h1 className="mt-2 text-2xl font-semibold text-text-default">Missionen</h1>
-      <p className="mt-1 text-sm text-text-secondary">
-        Plant die nächste Mission, markiert sie als laufend, sobald ihr spielt, und schreibt danach den Bericht.
-      </p>
+    <div className="hud-grid min-h-[calc(100vh-4rem)]">
+      <div className="mx-auto max-w-3xl px-6 py-12">
+        <Link href={`/campaigns/${campaignId}`} className="font-mono text-xs text-text-secondary hover:text-accent">
+          ← {campaign.name}
+        </Link>
+        <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.16em] text-text-default uppercase">Missionen</h1>
+        <p className="mt-1 font-mono text-xs text-text-secondary">
+          Plant die nächste Mission, markiert sie als laufend, sobald ihr spielt, und schreibt danach den Bericht.
+        </p>
 
-      <div className="mt-6">
-        <NewMissionForm campaignId={campaignId} />
-      </div>
-
-      <div className="mt-8 flex flex-col gap-4">{current.map(renderCard)}</div>
-
-      {history.length > 0 ? (
-        <div className="mt-12">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-text-secondary">Verlauf</h2>
-          <div className="mt-4 flex flex-col gap-4">{history.map(renderCard)}</div>
+        <div className="mt-6">
+          <NewMissionForm campaignId={campaignId} />
         </div>
-      ) : null}
+
+        <div className="mt-8 flex flex-col gap-4">{current.map(renderCard)}</div>
+
+        {history.length > 0 ? (
+          <div className="mt-12">
+            <h2 className="font-mono text-[10px] tracking-[0.08em] text-text-secondary uppercase">{"// Verlauf"}</h2>
+            <div className="mt-4 flex flex-col gap-4">{history.map(renderCard)}</div>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
