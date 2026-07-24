@@ -46,6 +46,28 @@ export async function setCampaignArchived(campaignId: string, archived: boolean)
   return {};
 }
 
+export async function importCrewIntoCampaign(campaignId: string, crewId: string): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Nicht eingeloggt." };
+
+  const { data: crew } = await supabase.from("crews").select("id, player_id, campaign_id").eq("id", crewId).maybeSingle();
+  if (!crew || crew.player_id !== user.id) return { error: "Crew nicht gefunden." };
+  if (crew.campaign_id) return { error: "Diese Crew gehört bereits zu einer Kampagne." };
+
+  const { error } = await supabase.from("crews").update({ campaign_id: campaignId }).eq("id", crewId);
+  if (error) {
+    return { error: error.code === "23505" ? "Du hast bereits eine Crew in dieser Kampagne." : error.message };
+  }
+
+  revalidatePath(`/campaigns/${campaignId}`);
+  revalidatePath("/crews");
+  revalidatePath("/");
+  return {};
+}
+
 export async function deleteCampaign(campaignId: string): Promise<{ error?: string }> {
   const supabase = await createClient();
   const {

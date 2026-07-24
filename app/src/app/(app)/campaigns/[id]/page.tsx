@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { CopyId } from "./copy-id";
 import { EditCampaignForm } from "./edit-campaign-form";
 import { CampaignDangerZone } from "./campaign-danger-zone";
+import { ImportCrewCard } from "./import-crew-card";
 import { corpThemeSlug } from "@/lib/corp-theme";
 
 export default async function CampaignDetailPage({
@@ -35,6 +36,15 @@ export default async function CampaignDetailPage({
   ]);
 
   const myCrew = crews?.find((c) => c.player_id === user!.id);
+
+  const { data: importableCrews } = myCrew
+    ? { data: [] }
+    : await supabase
+        .from("crews")
+        .select("id, name, corps(name)")
+        .eq("player_id", user!.id)
+        .is("campaign_id", null)
+        .order("created_at", { ascending: false });
 
   return (
     <div className="hud-grid min-h-screen">
@@ -126,6 +136,10 @@ export default async function CampaignDetailPage({
               >
                 ＋ Eigene Crew erstellen
               </Link>
+            ) : null}
+
+            {!myCrew && importableCrews && importableCrews.length > 0 ? (
+              <ImportCrewCard campaignId={campaign.id} crews={importableCrews} />
             ) : null}
           </div>
         </section>
