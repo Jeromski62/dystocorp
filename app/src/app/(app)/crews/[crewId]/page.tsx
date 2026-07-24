@@ -9,6 +9,7 @@ import { CorpEmblem } from "@/components/corp-emblem";
 import { EditCrewNameForm } from "./edit-crew-name-form";
 import { DeleteCrewButton } from "./delete-crew-button";
 import { CaptainDossier } from "./captain-dossier";
+import { CrewReadonlyView } from "./crew-readonly-view";
 
 export default async function CrewPage({
   params,
@@ -17,14 +18,19 @@ export default async function CrewPage({
 }) {
   const { crewId } = await params;
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { data: crew } = await supabase
     .from("crews")
-    .select("id, name, campaign_id, credits, experience, ship_name, corps(name)")
+    .select("id, name, player_id, campaign_id, credits, experience, ship_name, corps(name)")
     .eq("id", crewId)
     .maybeSingle();
 
   if (!crew) notFound();
+
+  const isOwner = crew.player_id === user?.id;
 
   const [
     { data: backgrounds },
@@ -55,7 +61,11 @@ export default async function CrewPage({
       .maybeSingle(),
     supabase.from("captain_powers").select("power_id, is_core, reduced, captains!inner(crew_id)").eq("captains.crew_id", crewId),
     supabase.from("captain_gear").select("equipment_item_id, captains!inner(crew_id)").eq("captains.crew_id", crewId),
-    supabase.from("first_mates").select("id, name, background_id, chosen_stat_options").eq("crew_id", crewId).maybeSingle(),
+    supabase
+      .from("first_mates")
+      .select("id, name, background_id, chosen_stat_options, move, fight, shoot, armour, will, health, current_health")
+      .eq("crew_id", crewId)
+      .maybeSingle(),
     supabase
       .from("first_mate_powers")
       .select("power_id, is_core, reduced, first_mates!inner(crew_id)")
@@ -96,6 +106,24 @@ export default async function CrewPage({
     : SOLDIER_RULES.maxSpecialistsDefault;
 
   const captainBackgroundName = captain ? typedBackgrounds.find((b) => b.id === captain.background_id)?.name ?? null : null;
+  const firstMateBackgroundName = firstMate ? typedBackgrounds.find((b) => b.id === firstMate.background_id)?.name ?? null : null;
+
+  if (!isOwner) {
+    return (
+      <CrewReadonlyView
+        crew={crew}
+        captain={captain}
+        captainBackgroundName={captainBackgroundName}
+        firstMate={firstMate}
+        firstMateBackgroundName={firstMateBackgroundName}
+        soldiers={(soldiers ?? []).filter((s) => s.soldier_types !== null) as Parameters<typeof CrewReadonlyView>[0]["soldiers"]}
+        crewShipUpgrades={(crewShipUpgrades ?? []).filter((u) => u.ship_upgrade_types !== null) as Parameters<
+          typeof CrewReadonlyView
+        >[0]["crewShipUpgrades"]}
+        holdItems={holdItems ?? []}
+      />
+    );
+  }
 
   return (
     <div className="hud-grid min-h-screen">

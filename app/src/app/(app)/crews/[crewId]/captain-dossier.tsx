@@ -10,7 +10,7 @@ const STAT_LABELS: Record<(typeof STAT_COLUMNS)[number], string> = {
 
 type Captain = {
   name: string;
-  level: number;
+  level?: number;
   move: number;
   fight: number;
   shoot: number;
@@ -20,16 +20,26 @@ type Captain = {
   current_health: number;
 };
 
-// Read-only summary of the captain's current combat stats, shown above the
+// Read-only summary of an officer's current combat stats, shown above the
 // edit-mode tabs (Captain/First Mate/Soldiers/Ship) — a snapshot, not a form.
-export function CaptainDossier({ captain, backgroundName }: { captain: Captain; backgroundName: string | null }) {
+// Reused for both Captain (roleLabel default, has a level) and First Mate
+// (roleLabel="First-Mate-Dossier", no level column in that role).
+export function CaptainDossier({
+  captain,
+  backgroundName,
+  roleLabel = "Captain-Dossier",
+}: {
+  captain: Captain;
+  backgroundName: string | null;
+  roleLabel?: string;
+}) {
   const healthPct = Math.max(0, Math.min(100, (captain.current_health / captain.health) * 100));
 
   return (
     <div className="border border-corp-accent/28 border-t-2 border-t-corp-accent bg-corp-surface p-4">
       <div className="flex items-baseline justify-between">
-        <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Captain-Dossier</span>
-        <span className="font-mono text-[14px] text-corp-accent">LV {captain.level}</span>
+        <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{roleLabel}</span>
+        {typeof captain.level === "number" ? <span className="font-mono text-[14px] text-corp-accent">LV {captain.level}</span> : null}
       </div>
       <p className="mt-2 font-display text-xl font-semibold tracking-[0.05em] text-text-default">{captain.name}</p>
       {backgroundName ? <p className="mt-0.5 font-mono text-[14px] text-text-subtle">{backgroundName}</p> : null}
