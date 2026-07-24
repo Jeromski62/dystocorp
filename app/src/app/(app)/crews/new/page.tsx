@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { createCrew } from "@/app/campaigns/[id]/new-crew/actions";
+import { createCrew } from "@/app/(app)/campaigns/[id]/new-crew/actions";
 import { CorpPicker } from "@/components/corp-picker";
 
 export default async function NewStandaloneCrewPage() {

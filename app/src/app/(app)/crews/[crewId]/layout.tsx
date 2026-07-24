@@ -21,7 +21,7 @@ export default async function CrewLayout({
   if (!crew) notFound();
 
   return (
-    <div data-corp={corpThemeSlug(crew.corps?.key ?? "")} className="bg-corp-bg min-h-[calc(100vh-4rem)]">
+    <div data-corp={corpThemeSlug(crew.corps?.key ?? "")} className="bg-corp-bg min-h-screen">
       {children}
     </div>
   );

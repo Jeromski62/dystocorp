@@ -8,7 +8,7 @@ export default async function ConfirmPage({
   const { token_hash, type, next } = await searchParams;
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-sm flex-col justify-center gap-6 px-6">
+    <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-6 px-6">
       <div>
         <p className="text-xs uppercase tracking-widest text-accent">DystoCorp Access Terminal</p>
         <h1 className="mt-2 text-2xl font-semibold text-text-default">Login bestätigen</h1>

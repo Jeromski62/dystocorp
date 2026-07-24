@@ -98,7 +98,7 @@ export default async function CrewPage({
   const captainBackgroundName = captain ? typedBackgrounds.find((b) => b.id === captain.background_id)?.name ?? null : null;
 
   return (
-    <div className="hud-grid min-h-[calc(100vh-4rem)]">
+    <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-4xl px-6 py-12">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">

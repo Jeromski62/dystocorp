@@ -23,7 +23,7 @@ export default async function CrewsPage() {
   }));
 
   return (
-    <div className="hud-grid min-h-[calc(100vh-4rem)]">
+    <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="flex items-baseline gap-3">

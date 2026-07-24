@@ -64,7 +64,7 @@ export default async function HomePage() {
 
   if (!latestCampaign && !newestCrew) {
     return (
-      <div className="hud-grid flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center gap-4 px-6 text-center">
+      <div className="hud-grid flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
         <p className="font-display text-2xl tracking-[0.1em] text-text-default">Willkommen bei DystoCorp</p>
         <p className="max-w-sm font-mono text-xs leading-relaxed text-text-secondary">
           Leg deine erste Crew an oder tritt einer Kampagne bei, um loszulegen.
@@ -86,10 +86,10 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="hud-grid relative min-h-[calc(100vh-4rem)] overflow-hidden">
+    <div className="hud-grid relative min-h-screen overflow-hidden">
       <RainCanvas tint={corpRainTint(newestCrewSlug)} />
 
-      <div className="relative z-[1] flex min-h-[calc(100vh-4rem)] flex-col">
+      <div className="relative z-[1] flex min-h-screen flex-col">
         <div className="flex flex-wrap items-stretch border-b border-border bg-black/40 font-mono text-[10.5px] tracking-[0.05em] text-text-secondary">
           <span className="border-r border-border px-4 py-2 text-text-default">SYS_OP_1.09</span>
           <span className="border-r border-border px-4 py-2 text-accent">[ONLINE]</span>

@@ -25,7 +25,7 @@ export default async function ProfilePage() {
       : { count: 0 };
 
   return (
-    <div className="hud-grid min-h-[calc(100vh-4rem)]">
+    <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Profil</h1>
 

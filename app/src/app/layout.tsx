@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Rajdhani, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { NavBar } from "@/components/nav-bar";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({
@@ -36,10 +35,7 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full dark antialiased", inter.variable, rajdhani.variable, ibmPlexMono.variable)}
     >
-      <body className="min-h-full flex flex-col">
-        <NavBar />
-        <main className="flex-1">{children}</main>
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

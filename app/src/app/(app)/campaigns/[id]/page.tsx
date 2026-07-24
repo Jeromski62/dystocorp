@@ -36,7 +36,7 @@ export default async function CampaignDetailPage({
   const myCrew = crews?.find((c) => c.player_id === user!.id);
 
   return (
-    <div className="hud-grid min-h-[calc(100vh-4rem)]">
+    <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <p className="font-mono text-[10px] tracking-[0.08em] text-text-subtle uppercase">Kampagnen /</p>
         <div className="mt-1">

@@ -69,7 +69,7 @@ export default async function MissionsPage({
   }
 
   return (
-    <div className="hud-grid min-h-[calc(100vh-4rem)]">
+    <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <Link href={`/campaigns/${campaignId}`} className="font-mono text-xs text-text-secondary hover:text-accent">
           ← {campaign.name}

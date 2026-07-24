@@ -21,7 +21,7 @@ export default async function CorpDetailPage({
   if (!corp) notFound();
 
   return (
-    <div data-corp={corpThemeSlug(corp.key)} className="bg-corp-bg min-h-[calc(100vh-4rem)]">
+    <div data-corp={corpThemeSlug(corp.key)} className="bg-corp-bg min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <Link href="/setting/corps" className="text-xs text-text-secondary hover:text-corp-accent">
           ← Corps

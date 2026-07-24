@@ -4,10 +4,10 @@ import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
   return (
-    <div className="hud-grid relative min-h-[calc(100vh-4rem)] overflow-hidden">
+    <div className="hud-grid relative min-h-screen overflow-hidden">
       <RainCanvas className="z-[6]" />
       <LensFlare />
-      <div className="relative z-[1] mx-auto flex min-h-[calc(100vh-4rem)] max-w-sm flex-col px-6">
+      <div className="relative z-[1] mx-auto flex min-h-screen max-w-sm flex-col px-6">
         <div className="flex items-center justify-between pt-6 font-mono text-[11px] tracking-[0.06em] text-text-default">
           <span className="font-semibold">SYS_OP_1.09</span>
           <span>[ONLINE]</span>
