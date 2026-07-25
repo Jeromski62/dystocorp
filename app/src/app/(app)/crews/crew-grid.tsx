@@ -59,7 +59,7 @@ export function CrewGrid({ crews }: { crews: Crew[] }) {
         ))}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="flex flex-col gap-3">
         {filtered.map((crew) => {
           const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
           return (

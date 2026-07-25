@@ -105,7 +105,7 @@ export default async function CampaignDetailPage({
 
         <section className="mt-8">
           <h2 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Teilnehmende Crews"}</h2>
-          <div className="mt-2 grid gap-3 sm:grid-cols-2">
+          <div className="mt-2 flex flex-col gap-3">
             {(crews ?? []).map((crew) => {
               const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
               const unitCount = (crew.soldiers as unknown as { count: number }[])?.[0]?.count ?? 0;
