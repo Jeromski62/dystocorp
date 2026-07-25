@@ -130,7 +130,7 @@ export default async function HomePage() {
               )}
             </section>
 
-            <section className="border border-border bg-black/40 p-4">
+            <section className="flex flex-col pt-4">
               <div className="flex items-center justify-between">
                 <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Neueste Mission</p>
                 {latestMission ? (
@@ -145,7 +145,9 @@ export default async function HomePage() {
                   <p className="mt-1 font-mono text-[14px] text-text-subtle">{latestMission.campaigns?.name}</p>
                 </Link>
               ) : (
-                <p className="mt-2 font-mono text-xs text-text-secondary">Noch keine Mission geplant.</p>
+                <div className="flex flex-1 items-center justify-center">
+                  <p className="font-mono text-xs text-text-secondary">Noch keine Mission geplant.</p>
+                </div>
               )}
             </section>
 
@@ -173,7 +175,7 @@ export default async function HomePage() {
             </section>
           </div>
 
-          <section className="flex flex-1 flex-col border border-border bg-black/40">
+          <section className="flex flex-1 flex-col border border-border bg-black/60">
             <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
               <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
                 Crew-Register // Aktive Einheiten
