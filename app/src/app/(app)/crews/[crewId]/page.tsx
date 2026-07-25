@@ -1,275 +1,42 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { Tabs } from "@/components/tabs";
-import { OfficerBuilder } from "./officer-builder";
-import { SoldierRecruiter } from "./soldier-recruiter";
-import { ShipPanel } from "./ship-panel";
-import { SOLDIER_RULES } from "@/lib/stargrave/constants";
-import { CorpEmblem } from "@/components/corp-emblem";
-import { EditCrewNameForm } from "./edit-crew-name-form";
-import { DeleteCrewButton } from "./delete-crew-button";
-import { CaptainDossier } from "./captain-dossier";
+import { loadCrewDetail } from "./load-crew-data";
+import { CrewWizard } from "./crew-wizard";
 import { CrewReadonlyView } from "./crew-readonly-view";
-import { corpThemeSlug } from "@/lib/corp-theme";
 
+// Router for the three crew-detail flows: an owner whose crew isn't
+// finished yet gets the step-gated creation wizard; everyone else (the
+// owner of a finished crew, or a campaign teammate) gets the read-only
+// dossier view. Editing a finished crew happens on the separate
+// crews/[crewId]/edit route, reached via the "Bearbeiten" button there.
 export default async function CrewPage({
   params,
 }: {
   params: Promise<{ crewId: string }>;
 }) {
   const { crewId } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const data = await loadCrewDetail(crewId);
+  if (!data) notFound();
 
-  const { data: crew } = await supabase
-    .from("crews")
-    .select("id, name, player_id, campaign_id, credits, experience, ship_name, corps(key, name)")
-    .eq("id", crewId)
-    .maybeSingle();
+  const { crew, isOwner } = data;
 
-  if (!crew) notFound();
-
-  const isOwner = crew.player_id === user?.id;
-  const corpSlug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
-
-  const [
-    { data: backgrounds },
-    { data: corePowerLinks },
-    { data: powers },
-    { data: equipment },
-    { data: soldierTypes },
-    { data: captain },
-    { data: captainPowers },
-    { data: captainGear },
-    { data: firstMate },
-    { data: firstMatePowers },
-    { data: firstMateGear },
-    { data: soldiers },
-    { data: shipUpgradeTypes },
-    { data: crewShipUpgrades },
-    { data: holdItems },
-    { data: soldierTypeGear },
-  ] = await Promise.all([
-    supabase.from("backgrounds").select("id, name, flavor_text, fixed_stat_mods, choice_stat_count, choice_stat_options"),
-    supabase.from("background_core_powers").select("background_id, power_id"),
-    supabase.from("powers").select("id, name, activation_number, strain, full_text").order("name"),
-    supabase
-      .from("equipment_items")
-      .select("id, key, name, category, gear_slots, cost_cr, effect_text, restrictions, base_weapon_type")
-      .order("category, name"),
-    supabase.from("soldier_types").select("id, name, table_type, move, fight, shoot, armour, will, health, cost_cr"),
-    supabase
-      .from("captains")
-      .select("id, name, background_id, chosen_stat_options, level, move, fight, shoot, armour, will, health, current_health")
-      .eq("crew_id", crewId)
-      .maybeSingle(),
-    supabase.from("captain_powers").select("power_id, is_core, reduced, captains!inner(crew_id)").eq("captains.crew_id", crewId),
-    supabase.from("captain_gear").select("equipment_item_id, captains!inner(crew_id)").eq("captains.crew_id", crewId),
-    supabase
-      .from("first_mates")
-      .select("id, name, background_id, chosen_stat_options, move, fight, shoot, armour, will, health, current_health")
-      .eq("crew_id", crewId)
-      .maybeSingle(),
-    supabase
-      .from("first_mate_powers")
-      .select("power_id, is_core, reduced, first_mates!inner(crew_id)")
-      .eq("first_mates.crew_id", crewId),
-    supabase.from("first_mate_gear").select("equipment_item_id, first_mates!inner(crew_id)").eq("first_mates.crew_id", crewId),
-    supabase
-      .from("soldiers")
-      .select(
-        "id, name, is_robot, current_health, bonus_gear_item_id, soldier_types(id, name, table_type, move, fight, shoot, armour, will, health, cost_cr), bonus_gear:equipment_items(id, name)"
-      )
-      .eq("crew_id", crewId)
-      .order("sort_order"),
-    supabase.from("ship_upgrade_types").select("id, key, name, cost_cr, effect_text, max_purchases"),
-    supabase
-      .from("crew_ship_upgrades")
-      .select("id, ship_upgrade_type_id, target_note, ship_upgrade_types(id, key, name, cost_cr, effect_text, max_purchases)")
-      .eq("crew_id", crewId),
-    supabase
-      .from("ship_hold_items")
-      .select("id, equipment_item_id, custom_name, quantity, notes, equipment_items(id, name)")
-      .eq("crew_id", crewId),
-    supabase.from("soldier_type_gear").select("soldier_type_id, quantity, equipment_items(name, key, category)"),
-  ]);
-
-  const gearByType: Record<string, { name: string; quantity: number }[]> = {};
-  const weaponContextByType: Record<string, { weaponKeys: string[]; hasDeck: boolean; hasPicks: boolean }> = {};
-  for (const g of soldierTypeGear ?? []) {
-    if (!g.equipment_items) continue;
-    (gearByType[g.soldier_type_id] ??= []).push({ name: g.equipment_items.name, quantity: g.quantity });
-
-    const ctx = (weaponContextByType[g.soldier_type_id] ??= { weaponKeys: [], hasDeck: false, hasPicks: false });
-    if (g.equipment_items.category === "weapon") ctx.weaponKeys.push(g.equipment_items.key);
-    if (g.equipment_items.key === "deck") ctx.hasDeck = true;
-    if (g.equipment_items.key === "picks") ctx.hasPicks = true;
-  }
-
-  const typedBackgrounds = (backgrounds ?? []).map((b) => ({
-    ...b,
-    fixed_stat_mods: (b.fixed_stat_mods ?? {}) as Record<string, number>,
-  }));
-  const typedSoldierTypes = (soldierTypes ?? []).map((t) => ({
-    ...t,
-    table_type: t.table_type as "standard" | "specialist",
-  }));
-
-  const corePowersByBackground: Record<string, string[]> = {};
-  for (const link of corePowerLinks ?? []) {
-    (corePowersByBackground[link.background_id] ??= []).push(link.power_id);
-  }
-
-  const maxSpecialists = (crewShipUpgrades ?? []).some((u) => u.ship_upgrade_types?.key === "extra_quarters")
-    ? SOLDIER_RULES.maxSpecialistsDefault + 1
-    : SOLDIER_RULES.maxSpecialistsDefault;
-
-  const captainBackgroundName = captain ? typedBackgrounds.find((b) => b.id === captain.background_id)?.name ?? null : null;
-  const firstMateBackgroundName = firstMate ? typedBackgrounds.find((b) => b.id === firstMate.background_id)?.name ?? null : null;
-
-  if (!isOwner) {
-    return (
-      <CrewReadonlyView
-        crew={crew}
-        captain={captain}
-        captainBackgroundName={captainBackgroundName}
-        firstMate={firstMate}
-        firstMateBackgroundName={firstMateBackgroundName}
-        soldiers={(soldiers ?? []).filter((s) => s.soldier_types !== null) as Parameters<typeof CrewReadonlyView>[0]["soldiers"]}
-        crewShipUpgrades={(crewShipUpgrades ?? []).filter((u) => u.ship_upgrade_types !== null) as Parameters<
-          typeof CrewReadonlyView
-        >[0]["crewShipUpgrades"]}
-        holdItems={holdItems ?? []}
-        gearByType={gearByType}
-        corpSlug={corpSlug}
-      />
-    );
+  if (isOwner && !crew.setup_completed_at) {
+    return <CrewWizard crewId={crewId} {...data} />;
   }
 
   return (
-    <div className="hud-grid min-h-screen">
-      <div className="mx-auto max-w-4xl px-6 py-12">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
-          <div>
-            <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
-            <EditCrewNameForm crewId={crewId} name={crew.name} />
-          </div>
-        </div>
-        <DeleteCrewButton crewId={crewId} crewName={crew.name} />
-      </div>
-      <p className="mt-3 font-mono text-sm text-text-secondary">
-        {crew.credits.toLocaleString("de-DE")} CR · {crew.experience} XP
-      </p>
-
-      {captain ? (
-        <div className="mt-6 max-w-md">
-          <CaptainDossier captain={captain} backgroundName={captainBackgroundName} />
-        </div>
-      ) : null}
-
-      <div className="mt-8">
-        <Tabs
-          tabs={[
-            {
-              label: "Captain",
-              content: (
-                <OfficerBuilder
-                  key="captain"
-                  crewId={crewId}
-                  role="captain"
-                  inCampaign={!!crew.campaign_id}
-                  backgrounds={typedBackgrounds}
-                  corePowersByBackground={corePowersByBackground}
-                  powers={powers ?? []}
-                  equipment={equipment ?? []}
-                  existing={
-                    captain
-                      ? {
-                          name: captain.name,
-                          backgroundId: captain.background_id,
-                          chosenStatOptions: captain.chosen_stat_options,
-                          powers: (captainPowers ?? []).map((p) => ({ powerId: p.power_id, reduced: p.reduced })),
-                          gearItemIds: (captainGear ?? []).map((g) => g.equipment_item_id),
-                        }
-                      : null
-                  }
-                />
-              ),
-            },
-            {
-              label: "First Mate",
-              content: (
-                <OfficerBuilder
-                  key="first_mate"
-                  crewId={crewId}
-                  role="first_mate"
-                  inCampaign={!!crew.campaign_id}
-                  backgrounds={typedBackgrounds}
-                  corePowersByBackground={corePowersByBackground}
-                  powers={powers ?? []}
-                  equipment={equipment ?? []}
-                  existing={
-                    firstMate
-                      ? {
-                          name: firstMate.name,
-                          backgroundId: firstMate.background_id,
-                          chosenStatOptions: firstMate.chosen_stat_options,
-                          powers: (firstMatePowers ?? []).map((p) => ({ powerId: p.power_id, reduced: p.reduced })),
-                          gearItemIds: (firstMateGear ?? []).map((g) => g.equipment_item_id),
-                        }
-                      : null
-                  }
-                />
-              ),
-            },
-            {
-              label: "Soldiers",
-              content: (
-                <SoldierRecruiter
-                  crewId={crewId}
-                  inCampaign={!!crew.campaign_id}
-                  soldierTypes={typedSoldierTypes}
-                  soldiers={(soldiers ?? []).filter((s) => s.soldier_types !== null) as Parameters<
-                    typeof SoldierRecruiter
-                  >[0]["soldiers"]}
-                  credits={crew.credits}
-                  maxSpecialists={maxSpecialists}
-                  gearByType={gearByType}
-                  weaponContextByType={weaponContextByType}
-                  equipment={(equipment ?? []).map((e) => ({
-                    id: e.id,
-                    name: e.name,
-                    category: e.category,
-                    restrictions: e.restrictions,
-                    base_weapon_type: e.base_weapon_type,
-                  }))}
-                />
-              ),
-            },
-            {
-              label: "Ship",
-              content: (
-                <ShipPanel
-                  crewId={crewId}
-                  shipName={crew.ship_name}
-                  credits={crew.credits}
-                  shipUpgradeTypes={shipUpgradeTypes ?? []}
-                  crewShipUpgrades={(crewShipUpgrades ?? []).filter((u) => u.ship_upgrade_types !== null) as Parameters<
-                    typeof ShipPanel
-                  >[0]["crewShipUpgrades"]}
-                  equipment={(equipment ?? []).map((e) => ({ id: e.id, name: e.name }))}
-                  holdItems={holdItems ?? []}
-                />
-              ),
-            },
-          ]}
-        />
-      </div>
-      </div>
-    </div>
+    <CrewReadonlyView
+      crewId={crewId}
+      crew={crew}
+      captain={data.captain}
+      captainBackgroundName={data.captainBackgroundName}
+      firstMate={data.firstMate}
+      firstMateBackgroundName={data.firstMateBackgroundName}
+      soldiers={data.soldiers}
+      crewShipUpgrades={data.crewShipUpgrades}
+      holdItems={data.holdItems}
+      gearByType={data.gearByType}
+      corpSlug={data.corpSlug}
+      isOwner={isOwner}
+    />
   );
 }

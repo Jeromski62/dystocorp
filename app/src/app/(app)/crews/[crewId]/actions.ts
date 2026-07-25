@@ -30,7 +30,7 @@ async function requireOwnedCrew(crewId: string) {
 
   const { data: crew } = await supabase
     .from("crews")
-    .select("id, credits, campaign_id")
+    .select("id, credits, campaign_id, wizard_step, setup_completed_at")
     .eq("id", crewId)
     .eq("player_id", user.id)
     .maybeSingle();
@@ -379,6 +379,32 @@ export async function setSoldierBonusGear(
     .update({ bonus_gear_item_id: equipmentItemId })
     .eq("id", soldierId)
     .eq("crew_id", crewId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/crews/${crewId}`);
+  return {};
+}
+
+// Advances the crew-creation wizard's persisted frontier past `fromStep`
+// (1=Captain, 2=First Mate, 3=Soldiers, 4=Ship). wizard_step only ever moves
+// forward -- re-confirming an earlier step (after navigating back) is a
+// no-op past the already-reached frontier. Completing step 4 finalizes the
+// crew, after which it always opens in the read-only view.
+export async function advanceWizardStep(crewId: string, fromStep: number): Promise<{ error?: string }> {
+  const owned = await requireOwnedCrew(crewId);
+  if ("error" in owned) return owned;
+  const { supabase, crew } = owned;
+
+  if (crew.setup_completed_at) return {};
+
+  const nextStep = Math.min(4, Math.max(crew.wizard_step, fromStep + 1));
+  const { error } = await supabase
+    .from("crews")
+    .update({
+      wizard_step: nextStep,
+      ...(fromStep >= 4 ? { setup_completed_at: new Date().toISOString() } : {}),
+    })
+    .eq("id", crewId);
   if (error) return { error: error.message };
 
   revalidatePath(`/crews/${crewId}`);

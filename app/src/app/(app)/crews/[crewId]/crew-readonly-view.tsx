@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { CaptainDossier } from "./captain-dossier";
+import { CrewMemberCard } from "./crew-member-card";
 import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
-import { StatusBadge } from "@/components/status-badge";
+import { Button } from "@/components/ui/button";
 
 type Officer = {
   name: string;
@@ -39,10 +41,41 @@ type Soldier = {
 type ShipUpgrade = { id: string; ship_upgrade_types: { name: string } | null };
 type HoldItem = { id: string; custom_name: string | null; quantity: number; equipment_items: { name: string } | null };
 
-// Read-only counterpart to the crew edit UI (CrewPage), shown to campaign
-// teammates viewing someone else's crew — only the owning player gets the
-// editable tabs (OfficerBuilder/SoldierRecruiter/ShipPanel).
+function SoldierCard({
+  soldier,
+  gearByType,
+}: {
+  soldier: Soldier;
+  gearByType: Record<string, { name: string; quantity: number }[]>;
+}) {
+  const type = soldier.soldier_types;
+  if (!type) return null;
+
+  const items = [
+    ...(gearByType[type.id] ?? []),
+    ...(soldier.bonus_gear ? [{ name: `${soldier.bonus_gear.name} (Bonus)`, quantity: 1 }] : []),
+  ];
+
+  return (
+    <CrewMemberCard
+      roleLabel={type.table_type === "specialist" ? "Specialist" : "Standard"}
+      name={soldier.name || type.name}
+      subLabel={soldier.name ? type.name : soldier.is_robot ? "Robot" : null}
+      health={type.health}
+      currentHealth={soldier.current_health}
+    >
+      <SoldierStatGrid stats={type} />
+      <GearTags items={items} />
+    </CrewMemberCard>
+  );
+}
+
+// Default landing view when opening a crew: read-only, whether it's your
+// own (finished) crew or a campaign teammate's. Owners get a "Bearbeiten"
+// button into the tab-based edit UI (crews/[crewId]/edit); everyone else
+// just sees the dossier.
 export function CrewReadonlyView({
+  crewId,
   crew,
   captain,
   captainBackgroundName,
@@ -53,7 +86,9 @@ export function CrewReadonlyView({
   holdItems,
   gearByType,
   corpSlug,
+  isOwner = false,
 }: {
+  crewId: string;
   crew: { name: string; credits: number; experience: number; ship_name: string | null; corps: { name: string } | null };
   captain: Officer | null;
   captainBackgroundName: string | null;
@@ -64,6 +99,7 @@ export function CrewReadonlyView({
   holdItems: HoldItem[];
   gearByType: Record<string, { name: string; quantity: number }[]>;
   corpSlug?: string;
+  isOwner?: boolean;
 }) {
   return (
     <div className="hud-grid min-h-screen">
@@ -74,9 +110,15 @@ export function CrewReadonlyView({
             <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
             <h1 className="font-display text-2xl tracking-[2.5px] text-text-default">{crew.name}</h1>
           </div>
-          <span className="ml-auto border border-border px-2 py-0.5 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
-            Nur-Lese-Ansicht
-          </span>
+          {isOwner ? (
+            <Link href={`/crews/${crewId}/edit`} className="ml-auto">
+              <Button variant="outline">Bearbeiten</Button>
+            </Link>
+          ) : (
+            <span className="ml-auto border border-border px-2 py-0.5 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
+              Nur-Lese-Ansicht
+            </span>
+          )}
         </div>
         <p className="mt-3 font-mono text-sm text-text-secondary">
           {crew.credits.toLocaleString("de-DE")} CR · {crew.experience} XP
@@ -89,46 +131,18 @@ export function CrewReadonlyView({
           ) : null}
         </div>
 
-        <section className="mt-8 flex flex-col border border-border bg-bg-surface">
-          <div className="border-b border-border px-4 py-2.5">
-            <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
-              Trupp-Register // {soldiers.length} Einheiten
-            </span>
-          </div>
+        <section className="mt-8">
+          <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
+            Trupp-Register // {soldiers.length} Einheiten
+          </p>
           {soldiers.length === 0 ? (
-            <p className="px-4 py-6 font-mono text-sm text-text-secondary">Keine Soldaten rekrutiert.</p>
+            <p className="mt-2 font-mono text-sm text-text-secondary">Keine Soldaten rekrutiert.</p>
           ) : (
-            soldiers.map((s) => {
-              const type = s.soldier_types;
-              return (
-                <div key={s.id} className="border-b border-border/60 px-4 py-3 last:border-b-0">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-medium text-text-default">
-                      {s.name || type?.name || "Soldat"}
-                      {type ? (
-                        <span className="ml-2 font-mono text-[14px] text-text-secondary uppercase">
-                          {type.table_type === "specialist" ? "Specialist" : "Standard"}
-                        </span>
-                      ) : null}
-                    </span>
-                    <StatusBadge currentHealth={s.current_health} health={type?.health ?? s.current_health} />
-                  </div>
-                  {type ? (
-                    <>
-                      <div className="mt-2.5">
-                        <SoldierStatGrid stats={type} />
-                      </div>
-                      <GearTags
-                        items={[
-                          ...(gearByType[type.id] ?? []),
-                          ...(s.bonus_gear ? [{ name: `${s.bonus_gear.name} (Bonus)`, quantity: 1 }] : []),
-                        ]}
-                      />
-                    </>
-                  ) : null}
-                </div>
-              );
-            })
+            <div className="mt-2 grid gap-4 sm:grid-cols-2">
+              {soldiers.map((s) => (
+                <SoldierCard key={s.id} soldier={s} gearByType={gearByType} />
+              ))}
+            </div>
           )}
         </section>
 

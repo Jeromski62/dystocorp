@@ -457,8 +457,10 @@ export type Database = {
           name: string
           notes: string | null
           player_id: string
+          setup_completed_at: string | null
           ship_name: string | null
           updated_at: string
+          wizard_step: number
         }
         Insert: {
           campaign_id?: string | null
@@ -470,8 +472,10 @@ export type Database = {
           name?: string
           notes?: string | null
           player_id: string
+          setup_completed_at?: string | null
           ship_name?: string | null
           updated_at?: string
+          wizard_step?: number
         }
         Update: {
           campaign_id?: string | null
@@ -483,8 +487,10 @@ export type Database = {
           name?: string
           notes?: string | null
           player_id?: string
+          setup_completed_at?: string | null
           ship_name?: string | null
           updated_at?: string
+          wizard_step?: number
         }
         Relationships: [
           {
