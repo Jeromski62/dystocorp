@@ -40,7 +40,7 @@ export function CorpPicker({
               {corp.lore_markdown}
             </p>
             <form action={createAction.bind(null, corp.id)} className="mt-4">
-              <Button type="submit">Crew bei {corp.name} gründen</Button>
+              <Button type="submit">In Team investieren</Button>
             </form>
           </article>
         ))}

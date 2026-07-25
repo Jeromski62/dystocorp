@@ -213,7 +213,7 @@ export default async function HomePage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <Link href="/crews/new">
-              <Button variant="cta">＋ Neue Crew</Button>
+              <Button variant="cta">＋ Team Einstellen</Button>
             </Link>
             <Link href="/campaigns">
               <Button variant="ghost">＋ Kampagne beitreten</Button>

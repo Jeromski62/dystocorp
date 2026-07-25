@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { CrewCard } from "@/components/crew-card";
@@ -76,13 +75,6 @@ export function CrewGrid({ crews }: { crews: Crew[] }) {
             />
           );
         })}
-
-        <Link
-          href="/crews/new"
-          className="flex flex-col items-center justify-center gap-2 border border-white/18 p-4 text-center font-display text-sm font-semibold tracking-[0.06em] text-text-secondary uppercase transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:border-white/40 hover:text-text-default"
-        >
-          ＋ Crew registrieren
-        </Link>
       </div>
     </div>
   );

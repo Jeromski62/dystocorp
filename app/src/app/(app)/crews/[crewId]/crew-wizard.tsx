@@ -97,7 +97,7 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
           </div>
         </div>
         <p className="mt-3 font-mono text-sm text-text-secondary">
-          {crew.credits.toLocaleString("de-DE")} CR · Crew-Erstellung
+          {crew.credits.toLocaleString("de-DE")} CR · Team Invest
         </p>
 
         <ol className="mt-8 flex flex-wrap items-center gap-2 font-mono text-[14px] uppercase tracking-[0.06em]">

@@ -29,7 +29,7 @@ export default async function CrewsPage() {
             <span className="font-mono text-[14px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
           </div>
           <Link href="/crews/new">
-            <Button variant="cta">＋ Neue Crew</Button>
+            <Button variant="cta">＋ Team Einstellen</Button>
           </Link>
         </div>
         <p className="mt-1 font-mono text-xs text-text-secondary">

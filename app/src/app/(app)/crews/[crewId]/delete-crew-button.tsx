@@ -20,7 +20,7 @@ export function DeleteCrewButton({ crewId, crewName }: { crewId: string; crewNam
   return (
     <div className="flex flex-col items-end gap-1">
       <Button type="button" variant="destructive" size="sm" disabled={pending} onClick={handleDelete}>
-        {pending ? "Lösche…" : "Crew löschen"}
+        {pending ? "Lösche…" : "Layoff Team"}
       </Button>
       {error ? <p className="text-xs text-danger">{error}</p> : null}
     </div>
