@@ -77,11 +77,12 @@ export function CrewCard({
   );
 }
 
+// Per Figma redesign (node 2046:490): white 24%-alpha wash chip, no border,
+// full-opacity white text -- replaces the old dimmed border+font-mono style.
 function StatBadge({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex shrink-0 items-start border border-white p-1 font-mono text-[14px] tracking-[1.4px] text-text-default opacity-70">
-      <span>{label}:</span>
-      <span>{value}</span>
+    <div className="flex shrink-0 items-center bg-white/24 px-1.5 py-1 text-[14px] font-semibold tracking-[1.4px] text-white">
+      {label}: {value}
     </div>
   );
 }
