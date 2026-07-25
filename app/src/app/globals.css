@@ -232,6 +232,23 @@ body {
   border-radius: var(--radius-sm);
 }
 
+/* Every interactive element gets an explicit pointer/not-allowed cursor,
+   regardless of whether it's a plain <button>, a base-ui primitive
+   (disabled state exposed as both the native attribute and data-disabled),
+   a link, or a native <select>. */
+button:not(:disabled):not([data-disabled]),
+[role="button"]:not([aria-disabled="true"]),
+a[href],
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+button[data-disabled],
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
