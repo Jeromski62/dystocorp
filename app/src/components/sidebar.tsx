@@ -28,7 +28,7 @@ export async function Sidebar() {
           <SidebarNav />
         </div>
 
-        <Link href="/profile" className="flex items-center gap-2.5 border-t border-border px-4 py-3.5 transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:bg-white/[0.03]">
+        <Link href="/profile" className="flex items-center gap-2.5 border-t border-border px-4 py-3.5 transition-colors hover:bg-white/[0.03]">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-accent/40 bg-accent/10 font-display text-xs font-bold text-accent">
             {identity.trim().charAt(0).toUpperCase()}
           </span>

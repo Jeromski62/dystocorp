@@ -13,7 +13,7 @@ export function Tabs({ tabs }: { tabs: { label: string; content: ReactNode }[] }
             key={tab.label}
             type="button"
             onClick={() => setActive(i)}
-            className={`px-4 py-2 font-display text-sm font-semibold tracking-[0.06em] uppercase transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
+            className={`px-4 py-2 font-display text-sm font-semibold tracking-[0.06em] uppercase transition-colors ${
               active === i
                 ? "border-b-2 border-corp-accent text-text-default"
                 : "text-text-secondary hover:text-text-default"

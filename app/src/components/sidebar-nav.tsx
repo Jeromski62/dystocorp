@@ -18,7 +18,7 @@ export function SidebarNav() {
             className={
               active
                 ? "border-l-2 border-accent bg-accent/[0.08] px-4 py-2.5 font-display text-[16px] font-semibold tracking-[0.06em] text-text-default uppercase"
-                : "border-l-2 border-transparent px-4 py-2.5 font-display text-[16px] font-semibold tracking-[0.06em] text-text-secondary uppercase transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:text-text-default"
+                : "border-l-2 border-transparent px-4 py-2.5 font-display text-[16px] font-semibold tracking-[0.06em] text-text-secondary uppercase transition-colors hover:text-text-default"
             }
           >
             {item.label}

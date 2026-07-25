@@ -42,7 +42,7 @@
   /* motion */
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --dur-hover: 120ms;
-  --dur-ui: 240ms;
+  --dur-ui: 300ms;
   --dur-page: 400ms;
 
   /* corp tokens — safe fallback (neutral) so nothing breaks if used outside [data-corp] */
@@ -150,6 +150,13 @@
   --font-display: var(--font-rajdhani);
   --font-mono: var(--font-rajdhani);
   --font-sans: var(--font-inter);
+
+  /* every transition-* utility (transition-colors, transition-[...], etc.)
+     defaults to this duration/easing unless a component explicitly
+     overrides it -- single point of change for "all interactions feel
+     smoother" instead of hand-tuning each usage. */
+  --default-transition-duration: var(--dur-ui);
+  --default-transition-timing-function: var(--ease);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -188,6 +195,24 @@ body {
   background: var(--bg-body);
   color: var(--text-default);
   font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/* Fallback so hover/focus/active states are never an instant snap even on
+   elements that don't (yet) carry an explicit transition-* utility class.
+   Layered as `base` so any component's own transition-* utility (e.g.
+   Button's transition-[...] with `transform` added) still wins over this. */
+@layer base {
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  summary {
+    transition-property: color, background-color, border-color, box-shadow, opacity;
+    transition-timing-function: var(--ease);
+    transition-duration: var(--dur-ui);
+  }
 }
 
 /* headline utility per styleguide: Rajdhani, uppercase, wide tracking */

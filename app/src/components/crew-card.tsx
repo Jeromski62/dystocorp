@@ -43,7 +43,7 @@ export function CrewCard({
     <Link
       href={href}
       data-corp={corpSlug}
-      className="relative flex h-[160px] w-full flex-col gap-2 overflow-hidden border border-corp-accent p-4 transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:border-corp-accent/60"
+      className="relative flex h-[160px] w-full flex-col gap-2 overflow-hidden border border-corp-accent p-4 transition-colors hover:border-corp-accent/60"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-black" />
