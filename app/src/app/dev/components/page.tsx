@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ResolvedVar } from "./resolved-var";
 import { Button } from "@/components/ui/button";
 import { CrewCard } from "@/components/crew-card";
 import { CorpEmblem } from "@/components/corp-emblem";
@@ -44,6 +45,27 @@ function CorpColumns({ children }: { children: (slug: (typeof CORP_COLUMNS)[numb
           {children(slug)}
         </div>
       ))}
+    </div>
+  );
+}
+
+function TokenGroup({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div>
+      <p className="mb-1 font-mono text-[11px] tracking-[0.1em] text-text-subtle uppercase">{label}</p>
+      <div className="grid grid-cols-1 gap-4 border border-border p-4 sm:grid-cols-2 lg:grid-cols-4">{children}</div>
+    </div>
+  );
+}
+
+function TokenSwatch({ name }: { name: string }) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <span className="h-9 w-9 shrink-0 border border-border" style={{ background: `var(${name})` }} />
+      <div className="min-w-0">
+        <p className="truncate font-mono text-[11px] text-corp-accent">{name}</p>
+        <ResolvedVar name={name} />
+      </div>
     </div>
   );
 }
@@ -201,6 +223,64 @@ export default function ComponentPlaygroundPage() {
             sampleClassName="font-display text-sm font-semibold tracking-wide text-text-default uppercase"
           />
         </TypeGroup>
+      </Section>
+
+      <Section title="Design Tokens (CSS-Variablen)">
+        <TokenGroup label="Backgrounds">
+          <TokenSwatch name="--bg-body" />
+          <TokenSwatch name="--bg-surface" />
+          <TokenSwatch name="--bg-raised" />
+          <TokenSwatch name="--bg-input" />
+        </TokenGroup>
+
+        <TokenGroup label="Border">
+          <TokenSwatch name="--border" />
+        </TokenGroup>
+
+        <TokenGroup label="Text">
+          <TokenSwatch name="--text-default" />
+          <TokenSwatch name="--text-mid" />
+          <TokenSwatch name="--text-secondary" />
+          <TokenSwatch name="--text-subtle" />
+        </TokenGroup>
+
+        <TokenGroup label="Status (corp-unabhängig)">
+          <TokenSwatch name="--status-active" />
+          <TokenSwatch name="--status-injured" />
+          <TokenSwatch name="--status-out" />
+          <TokenSwatch name="--danger" />
+        </TokenGroup>
+
+        <TokenGroup label="Neutrale Accent / CTA">
+          <TokenSwatch name="--accent" />
+          <TokenSwatch name="--accent-foreground" />
+          <TokenSwatch name="--cta-bg" />
+          <TokenSwatch name="--cta-bg-hover" />
+          <TokenSwatch name="--cta-foreground" />
+        </TokenGroup>
+
+        <div>
+          <p className="mb-1 font-mono text-[11px] tracking-[0.1em] text-text-subtle uppercase">
+            Corp-Tokens (neutral / yugure / bionexx)
+          </p>
+          <CorpColumns>
+            {() => (
+              <div className="flex flex-col gap-3">
+                <TokenSwatch name="--corp-accent" />
+                <TokenSwatch name="--corp-bg" />
+                <TokenSwatch name="--corp-surface" />
+                <TokenSwatch name="--corp-border" />
+                <TokenSwatch name="--corp-on-accent" />
+              </div>
+            )}
+          </CorpColumns>
+        </div>
+
+        <p className="font-mono text-[11px] text-text-subtle">
+          Ausgeblendet: die generischen shadcn-Init-Tokens (--background, --card, --popover, --primary, --secondary,
+          --muted, --destructive, --input, --ring, --chart-*, --sidebar-*) — nicht Teil der aktiven DystoCorp-Palette,
+          nur noch Altlast aus dem shadcn-Setup.
+        </p>
       </Section>
 
       <Section title="Button">
