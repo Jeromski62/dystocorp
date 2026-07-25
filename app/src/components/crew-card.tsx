@@ -30,7 +30,6 @@ export function CrewCard({
   fte,
   xp,
   cr,
-  fill = false,
 }: {
   href: string;
   corpSlug?: string;
@@ -40,16 +39,12 @@ export function CrewCard({
   fte: number;
   xp: number;
   cr: number;
-  /** Stretch to the parent's height instead of the default fixed 160px --
-   *  for slots next to a taller sibling card (e.g. the dashboard, where it
-   *  should bottom out level with CampaignCard). */
-  fill?: boolean;
 }) {
   return (
     <Link
       href={href}
       data-corp={corpSlug}
-      className={`relative flex w-full flex-col gap-2 overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30 ${fill ? "h-full" : "h-[160px]"}`}
+      className="relative flex h-[200px] w-full flex-col gap-2 overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-black" />
