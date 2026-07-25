@@ -5,7 +5,6 @@ import { Clock } from "@/components/clock";
 import { StarmapCanvas } from "@/components/starmap-canvas";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { crewStatus } from "@/lib/crew-status";
-import { CrewCard } from "@/components/crew-card";
 import { CampaignCard } from "@/components/campaign-card";
 import { MissionPreviewCard } from "@/components/mission-preview-card";
 
@@ -13,10 +12,8 @@ type CrewRow = {
   id: string;
   name: string;
   credits: number;
-  experience: number;
   corps: { key: string; name: string } | null;
   captains: { name: string; level: number; current_health: number; health: number } | null;
-  soldiers: { count: number }[];
 };
 
 export default async function HomePage() {
@@ -59,7 +56,7 @@ export default async function HomePage() {
         }),
     supabase
       .from("crews")
-      .select("id, name, credits, experience, corps(key, name), captains(name, level, current_health, health), soldiers(count)")
+      .select("id, name, credits, corps(key, name), captains(name, level, current_health, health)")
       .eq("player_id", user!.id)
       .order("created_at", { ascending: false }),
   ]);
@@ -69,7 +66,6 @@ export default async function HomePage() {
   const newestCrew = crewList[0] ?? null;
   const totalCredits = crewList.reduce((sum, c) => sum + c.credits, 0);
   const newestCrewSlug = newestCrew?.corps ? corpThemeSlug(newestCrew.corps.key) : undefined;
-  const newestCrewUnitCount = newestCrew?.soldiers?.[0]?.count ?? 0;
 
   if (!latestCampaign && !newestCrew) {
     return (
@@ -129,7 +125,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="grid gap-3.5 sm:grid-cols-3">
+          <div className="grid gap-3.5 sm:grid-cols-2">
             <section className="pt-4">
               <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Laufende Kampagne</p>
               {latestCampaign ? (
@@ -159,29 +155,6 @@ export default async function HomePage() {
                 <div className="flex flex-1 items-center justify-center">
                   <p className="font-mono text-xs text-text-secondary">Noch keine Mission geplant.</p>
                 </div>
-              )}
-            </section>
-
-            <section className="flex flex-col pt-4">
-              <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Neueste Crew</p>
-              {newestCrew ? (
-                <div className="mt-2 flex-1">
-                  <CrewCard
-                    href={`/crews/${newestCrew.id}`}
-                    corpSlug={newestCrewSlug}
-                    corpName={newestCrew.corps?.name}
-                    teamName={newestCrew.name}
-                    metaLine={newestCrew.captains?.name ?? "Kein Captain"}
-                    fte={newestCrewUnitCount}
-                    xp={newestCrew.experience}
-                    cr={newestCrew.credits}
-                    fill
-                  />
-                </div>
-              ) : (
-                <Link href="/crews/new" className="mt-2 block font-mono text-xs text-text-secondary hover:text-accent">
-                  Noch keine Crew — erstellen →
-                </Link>
               )}
             </section>
           </div>
