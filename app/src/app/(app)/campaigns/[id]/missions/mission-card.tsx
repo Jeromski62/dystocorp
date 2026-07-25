@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { startMission, submitMissionReport, updateMission } from "./actions";
 import { CrewMissionResultForm } from "./crew-mission-result-form";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 type MissionStatus = "planned" | "ongoing" | "report";
 

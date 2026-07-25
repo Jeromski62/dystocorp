@@ -2,8 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateCrewName } from "./actions";
-import { Button } from "@/components/button";
-import { Button as ShadcnButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function EditCrewNameForm({ crewId, name }: { crewId: string; name: string }) {
@@ -45,9 +44,9 @@ export function EditCrewNameForm({ crewId, name }: { crewId: string; name: strin
         <Button type="button" disabled={pending} onClick={handleSave} className="self-start">
           {pending ? "Speichere…" : "Speichern"}
         </Button>
-        <ShadcnButton
+        <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => {
             setEditing(false);
@@ -55,7 +54,7 @@ export function EditCrewNameForm({ crewId, name }: { crewId: string; name: strin
           }}
         >
           Abbrechen
-        </ShadcnButton>
+        </Button>
       </div>
     </div>
   );

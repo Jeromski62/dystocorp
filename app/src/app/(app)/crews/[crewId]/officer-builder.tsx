@@ -9,7 +9,7 @@ import {
   type ChoosableStat,
   type OfficerRole,
 } from "@/lib/stargrave/constants";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 import {
   computeActivationNumber,
   computeGearSlotTotal,

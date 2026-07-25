@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { joinCampaign } from "./actions";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 export function JoinCampaignForm() {
   const [state, action, pending] = useActionState(joinCampaign, undefined);

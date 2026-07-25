@@ -1,5 +1,5 @@
 import { confirmMagicLink } from "@/lib/supabase/actions";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 export default async function ConfirmPage({
   searchParams,

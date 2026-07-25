@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 import { CrewCard } from "@/components/crew-card";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { StatusBadge } from "@/components/status-badge";
 import { Tabs } from "@/components/tabs";
 import { RainCanvas } from "@/components/rain-canvas";
-import { Button as ShadcnButton } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
@@ -72,11 +71,30 @@ export default function ComponentPlaygroundPage() {
           )}
         </CorpColumns>
         <div>
-          <p className="mb-2 font-mono text-xs text-text-secondary uppercase">cta (corp-unabhängig)</p>
+          <p className="mb-2 font-mono text-xs text-text-secondary uppercase">corp-unabhängig</p>
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="cta">CTA</Button>
             <Button variant="cta" disabled>
               CTA (disabled)
+            </Button>
+            <Button variant="outline">Outline</Button>
+            <Button variant="destructive">Destructive</Button>
+          </div>
+        </div>
+        <div>
+          <p className="mb-2 font-mono text-xs text-text-secondary uppercase">Größen (variant=cta)</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="cta" size="xs">
+              XS
+            </Button>
+            <Button variant="cta" size="sm">
+              SM
+            </Button>
+            <Button variant="cta" size="default">
+              Default (44px)
+            </Button>
+            <Button variant="cta" size="lg">
+              LG
             </Button>
           </div>
         </div>
@@ -164,38 +182,21 @@ export default function ComponentPlaygroundPage() {
         </div>
       </Section>
 
-      <Section title="shadcn ui/Button">
-        <div className="flex flex-wrap items-center gap-2">
-          <ShadcnButton variant="default">Default</ShadcnButton>
-          <ShadcnButton variant="outline">Outline</ShadcnButton>
-          <ShadcnButton variant="secondary">Secondary</ShadcnButton>
-          <ShadcnButton variant="ghost">Ghost</ShadcnButton>
-          <ShadcnButton variant="destructive">Destructive</ShadcnButton>
-          <ShadcnButton variant="link">Link</ShadcnButton>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <ShadcnButton size="xs">XS</ShadcnButton>
-          <ShadcnButton size="sm">SM</ShadcnButton>
-          <ShadcnButton size="default">Default</ShadcnButton>
-          <ShadcnButton size="lg">LG</ShadcnButton>
-        </div>
-      </Section>
-
       <Section title="ui/Input">
         <Input placeholder="Placeholder…" className="max-w-sm" />
       </Section>
 
       <Section title="ui/Dialog">
         <Dialog>
-          <DialogTrigger render={<ShadcnButton>Dialog öffnen</ShadcnButton>} />
+          <DialogTrigger render={<Button variant="outline">Dialog öffnen</Button>} />
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Beispiel-Dialog</DialogTitle>
               <DialogDescription>Kurzer Beschreibungstext für den Dialog-Inhalt.</DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <DialogClose render={<ShadcnButton variant="outline">Abbrechen</ShadcnButton>} />
-              <ShadcnButton>Bestätigen</ShadcnButton>
+              <DialogClose render={<Button variant="outline">Abbrechen</Button>} />
+              <Button>Bestätigen</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

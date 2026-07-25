@@ -1,6 +1,6 @@
 import { CorpEmblem } from "@/components/corp-emblem";
 import { corpThemeSlug } from "@/lib/corp-theme";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 type Corp = { id: string; key: string; name: string; sector: string; lore_markdown: string };
 

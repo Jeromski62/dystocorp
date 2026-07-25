@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateCampaign } from "./actions";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 export function EditCampaignForm({
   campaignId,

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { saveCrewMissionResult } from "./actions";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 type ExistingResult = {
   xpDelta: number;

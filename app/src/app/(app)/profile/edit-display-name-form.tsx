@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateDisplayName } from "./actions";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 export function EditDisplayNameForm({ name }: { name: string }) {
   const [nameValue, setNameValue] = useState(name);

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 import { Clock } from "@/components/clock";
 import { RainCanvas } from "@/components/rain-canvas";
 import { corpThemeSlug } from "@/lib/corp-theme";

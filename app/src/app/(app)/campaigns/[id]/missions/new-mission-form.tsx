@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { createMission } from "./actions";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 export function NewMissionForm({ campaignId }: { campaignId: string }) {
   const [title, setTitle] = useState("");

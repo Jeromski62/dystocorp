@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/supabase/actions";
 import { EditDisplayNameForm } from "./edit-display-name-form";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 export default async function ProfilePage() {
   const supabase = await createClient();

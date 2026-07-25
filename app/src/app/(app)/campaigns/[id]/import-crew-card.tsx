@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { importCrewIntoCampaign } from "./actions";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 type Crew = { id: string; name: string; corps: { name: string } | null };
 
