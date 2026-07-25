@@ -251,6 +251,64 @@ body {
   }
 }
 
+/* StarmapCanvas overlay motion — haze drift, CRT sweep band, film grain jitter */
+@keyframes hazeDrift {
+  0% {
+    transform: translate(-2%, 1%) scale(1.05);
+  }
+  50% {
+    transform: translate(3%, -2%) scale(1.12);
+  }
+  100% {
+    transform: translate(-2%, 1%) scale(1.05);
+  }
+}
+
+@keyframes sweepDown {
+  0% {
+    transform: translateY(-20%);
+  }
+  100% {
+    transform: translateY(120%);
+  }
+}
+
+@keyframes grainShift {
+  0% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-6%, 4%);
+  }
+  20% {
+    transform: translate(5%, -7%);
+  }
+  30% {
+    transform: translate(-8%, 2%);
+  }
+  40% {
+    transform: translate(4%, 6%);
+  }
+  50% {
+    transform: translate(-3%, -5%);
+  }
+  60% {
+    transform: translate(7%, 3%);
+  }
+  70% {
+    transform: translate(-5%, -2%);
+  }
+  80% {
+    transform: translate(2%, 7%);
+  }
+  90% {
+    transform: translate(-7%, -4%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
 *:focus-visible {
   outline: 2px solid var(--corp-accent);
   outline-offset: 2px;

@@ -9,14 +9,3 @@ const CORP_THEME_SLUGS: Record<string, string> = {
 export function corpThemeSlug(corpKey: string): string {
   return CORP_THEME_SLUGS[corpKey] ?? corpKey;
 }
-
-// rgb() triplets for RainCanvas's `tint` prop, keyed by design-system slug —
-// matches --corp-accent in globals.css (Yūgure red / BioNexx green).
-const CORP_RAIN_TINTS: Record<string, string> = {
-  yugure: "251,59,78",
-  bionexx: "83,211,125",
-};
-
-export function corpRainTint(slug: string | undefined): string {
-  return (slug && CORP_RAIN_TINTS[slug]) || "170,196,224";
-}

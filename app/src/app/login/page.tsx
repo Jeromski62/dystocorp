@@ -1,11 +1,11 @@
-import { RainCanvas } from "@/components/rain-canvas";
+import { StarmapCanvas } from "@/components/starmap-canvas";
 import { LensFlare } from "./lens-flare";
 import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
   return (
     <div className="hud-grid relative min-h-screen overflow-hidden">
-      <RainCanvas className="z-[6]" />
+      <StarmapCanvas className="z-[6]" />
       <LensFlare />
       <div className="relative z-[1] mx-auto flex min-h-screen max-w-sm flex-col px-6">
         <div className="flex items-center justify-between pt-6 font-mono text-[15px] tracking-[0.06em] text-text-default">

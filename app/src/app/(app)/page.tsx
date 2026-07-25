@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Clock } from "@/components/clock";
-import { RainCanvas } from "@/components/rain-canvas";
+import { StarmapCanvas } from "@/components/starmap-canvas";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { crewStatus } from "@/lib/crew-status";
 import { CrewCard } from "@/components/crew-card";
@@ -93,7 +93,7 @@ export default async function HomePage() {
 
   return (
     <div className="hud-grid relative min-h-screen overflow-hidden">
-      <RainCanvas />
+      <StarmapCanvas />
 
       <div className="relative z-[1] flex min-h-screen flex-col">
         <div className="flex flex-wrap items-stretch border-b border-border bg-black/40 font-mono text-[14px] tracking-[0.05em] text-text-secondary">

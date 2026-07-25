@@ -5,7 +5,7 @@ import { CrewCard } from "@/components/crew-card";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { StatusBadge } from "@/components/status-badge";
 import { Tabs } from "@/components/tabs";
-import { RainCanvas } from "@/components/rain-canvas";
+import { StarmapCanvas } from "@/components/starmap-canvas";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
@@ -403,9 +403,9 @@ export default function ComponentPlaygroundPage() {
         />
       </Section>
 
-      <Section title="RainCanvas">
+      <Section title="StarmapCanvas">
         <div className="relative h-48 overflow-hidden border border-border">
-          <RainCanvas />
+          <StarmapCanvas />
         </div>
       </Section>
 
