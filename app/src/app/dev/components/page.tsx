@@ -184,8 +184,8 @@ export default function ComponentPlaygroundPage() {
             sampleClassName="font-display text-xl text-text-default"
           />
           <TypeRow
-            label="font-mono (IBM Plex Mono)"
-            note="Daten, Labels, Systemstrings"
+            label="font-mono (Rajdhani, kein Mono mehr)"
+            note="Daten, Labels, Systemstrings — Utility-Klasse bleibt, Schrift ist jetzt dieselbe wie überall sonst"
             sample="SYS_OP_1.09 // ONLINE"
             sampleClassName="font-mono text-lg text-text-default"
           />

@@ -148,7 +148,7 @@
 
   --font-body: var(--font-rajdhani);
   --font-display: var(--font-rajdhani);
-  --font-mono: var(--font-ibm-plex-mono);
+  --font-mono: var(--font-rajdhani);
   --font-sans: var(--font-inter);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

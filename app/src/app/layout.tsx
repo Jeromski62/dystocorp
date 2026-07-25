@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Rajdhani, IBM_Plex_Mono } from "next/font/google";
+import { Inter, Rajdhani } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -11,12 +11,6 @@ const inter = Inter({
 const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
   weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
-  weight: ["400", "500", "700"],
   subsets: ["latin"],
 });
 
@@ -33,7 +27,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full dark antialiased", inter.variable, rajdhani.variable, ibmPlexMono.variable)}
+      className={cn("h-full dark antialiased", inter.variable, rajdhani.variable)}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
