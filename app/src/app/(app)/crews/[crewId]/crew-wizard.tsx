@@ -8,6 +8,7 @@ import { SoldierRecruiter } from "./soldier-recruiter";
 import { ShipPanel } from "./ship-panel";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { EditCrewNameForm } from "./edit-crew-name-form";
+import { DeleteCrewButton } from "./delete-crew-button";
 import { Button } from "@/components/ui/button";
 import type { CrewDetail } from "./load-crew-data";
 
@@ -89,12 +90,15 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
   return (
     <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-4xl px-6 py-12">
-        <div className="flex items-center gap-4">
-          <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
-          <div>
-            <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
-            <EditCrewNameForm crewId={crewId} name={crew.name} />
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
+            <div>
+              <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
+              <EditCrewNameForm crewId={crewId} name={crew.name} />
+            </div>
           </div>
+          <DeleteCrewButton crewId={crewId} crewName={crew.name} />
         </div>
         <p className="mt-3 font-mono text-sm text-text-secondary">
           {crew.credits.toLocaleString("de-DE")} CR · Team Invest
