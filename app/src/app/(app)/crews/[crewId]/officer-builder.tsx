@@ -62,6 +62,24 @@ const STAT_LABELS: Record<ChoosableStat, string> = {
   health: "Health",
 };
 
+// fixed_stat_mods can include "will" (never a choosable stat), so this needs
+// its own label map/order rather than reusing STAT_LABELS/ChoosableStat.
+const STAT_ORDER = ["move", "fight", "shoot", "armour", "will", "health"] as const;
+const FULL_STAT_LABELS: Record<string, string> = {
+  move: "Move",
+  fight: "Fight",
+  shoot: "Shoot",
+  armour: "Armour",
+  will: "Will",
+  health: "Health",
+};
+
+function formatFixedStatMods(mods: Record<string, number>): string {
+  return STAT_ORDER.filter((stat) => mods[stat])
+    .map((stat) => `+${mods[stat]} ${FULL_STAT_LABELS[stat]}`)
+    .join(", ");
+}
+
 export function OfficerBuilder({
   crewId,
   role,
@@ -256,6 +274,9 @@ export function OfficerBuilder({
               }`}
             >
               <p className="font-medium text-text-default">{b.name}</p>
+              {formatFixedStatMods(b.fixed_stat_mods) ? (
+                <p className="mt-0.5 font-mono text-[11px] text-text-secondary">{formatFixedStatMods(b.fixed_stat_mods)}</p>
+              ) : null}
               <p className="mt-1 text-xs text-text-secondary">{b.flavor_text}</p>
               <p className="mt-2 text-xs text-corp-accent">
                 Wähle {b.choice_stat_count} von: {b.choice_stat_options.map((s) => STAT_LABELS[s as ChoosableStat]).join(", ")}
