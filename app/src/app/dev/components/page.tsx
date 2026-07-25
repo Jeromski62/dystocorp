@@ -326,39 +326,41 @@ export default function ComponentPlaygroundPage() {
       </Section>
 
       <Section title="CrewCard">
-        <CorpColumns>
-          {(slug) => (
-            <CrewCard
-              href="#"
-              corpSlug={slug}
-              corpName={slug === "yugure" ? "Yūgure Syndikat" : slug === "bionexx" ? "Bionexx Collective" : undefined}
-              name="Schattenklaue"
-              status={{ label: "AKTIV", className: "text-status-active" }}
-            >
-              <p>Kampagne: Verlorene Sektoren</p>
-              <div className="mt-1.5 flex gap-4">
-                <span>
-                  LV <b className="text-text-default">3</b>
-                </span>
-                <span>5 EINH.</span>
-                <span className={slug ? "text-corp-accent" : "text-text-default"}>1.250 CR</span>
-              </div>
-            </CrewCard>
-          )}
-        </CorpColumns>
-        <div>
-          <p className="mb-2 font-mono text-xs text-text-secondary uppercase">status-Varianten (yugure)</p>
-          <div data-corp="yugure" className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {[
-              { label: "AKTIV", className: "text-status-active" },
-              { label: "VERLETZT", className: "text-status-injured" },
-              { label: "AUSSER GEFECHT", className: "text-status-out" },
-            ].map((status) => (
-              <CrewCard key={status.label} href="#" corpSlug="yugure" corpName="Yūgure Syndikat" name="Schattenklaue" status={status}>
-                <p>Kampagne: Verlorene Sektoren</p>
-              </CrewCard>
-            ))}
-          </div>
+        <p className="font-mono text-xs text-text-secondary">
+          Skeleton/Komposition aus Figma (Dysto-Corp-Rough-Concept, node 2039:282) — Hintergrundbild + Icon-Kachel je
+          Corp, fixes FTE/XP/CR-Footer. Kein corpSlug fällt automatisch auf die neutrale
+          &quot;Special Purpose Vehicle&quot;-Variante zurück.
+        </p>
+        <div className="flex flex-col gap-4">
+          <CrewCard
+            href="#"
+            corpSlug="bionexx"
+            corpName="Bionexx Connect"
+            teamName="Innovation Lab"
+            metaLine="Kampagne: Verlorene Sektoren"
+            fte={150}
+            xp={150}
+            cr={1250}
+          />
+          <CrewCard
+            href="#"
+            corpSlug="yugure"
+            corpName="Yugure Corp"
+            teamName="Resource Mngmt Department"
+            metaLine="Kampagne: Verlorene Sektoren"
+            fte={150}
+            xp={150}
+            cr={1250}
+          />
+          <CrewCard
+            href="#"
+            corpName={undefined}
+            teamName="Strawman Team"
+            metaLine="Kampagne: Verlorene Sektoren"
+            fte={150}
+            xp={150}
+            cr={1250}
+          />
         </div>
       </Section>
 

@@ -6,7 +6,6 @@ import { EditCampaignForm } from "./edit-campaign-form";
 import { CampaignDangerZone } from "./campaign-danger-zone";
 import { ImportCrewCard } from "./import-crew-card";
 import { corpThemeSlug } from "@/lib/corp-theme";
-import { crewStatus } from "@/lib/crew-status";
 import { CrewCard } from "@/components/crew-card";
 
 export default async function CampaignDetailPage({
@@ -33,7 +32,7 @@ export default async function CampaignDetailPage({
     supabase
       .from("crews")
       .select(
-        "id, name, player_id, credits, experience, corps(key, name), captains(name, level, current_health, health), first_mates(name)"
+        "id, name, player_id, credits, experience, corps(key, name), captains(name, level), first_mates(name), soldiers(count)"
       )
       .eq("campaign_id", id),
     supabase.from("missions").select("id", { count: "exact", head: true }).eq("campaign_id", id),
@@ -109,17 +108,24 @@ export default async function CampaignDetailPage({
           <div className="mt-2 grid gap-3 sm:grid-cols-2">
             {(crews ?? []).map((crew) => {
               const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
-              const status = crewStatus(crew.captains);
+              const unitCount = (crew.soldiers as unknown as { count: number }[])?.[0]?.count ?? 0;
               return (
-                <CrewCard key={crew.id} href={`/crews/${crew.id}`} corpSlug={slug} corpName={crew.corps?.name} name={crew.name} status={status}>
-                  <p>
-                    {crew.captains?.name ?? "—"}
-                    {crew.captains ? ` · LV ${crew.captains.level}` : ""} · {crew.first_mates?.name ?? "—"}
-                  </p>
-                  <p className="mt-1.5">
-                    {crew.credits.toLocaleString("de-DE")} CR · {crew.experience} XP
-                  </p>
-                </CrewCard>
+                <CrewCard
+                  key={crew.id}
+                  href={`/crews/${crew.id}`}
+                  corpSlug={slug}
+                  corpName={crew.corps?.name}
+                  teamName={crew.name}
+                  metaLine={
+                    <>
+                      {crew.captains?.name ?? "—"}
+                      {crew.captains ? ` · LV ${crew.captains.level}` : ""} · {crew.first_mates?.name ?? "—"}
+                    </>
+                  }
+                  fte={unitCount}
+                  xp={crew.experience}
+                  cr={crew.credits}
+                />
               );
             })}
 

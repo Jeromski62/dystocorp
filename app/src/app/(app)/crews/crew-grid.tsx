@@ -3,16 +3,15 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { corpThemeSlug } from "@/lib/corp-theme";
-import { crewStatus } from "@/lib/crew-status";
 import { CrewCard } from "@/components/crew-card";
 
 type Crew = {
   id: string;
   name: string;
   credits: number;
+  experience: number;
   campaigns: { name: string } | null;
   corps: { key: string; name: string } | null;
-  captains: { level: number; current_health: number; health: number } | null;
   unitCount: number;
 };
 
@@ -63,20 +62,18 @@ export function CrewGrid({ crews }: { crews: Crew[] }) {
       <div className="grid gap-3 sm:grid-cols-2">
         {filtered.map((crew) => {
           const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
-          const status = crewStatus(crew.captains);
           return (
-            <CrewCard key={crew.id} href={`/crews/${crew.id}`} corpSlug={slug} corpName={crew.corps?.name} name={crew.name} status={status}>
-              <p>{crew.campaigns?.name ?? "Ohne Kampagne"}</p>
-              <div className="mt-1.5 flex gap-4">
-                {crew.captains ? (
-                  <span>
-                    LV <b className="text-text-default">{crew.captains.level}</b>
-                  </span>
-                ) : null}
-                <span>{crew.unitCount} EINH.</span>
-                <span className={slug ? "text-corp-accent" : "text-text-default"}>{crew.credits.toLocaleString("de-DE")} CR</span>
-              </div>
-            </CrewCard>
+            <CrewCard
+              key={crew.id}
+              href={`/crews/${crew.id}`}
+              corpSlug={slug}
+              corpName={crew.corps?.name}
+              teamName={crew.name}
+              metaLine={crew.campaigns?.name ?? "Ohne Kampagne"}
+              fte={crew.unitCount}
+              xp={crew.experience}
+              cr={crew.credits}
+            />
           );
         })}
 

@@ -11,9 +11,7 @@ export default async function CrewsPage() {
 
   const { data: crews } = await supabase
     .from("crews")
-    .select(
-      "id, name, credits, corps(key, name), campaigns(id, name), captains(level, current_health, health), soldiers(count)"
-    )
+    .select("id, name, credits, experience, corps(key, name), campaigns(id, name), soldiers(count)")
     .eq("player_id", user!.id)
     .order("created_at", { ascending: false });
 

@@ -2,48 +2,86 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { CorpEmblem } from "@/components/corp-emblem";
 
-// Shared crew-card shell (icon + name + status header, corp-accent-topped
-// border) used everywhere a crew is listed as a card — Meine Crews, a
-// campaign's Teilnehmende Crews. Each caller passes its own meta line(s)
-// as children, since the fields worth showing differ slightly by context
-// (e.g. campaign name vs. captain/first mate names) — the layout itself
-// stays identical.
+// Background photo per corp — Figma "Dysto-Corp-Rough-Concept" Team Cards
+// (node 2039:282). Neutral/no-corp always falls back to the "Special
+// Purpose Vehicle" freelance variant, same as CorpEmblem's "n/a" tile.
+const CORP_BACKGROUNDS: Record<string, string> = {
+  yugure: "/teamcards/yugure.png",
+  bionexx: "/teamcards/bionexx.png",
+};
+
+function corpBackground(slug: string | undefined): string {
+  return (slug && CORP_BACKGROUNDS[slug]) || "/teamcards/freelance.png";
+}
+
+// Shared crew-card shell, ported skeleton-for-skeleton from the Figma Team
+// Card component: corp-accent-bordered box with a dimmed photo background,
+// an icon+corp-name+team-name header, one meta line, and a fixed FTE/XP/CR
+// stat footer. --corp-accent/--corp-bg fall back to neutral (white border,
+// no corp) outside a [data-corp] scope, so corpSlug={undefined} alone
+// reproduces the design's neutral "Special Purpose Vehicle" card.
 export function CrewCard({
   href,
   corpSlug,
   corpName,
-  name,
-  status,
-  children,
+  teamName,
+  metaLine,
+  fte,
+  xp,
+  cr,
 }: {
   href: string;
   corpSlug?: string;
   corpName: string | null | undefined;
-  name: string;
-  status?: { label: string; className: string };
-  children?: ReactNode;
+  teamName: string;
+  metaLine: ReactNode;
+  fte: number;
+  xp: number;
+  cr: number;
 }) {
   return (
     <Link
       href={href}
       data-corp={corpSlug}
-      className={`block border p-4 transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
-        corpSlug
-          ? "border-corp-accent/30 border-t-2 border-t-corp-accent bg-corp-surface hover:border-corp-accent/60"
-          : "border-border bg-bg-surface hover:border-accent"
-      }`}
+      className="relative flex h-[160px] w-full flex-col gap-2 overflow-hidden border border-corp-accent p-4 transition-colors duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:border-corp-accent/60"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <CorpEmblem name={corpName ?? "?"} slug={corpSlug} size={40} />
-          <div>
-            <p className="font-mono text-[11px] tracking-wide text-corp-accent uppercase">{corpName ?? "—"}</p>
-            <p className="font-display text-lg font-semibold text-text-default uppercase">{name}</p>
-          </div>
-        </div>
-        {status ? <span className={`shrink-0 font-mono text-[14px] ${status.className}`}>● {status.label}</span> : null}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-black" />
+        {/* eslint-disable-next-line @next/next/no-img-element -- fills an
+            absolutely-positioned decorative layer; next/image's fixed
+            intrinsic sizing doesn't fit this object-cover/opacity overlay */}
+        <img src={corpBackground(corpSlug)} alt="" className="absolute size-full max-w-none object-cover opacity-60" />
       </div>
-      {children ? <div className="mt-3 font-mono text-[13px] text-text-secondary">{children}</div> : null}
+
+      <div className="relative flex w-full shrink-0 items-center gap-4">
+        <CorpEmblem name={corpName ?? "?"} slug={corpSlug} size={48} />
+        <div className="flex min-w-0 flex-1 flex-col leading-none">
+          <p className="w-full font-display text-[16px] font-medium tracking-[1.6px] text-corp-accent uppercase">
+            {corpName ?? "Special Purpose Vehicle"}
+          </p>
+          <p className="w-full truncate font-display text-[24px] font-semibold tracking-[2.4px] text-text-default uppercase">
+            {teamName}
+          </p>
+        </div>
+      </div>
+
+      <div className="relative flex min-h-0 w-full flex-1 flex-col justify-between pl-[64px]">
+        <div className="truncate font-mono text-[14px] tracking-[1.4px] text-white/70">{metaLine}</div>
+        <div className="flex items-start gap-2">
+          <StatBadge label="FTE" value={fte} />
+          <StatBadge label="XP" value={xp} />
+          <StatBadge label="CR" value={cr.toLocaleString("de-DE")} />
+        </div>
+      </div>
     </Link>
+  );
+}
+
+function StatBadge({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex shrink-0 items-start border border-white p-1 font-mono text-[14px] tracking-[1.4px] text-text-default opacity-70">
+      <span>{label}:</span>
+      <span>{value}</span>
+    </div>
   );
 }

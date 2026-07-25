@@ -1,30 +1,36 @@
 import Image from "next/image";
 
-const CORP_LOGOS: Record<string, string> = {
-  yugure: "/corps/yugure.png",
-  bionexx: "/corps/bionexx.png",
+// Vector glyphs (dark navy fill, meant to sit on the corp-accent tile) per
+// the Figma "Dysto-Corp-Rough-Concept" Team Cards reference — replaces the
+// earlier cropped-PNG-lockup approach.
+const CORP_ICONS: Record<string, string> = {
+  yugure: "/corps/yugure.svg",
+  bionexx: "/corps/bionexx.svg",
 };
 
-// Real corp logo (cropped to just the icon mark, see assets/logos/ + memory)
-// when we know the corp's design slug; falls back to an initial-letter tile
-// for anything else (e.g. corps without dedicated art yet).
+// Solid corp-accent tile with the corp's glyph when we know the slug; falls
+// back to a neutral "n/a" tile otherwise (Figma's "Special Purpose Vehicle"
+// state — a crew with no specific corp, or corp data that failed to load).
 export function CorpEmblem({ name, slug, size = 48 }: { name: string; slug?: string; size?: number }) {
-  const logoSrc = slug ? CORP_LOGOS[slug] : undefined;
+  const iconSrc = slug ? CORP_ICONS[slug] : undefined;
 
-  if (logoSrc) {
+  if (iconSrc) {
     return (
-      <div className="flex flex-shrink-0 items-center justify-center" style={{ width: size, height: size }}>
-        <Image src={logoSrc} alt={name} width={size} height={size} className="h-full w-full object-contain" />
+      <div
+        className="flex flex-shrink-0 items-center justify-center bg-corp-accent"
+        style={{ width: size, height: size, padding: size * 0.18 }}
+      >
+        <Image src={iconSrc} alt={name} width={size} height={size} className="h-full w-full object-contain" />
       </div>
     );
   }
 
   return (
     <div
-      className="flex flex-shrink-0 items-center justify-center rounded-sm bg-corp-accent font-display text-corp-on-accent"
-      style={{ width: size, height: size, fontSize: size * 0.4 }}
+      className="flex flex-shrink-0 items-center justify-center bg-[#ababab] font-display font-semibold text-black"
+      style={{ width: size, height: size, fontSize: size * 0.29 }}
     >
-      {name.trim().charAt(0).toUpperCase()}
+      n/a
     </div>
   );
 }
