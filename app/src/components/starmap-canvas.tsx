@@ -13,10 +13,11 @@ import { useEffect, useRef } from "react";
 
 type CrtIntensity = "subtle" | "medium" | "strong";
 
+// scan values dialed ~30% darker than the handoff spec's per user request.
 const CRT_PRESETS: Record<CrtIntensity, { scan: number; vig: number; flick: number; sweep: boolean }> = {
-  subtle: { scan: 0.16, vig: 0.82, flick: 0.01, sweep: false },
-  medium: { scan: 0.3, vig: 1.0, flick: 0.028, sweep: true },
-  strong: { scan: 0.44, vig: 1.18, flick: 0.055, sweep: true },
+  subtle: { scan: 0.11, vig: 0.82, flick: 0.01, sweep: false },
+  medium: { scan: 0.21, vig: 1.0, flick: 0.028, sweep: true },
+  strong: { scan: 0.31, vig: 1.18, flick: 0.055, sweep: true },
 };
 
 type System = {
@@ -332,7 +333,7 @@ export function StarmapCanvas({
       ref={rootRef}
       aria-hidden
       className={`pointer-events-none absolute inset-0 overflow-hidden bg-black font-mono text-[#f2f2f2] select-none motion-reduce:[&_[data-role=grain]]:animate-none motion-reduce:[&_[data-role=haze]]:animate-none motion-reduce:[&_[data-role=sweep]]:animate-none ${className}`}
-      style={{ ["--scan" as string]: 0.18, ["--vig" as string]: 1 }}
+      style={{ ["--scan" as string]: 0.13, ["--vig" as string]: 1 }}
     >
       <canvas ref={glCanvasRef} className="absolute inset-0 z-0 block size-full" />
 
