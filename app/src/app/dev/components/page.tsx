@@ -190,8 +190,8 @@ export default function ComponentPlaygroundPage() {
             sampleClassName="font-mono text-lg text-text-default"
           />
           <TypeRow
-            label="body / Standard (Inter)"
-            note="Fließtext"
+            label="body / Standard (Rajdhani)"
+            note="Fließtext — font-sans/Inter bleibt separat für Tailwind-Default-Fälle"
             sample="Die unabhängigen Crews überleben nur, wenn sie zusammenhalten."
             sampleClassName="text-lg text-text-default"
           />
