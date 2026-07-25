@@ -8,7 +8,7 @@ import { NAV_ITEMS, isNavItemActive } from "./nav-items";
 // The design handoff's mobile screens are shown as standalone full-bleed
 // captures with no persistent nav chrome (only per-screen back arrows). Since
 // this is a real multi-section web app rather than a native single-flow demo,
-// mobile still needs a way to reach Kampagnen/Regeln/Setting — a slim top bar
+// mobile still needs a way to reach Kampagnen/Regeln/Intel — a slim top bar
 // with a menu toggle is the minimal addition that doesn't invent new IA.
 export function MobileNav({ identity }: { identity: string }) {
   const [open, setOpen] = useState(false);

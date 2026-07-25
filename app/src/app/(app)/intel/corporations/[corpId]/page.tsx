@@ -24,8 +24,8 @@ export default async function CorpDetailPage({
     <div data-corp={corpThemeSlug(corp.key)} className="bg-corp-bg min-h-screen">
       <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <Link href="/setting/corps" className="text-xs text-text-secondary hover:text-corp-accent">
-          ← Corps
+        <Link href="/intel/corporations" className="text-xs text-text-secondary hover:text-corp-accent">
+          ← Corporations
         </Link>
 
         <div className="mt-4 flex items-center gap-4">
@@ -39,10 +39,10 @@ export default async function CorpDetailPage({
         <p className="mt-6 whitespace-pre-line text-sm text-text-secondary">{corp.lore_markdown}</p>
 
         <Link
-          href={`/setting/corps/${corp.id}/employees`}
+          href={`/intel/corporations/${corp.id}/dossiers`}
           className="mt-8 inline-block text-sm text-corp-accent hover:underline"
         >
-          Employee Details →
+          Dossiers →
         </Link>
       </div>
       </div>

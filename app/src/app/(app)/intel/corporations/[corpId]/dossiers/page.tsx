@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { corpThemeSlug } from "@/lib/corp-theme";
 
-export default async function CorpEmployeesPage({
+export default async function CorpDossiersPage({
   params,
 }: {
   params: Promise<{ corpId: string }>;
@@ -18,12 +18,12 @@ export default async function CorpEmployeesPage({
     <div data-corp={corpThemeSlug(corp.key)} className="bg-corp-bg min-h-screen">
       <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <Link href={`/setting/corps/${corp.id}`} className="text-xs text-text-secondary hover:text-corp-accent">
+        <Link href={`/intel/corporations/${corp.id}`} className="text-xs text-text-secondary hover:text-corp-accent">
           ← {corp.name}
         </Link>
-        <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Employee Details</h1>
+        <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Dossiers</h1>
         <p className="mt-4 rounded-md border border-dashed border-border px-4 py-6 text-sm text-text-secondary">
-          Kommt noch — hier entstehen NPC-Profile von {corp.name}.
+          Kommt noch — hier entstehen die Charakter-Dossiers von {corp.name}.
         </p>
       </div>
       </div>

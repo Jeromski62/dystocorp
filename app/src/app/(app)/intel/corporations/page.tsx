@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { corpThemeSlug } from "@/lib/corp-theme";
 
-export default async function CorpsPage() {
+export default async function CorporationsPage() {
   const supabase = await createClient();
 
   const { data: corps } = await supabase
@@ -14,17 +14,17 @@ export default async function CorpsPage() {
   return (
     <div className="hud-grid min-h-screen">
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <Link href="/setting" className="text-xs text-text-secondary hover:text-accent">
-        ← Setting
+      <Link href="/intel" className="text-xs text-text-secondary hover:text-accent">
+        ← Intel
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Corps</h1>
+      <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Corporations</h1>
       <p className="mt-1 text-sm text-text-secondary">Die Mega Corps der DystoCorp-Welt.</p>
 
       <div className="mt-8 flex flex-col gap-4">
         {(corps ?? []).map((corp) => (
           <Link
             key={corp.id}
-            href={`/setting/corps/${corp.id}`}
+            href={`/intel/corporations/${corp.id}`}
             data-corp={corpThemeSlug(corp.key)}
             className="flex items-start gap-3 rounded-md border border-corp-border bg-bg-surface p-4 hover:border-corp-accent"
           >

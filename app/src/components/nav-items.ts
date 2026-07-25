@@ -5,7 +5,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/crews", label: "Meine Crews" },
   { href: "/campaigns", label: "Kampagnen" },
   { href: "/rules", label: "Regeln" },
-  { href: "/setting", label: "Setting" },
+  { href: "/intel", label: "Intel" },
 ];
 
 export function isNavItemActive(pathname: string, href: string, exact?: boolean) {
