@@ -117,7 +117,7 @@ export default async function HomePage() {
           </div>
 
           <div className="grid gap-3.5 sm:grid-cols-3">
-            <section className="border border-border bg-black/40 p-4">
+            <section className="pt-4">
               <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Laufende Kampagne</p>
               {latestCampaign ? (
                 <div className="mt-2">
@@ -149,7 +149,7 @@ export default async function HomePage() {
               )}
             </section>
 
-            <section className="border border-border bg-black/40 p-4">
+            <section className="pt-4">
               <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Neueste Crew</p>
               {newestCrew ? (
                 <div className="mt-2">
