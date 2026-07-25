@@ -5,68 +5,65 @@ import { corpThemeSlug } from "@/lib/corp-theme";
 // Shared data loader for the three crew-detail surfaces (wizard, read-only
 // view, edit/page.tsx) -- they all need the same officer/soldier/ship join,
 // just render it differently depending on ownership and setup progress.
+//
+// Every query here runs in a single Promise.all batch (no query depends on
+// another's result), and powers/gear/core-power links ride along as nested
+// selects on their parent row instead of separate round trips -- this was
+// 17 sequential-ish Supabase requests before, now 9 concurrent ones.
 export async function loadCrewDetail(crewId: string) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: crew } = await supabase
-    .from("crews")
-    .select(
-      "id, name, player_id, campaign_id, credits, experience, ship_name, wizard_step, setup_completed_at, corps(key, name)"
-    )
-    .eq("id", crewId)
-    .maybeSingle();
-
-  if (!crew) return null;
-
-  const isOwner = crew.player_id === user?.id;
-  const corpSlug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
 
   const [
+    {
+      data: { user },
+    },
+    { data: crew },
     { data: backgrounds },
-    { data: corePowerLinks },
     { data: powers },
     { data: equipment },
     { data: soldierTypes },
     { data: captain },
-    { data: captainPowers },
-    { data: captainGear },
     { data: firstMate },
-    { data: firstMatePowers },
-    { data: firstMateGear },
     { data: soldiers },
     { data: shipUpgradeTypes },
     { data: crewShipUpgrades },
     { data: holdItems },
-    { data: soldierTypeGear },
   ] = await Promise.all([
-    supabase.from("backgrounds").select("id, name, flavor_text, fixed_stat_mods, choice_stat_count, choice_stat_options"),
-    supabase.from("background_core_powers").select("background_id, power_id"),
+    supabase.auth.getUser(),
+    supabase
+      .from("crews")
+      .select(
+        "id, name, player_id, campaign_id, credits, experience, ship_name, wizard_step, setup_completed_at, corps(key, name)"
+      )
+      .eq("id", crewId)
+      .maybeSingle(),
+    supabase
+      .from("backgrounds")
+      .select("id, name, flavor_text, fixed_stat_mods, choice_stat_count, choice_stat_options, background_core_powers(power_id)"),
     supabase.from("powers").select("id, name, activation_number, strain, full_text").order("name"),
     supabase
       .from("equipment_items")
       .select("id, key, name, category, gear_slots, cost_cr, effect_text, restrictions, base_weapon_type")
       .order("category, name"),
-    supabase.from("soldier_types").select("id, name, table_type, move, fight, shoot, armour, will, health, cost_cr"),
+    supabase
+      .from("soldier_types")
+      .select(
+        "id, name, table_type, move, fight, shoot, armour, will, health, cost_cr, soldier_type_gear(quantity, equipment_items(name, key, category))"
+      ),
     supabase
       .from("captains")
-      .select("id, name, background_id, chosen_stat_options, level, move, fight, shoot, armour, will, health, current_health")
+      .select(
+        "id, name, background_id, chosen_stat_options, level, move, fight, shoot, armour, will, health, current_health, captain_powers(power_id, is_core, reduced), captain_gear(equipment_item_id)"
+      )
       .eq("crew_id", crewId)
       .maybeSingle(),
-    supabase.from("captain_powers").select("power_id, is_core, reduced, captains!inner(crew_id)").eq("captains.crew_id", crewId),
-    supabase.from("captain_gear").select("equipment_item_id, captains!inner(crew_id)").eq("captains.crew_id", crewId),
     supabase
       .from("first_mates")
-      .select("id, name, background_id, chosen_stat_options, move, fight, shoot, armour, will, health, current_health")
+      .select(
+        "id, name, background_id, chosen_stat_options, move, fight, shoot, armour, will, health, current_health, first_mate_powers(power_id, is_core, reduced), first_mate_gear(equipment_item_id)"
+      )
       .eq("crew_id", crewId)
       .maybeSingle(),
-    supabase
-      .from("first_mate_powers")
-      .select("power_id, is_core, reduced, first_mates!inner(crew_id)")
-      .eq("first_mates.crew_id", crewId),
-    supabase.from("first_mate_gear").select("equipment_item_id, first_mates!inner(crew_id)").eq("first_mates.crew_id", crewId),
     supabase
       .from("soldiers")
       .select(
@@ -83,19 +80,25 @@ export async function loadCrewDetail(crewId: string) {
       .from("ship_hold_items")
       .select("id, equipment_item_id, custom_name, quantity, notes, equipment_items(id, name)")
       .eq("crew_id", crewId),
-    supabase.from("soldier_type_gear").select("soldier_type_id, quantity, equipment_items(name, key, category)"),
   ]);
+
+  if (!crew) return null;
+
+  const isOwner = crew.player_id === user?.id;
+  const corpSlug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
 
   const gearByType: Record<string, { name: string; quantity: number }[]> = {};
   const weaponContextByType: Record<string, { weaponKeys: string[]; hasDeck: boolean; hasPicks: boolean }> = {};
-  for (const g of soldierTypeGear ?? []) {
-    if (!g.equipment_items) continue;
-    (gearByType[g.soldier_type_id] ??= []).push({ name: g.equipment_items.name, quantity: g.quantity });
+  for (const t of soldierTypes ?? []) {
+    for (const g of t.soldier_type_gear ?? []) {
+      if (!g.equipment_items) continue;
+      (gearByType[t.id] ??= []).push({ name: g.equipment_items.name, quantity: g.quantity });
 
-    const ctx = (weaponContextByType[g.soldier_type_id] ??= { weaponKeys: [], hasDeck: false, hasPicks: false });
-    if (g.equipment_items.category === "weapon") ctx.weaponKeys.push(g.equipment_items.key);
-    if (g.equipment_items.key === "deck") ctx.hasDeck = true;
-    if (g.equipment_items.key === "picks") ctx.hasPicks = true;
+      const ctx = (weaponContextByType[t.id] ??= { weaponKeys: [], hasDeck: false, hasPicks: false });
+      if (g.equipment_items.category === "weapon") ctx.weaponKeys.push(g.equipment_items.key);
+      if (g.equipment_items.key === "deck") ctx.hasDeck = true;
+      if (g.equipment_items.key === "picks") ctx.hasPicks = true;
+    }
   }
 
   const typedBackgrounds = (backgrounds ?? []).map((b) => ({
@@ -108,8 +111,8 @@ export async function loadCrewDetail(crewId: string) {
   }));
 
   const corePowersByBackground: Record<string, string[]> = {};
-  for (const link of corePowerLinks ?? []) {
-    (corePowersByBackground[link.background_id] ??= []).push(link.power_id);
+  for (const b of backgrounds ?? []) {
+    corePowersByBackground[b.id] = (b.background_core_powers ?? []).map((link) => link.power_id);
   }
 
   const maxSpecialists = (crewShipUpgrades ?? []).some((u) => u.ship_upgrade_types?.key === "extra_quarters")
@@ -141,12 +144,12 @@ export async function loadCrewDetail(crewId: string) {
     equipment: equipment ?? [],
     soldierTypes: typedSoldierTypes,
     captain,
-    captainPowers: captainPowers ?? [],
-    captainGear: captainGear ?? [],
+    captainPowers: captain?.captain_powers ?? [],
+    captainGear: captain?.captain_gear ?? [],
     captainBackgroundName,
     firstMate,
-    firstMatePowers: firstMatePowers ?? [],
-    firstMateGear: firstMateGear ?? [],
+    firstMatePowers: firstMate?.first_mate_powers ?? [],
+    firstMateGear: firstMate?.first_mate_gear ?? [],
     firstMateBackgroundName,
     soldiers: typedSoldiers,
     shipUpgradeTypes: shipUpgradeTypes ?? [],

@@ -23,18 +23,25 @@ import {
 
 async function requireOwnedCrew(crewId: string) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "Nicht eingeloggt." } as const;
 
-  const { data: crew } = await supabase
-    .from("crews")
-    .select("id, credits, campaign_id, wizard_step, setup_completed_at")
-    .eq("id", crewId)
-    .eq("player_id", user.id)
-    .maybeSingle();
-  if (!crew) return { error: "Diese Crew gehört dir nicht." } as const;
+  // auth.getUser() and the crew fetch don't depend on each other -- fetch by
+  // id alone and check ownership once both are back, instead of waiting for
+  // the user id before even starting the crew query.
+  const [
+    {
+      data: { user },
+    },
+    { data: crew },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("crews")
+      .select("id, player_id, credits, campaign_id, wizard_step, setup_completed_at")
+      .eq("id", crewId)
+      .maybeSingle(),
+  ]);
+  if (!user) return { error: "Nicht eingeloggt." } as const;
+  if (!crew || crew.player_id !== user.id) return { error: "Diese Crew gehört dir nicht." } as const;
 
   return { supabase, crew } as const;
 }
@@ -52,27 +59,35 @@ export type SaveOfficerInput = {
 
 export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: string }> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "Nicht eingeloggt." };
+  const rules = OFFICER_RULES[input.role];
+  const table = input.role === "captain" ? "captains" : "first_mates";
 
-  const { data: crew } = await supabase
-    .from("crews")
-    .select("id, player_id, campaign_id")
-    .eq("id", input.crewId)
-    .maybeSingle();
+  // None of these six reads depend on each other's result -- batch them into
+  // one round trip instead of the seven sequential ones this used to be.
+  const [
+    {
+      data: { user },
+    },
+    { data: crew },
+    { data: background },
+    { data: corePowerRows },
+    { data: powerRows },
+    { data: gearRows },
+    { data: existing },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("crews").select("id, player_id, campaign_id").eq("id", input.crewId).maybeSingle(),
+    supabase.from("backgrounds").select("id, fixed_stat_mods, choice_stat_count, choice_stat_options").eq("id", input.backgroundId).maybeSingle(),
+    supabase.from("background_core_powers").select("power_id").eq("background_id", input.backgroundId),
+    supabase.from("powers").select("id, activation_number").in("id", input.powerIds),
+    supabase.from("equipment_items").select("id, key, gear_slots, category").in("id", Array.from(new Set(input.gearItemIds))),
+    supabase.from(table).select("id, current_health, health").eq("crew_id", input.crewId).maybeSingle(),
+  ]);
+
+  if (!user) return { error: "Nicht eingeloggt." };
   if (!crew || crew.player_id !== user.id) {
     return { error: "Diese Crew gehört dir nicht." };
   }
-
-  const rules = OFFICER_RULES[input.role];
-
-  const { data: background } = await supabase
-    .from("backgrounds")
-    .select("id, fixed_stat_mods, choice_stat_count, choice_stat_options")
-    .eq("id", input.backgroundId)
-    .maybeSingle();
   if (!background) return { error: "Ungültiger Background." };
 
   const statError = validateChosenStatOptions(
@@ -82,10 +97,6 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
   );
   if (statError) return { error: statError };
 
-  const { data: corePowerRows } = await supabase
-    .from("background_core_powers")
-    .select("power_id")
-    .eq("background_id", input.backgroundId);
   const corePowerIds = new Set((corePowerRows ?? []).map((r) => r.power_id));
 
   const powerError = validatePowerSelection(input.powerIds, corePowerIds, rules);
@@ -94,19 +105,11 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
   const reductionError = validateReduction(input.reducedPowerIds, input.powerIds, rules.maxReductions);
   if (reductionError) return { error: reductionError };
 
-  const { data: powerRows } = await supabase
-    .from("powers")
-    .select("id, activation_number")
-    .in("id", input.powerIds);
   if (!powerRows || powerRows.length !== input.powerIds.length) {
     return { error: "Eine oder mehrere Powers wurden nicht gefunden." };
   }
   const powerById = new Map(powerRows.map((p) => [p.id, p]));
 
-  const { data: gearRows } = await supabase
-    .from("equipment_items")
-    .select("id, key, gear_slots, category")
-    .in("id", Array.from(new Set(input.gearItemIds)));
   const gearById = new Map((gearRows ?? []).map((g) => [g.id, g]));
   if (input.gearItemIds.some((id) => !gearById.has(id))) {
     return { error: "Ein Gear-Item wurde nicht gefunden." };
@@ -126,13 +129,6 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
 
   const stats = computeStatLine(rules.baseStats, background.fixed_stat_mods as Record<string, number>, input.chosenStatOptions);
   const defaultName = input.role === "captain" ? "Captain" : "First Mate";
-
-  const table = input.role === "captain" ? "captains" : "first_mates";
-  const { data: existing } = await supabase
-    .from(table)
-    .select("id, current_health, health")
-    .eq("crew_id", input.crewId)
-    .maybeSingle();
 
   // Preserve accumulated damage when re-saving; only reset current_health if
   // starting health increased (e.g. a stat choice change), never let it exceed the new max.
@@ -169,52 +165,50 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
     };
   });
 
-  let officerId: string;
-  if (input.role === "captain") {
-    const { data: officer, error: upsertError } = await supabase
-      .from("captains")
-      .upsert(officerRow, { onConflict: "crew_id" })
-      .select("id")
-      .single();
-    if (upsertError || !officer) return { error: upsertError?.message ?? "Speichern fehlgeschlagen." };
-    officerId = officer.id;
+  const { data: officer, error: upsertError } = await supabase
+    .from(table)
+    .upsert(officerRow, { onConflict: "crew_id" })
+    .select("id")
+    .single();
+  if (upsertError || !officer) return { error: upsertError?.message ?? "Speichern fehlgeschlagen." };
+  const officerId = officer.id;
 
-    await supabase.from("captain_powers").delete().eq("captain_id", officerId);
-    const { error: powersError } = await supabase
-      .from("captain_powers")
-      .insert(basePowerInserts.map((p) => ({ ...p, captain_id: officerId })));
-    if (powersError) return { error: powersError.message };
+  // Delete-then-insert must stay two phases (an overlapping power/gear id
+  // would violate the unique constraint if run concurrently), but the two
+  // tables within each phase are independent -- batch those.
+  const [{ error: deletePowersError }, { error: deleteGearError }] =
+    input.role === "captain"
+      ? await Promise.all([
+          supabase.from("captain_powers").delete().eq("captain_id", officerId),
+          supabase.from("captain_gear").delete().eq("captain_id", officerId),
+        ])
+      : await Promise.all([
+          supabase.from("first_mate_powers").delete().eq("first_mate_id", officerId),
+          supabase.from("first_mate_gear").delete().eq("first_mate_id", officerId),
+        ]);
+  if (deletePowersError) return { error: deletePowersError.message };
+  if (deleteGearError) return { error: deleteGearError.message };
 
-    await supabase.from("captain_gear").delete().eq("captain_id", officerId);
-    if (input.gearItemIds.length > 0) {
-      const { error: gearError } = await supabase
-        .from("captain_gear")
-        .insert(input.gearItemIds.map((equipmentItemId) => ({ captain_id: officerId, equipment_item_id: equipmentItemId })));
-      if (gearError) return { error: gearError.message };
-    }
-  } else {
-    const { data: officer, error: upsertError } = await supabase
-      .from("first_mates")
-      .upsert(officerRow, { onConflict: "crew_id" })
-      .select("id")
-      .single();
-    if (upsertError || !officer) return { error: upsertError?.message ?? "Speichern fehlgeschlagen." };
-    officerId = officer.id;
-
-    await supabase.from("first_mate_powers").delete().eq("first_mate_id", officerId);
-    const { error: powersError } = await supabase
-      .from("first_mate_powers")
-      .insert(basePowerInserts.map((p) => ({ ...p, first_mate_id: officerId })));
-    if (powersError) return { error: powersError.message };
-
-    await supabase.from("first_mate_gear").delete().eq("first_mate_id", officerId);
-    if (input.gearItemIds.length > 0) {
-      const { error: gearError } = await supabase
-        .from("first_mate_gear")
-        .insert(input.gearItemIds.map((equipmentItemId) => ({ first_mate_id: officerId, equipment_item_id: equipmentItemId })));
-      if (gearError) return { error: gearError.message };
-    }
-  }
+  const [{ error: powersError }, gearResult] =
+    input.role === "captain"
+      ? await Promise.all([
+          supabase.from("captain_powers").insert(basePowerInserts.map((p) => ({ ...p, captain_id: officerId }))),
+          input.gearItemIds.length > 0
+            ? supabase
+                .from("captain_gear")
+                .insert(input.gearItemIds.map((equipmentItemId) => ({ captain_id: officerId, equipment_item_id: equipmentItemId })))
+            : Promise.resolve({ error: null }),
+        ])
+      : await Promise.all([
+          supabase.from("first_mate_powers").insert(basePowerInserts.map((p) => ({ ...p, first_mate_id: officerId }))),
+          input.gearItemIds.length > 0
+            ? supabase
+                .from("first_mate_gear")
+                .insert(input.gearItemIds.map((equipmentItemId) => ({ first_mate_id: officerId, equipment_item_id: equipmentItemId })))
+            : Promise.resolve({ error: null }),
+        ]);
+  if (powersError) return { error: powersError.message };
+  if (gearResult.error) return { error: gearResult.error.message };
 
   revalidatePath(`/crews/${input.crewId}`);
   return {};
@@ -229,17 +223,17 @@ export async function addSoldier(
   if ("error" in owned) return owned;
   const { supabase, crew } = owned;
 
-  const { data: soldierType } = await supabase
-    .from("soldier_types")
-    .select("id, table_type, cost_cr, health")
-    .eq("id", soldierTypeId)
-    .maybeSingle();
+  const [{ data: soldierType }, { data: existingSoldiers }, { data: extraQuarters }] = await Promise.all([
+    supabase.from("soldier_types").select("id, table_type, cost_cr, health").eq("id", soldierTypeId).maybeSingle(),
+    supabase.from("soldiers").select("id, soldier_types(table_type)").eq("crew_id", crewId),
+    supabase
+      .from("crew_ship_upgrades")
+      .select("id, ship_upgrade_types!inner(key)")
+      .eq("crew_id", crewId)
+      .eq("ship_upgrade_types.key", "extra_quarters")
+      .maybeSingle(),
+  ]);
   if (!soldierType) return { error: "Ungültiger Soldier-Typ." };
-
-  const { data: existingSoldiers } = await supabase
-    .from("soldiers")
-    .select("id, soldier_types(table_type)")
-    .eq("crew_id", crewId);
   const soldiers = existingSoldiers ?? [];
 
   if (soldiers.length >= SOLDIER_RULES.maxSoldiers) {
@@ -247,12 +241,6 @@ export async function addSoldier(
   }
 
   if (soldierType.table_type === "specialist") {
-    const { data: extraQuarters } = await supabase
-      .from("crew_ship_upgrades")
-      .select("id, ship_upgrade_types!inner(key)")
-      .eq("crew_id", crewId)
-      .eq("ship_upgrade_types.key", "extra_quarters")
-      .maybeSingle();
     const maxSpecialists = extraQuarters ? SOLDIER_RULES.maxSpecialistsDefault + 1 : SOLDIER_RULES.maxSpecialistsDefault;
     const specialistCount = soldiers.filter((s) => s.soldier_types?.table_type === "specialist").length;
     if (specialistCount >= maxSpecialists) {
@@ -462,18 +450,15 @@ export async function addShipUpgrade(
   if ("error" in owned) return owned;
   const { supabase, crew } = owned;
 
-  const { data: upgradeType } = await supabase
-    .from("ship_upgrade_types")
-    .select("id, cost_cr, max_purchases")
-    .eq("id", shipUpgradeTypeId)
-    .maybeSingle();
+  const [{ data: upgradeType }, { count }] = await Promise.all([
+    supabase.from("ship_upgrade_types").select("id, cost_cr, max_purchases").eq("id", shipUpgradeTypeId).maybeSingle(),
+    supabase
+      .from("crew_ship_upgrades")
+      .select("id", { count: "exact", head: true })
+      .eq("crew_id", crewId)
+      .eq("ship_upgrade_type_id", shipUpgradeTypeId),
+  ]);
   if (!upgradeType) return { error: "Ungültiges Ship-Upgrade." };
-
-  const { count } = await supabase
-    .from("crew_ship_upgrades")
-    .select("id", { count: "exact", head: true })
-    .eq("crew_id", crewId)
-    .eq("ship_upgrade_type_id", shipUpgradeTypeId);
   if ((count ?? 0) >= upgradeType.max_purchases) {
     return { error: "Dieses Upgrade wurde bereits maximal oft gekauft." };
   }
