@@ -5,13 +5,16 @@ import { Clock } from "@/components/clock";
 import { RainCanvas } from "@/components/rain-canvas";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { crewStatus } from "@/lib/crew-status";
+import { CrewCard } from "@/components/crew-card";
 
 type CrewRow = {
   id: string;
   name: string;
   credits: number;
+  experience: number;
   corps: { key: string; name: string } | null;
   captains: { name: string; level: number; current_health: number; health: number } | null;
+  soldiers: { count: number }[];
 };
 
 export default async function HomePage() {
@@ -43,7 +46,7 @@ export default async function HomePage() {
       : Promise.resolve({ data: [] as { id: string; title: string; status: string; campaign_id: string; campaigns: { name: string } | null }[] }),
     supabase
       .from("crews")
-      .select("id, name, credits, corps(key, name), captains(name, level, current_health, health)")
+      .select("id, name, credits, experience, corps(key, name), captains(name, level, current_health, health), soldiers(count)")
       .eq("player_id", user!.id)
       .order("created_at", { ascending: false }),
   ]);
@@ -53,6 +56,7 @@ export default async function HomePage() {
   const newestCrew = crewList[0] ?? null;
   const totalCredits = crewList.reduce((sum, c) => sum + c.credits, 0);
   const newestCrewSlug = newestCrew?.corps ? corpThemeSlug(newestCrew.corps.key) : undefined;
+  const newestCrewUnitCount = newestCrew?.soldiers?.[0]?.count ?? 0;
 
   if (!latestCampaign && !newestCrew) {
     return (
@@ -138,19 +142,21 @@ export default async function HomePage() {
               )}
             </section>
 
-            <section
-              data-corp={newestCrewSlug}
-              className={`border border-border p-4 ${newestCrewSlug ? "border-t-2 border-t-corp-accent bg-corp-surface/40" : "bg-black/40"}`}
-            >
+            <section className="border border-border bg-black/40 p-4">
               <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Neueste Crew</p>
               {newestCrew ? (
-                <Link href={`/crews/${newestCrew.id}`} className="mt-2 block hover:opacity-90">
-                  <p className="font-display text-lg font-semibold text-text-default">{newestCrew.name}</p>
-                  <div className="mt-1.5 flex gap-3.5 font-mono text-[14px] text-text-secondary">
-                    {newestCrew.captains ? <span>LV {newestCrew.captains.level}</span> : null}
-                    <span className="text-corp-accent">{newestCrew.credits.toLocaleString("de-DE")} CR</span>
-                  </div>
-                </Link>
+                <div className="mt-2">
+                  <CrewCard
+                    href={`/crews/${newestCrew.id}`}
+                    corpSlug={newestCrewSlug}
+                    corpName={newestCrew.corps?.name}
+                    teamName={newestCrew.name}
+                    metaLine={newestCrew.captains?.name ?? "Kein Captain"}
+                    fte={newestCrewUnitCount}
+                    xp={newestCrew.experience}
+                    cr={newestCrew.credits}
+                  />
+                </div>
               ) : (
                 <Link href="/crews/new" className="mt-2 block font-mono text-xs text-text-secondary hover:text-accent">
                   Noch keine Crew — erstellen →
