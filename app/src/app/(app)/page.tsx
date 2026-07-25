@@ -149,10 +149,10 @@ export default async function HomePage() {
               )}
             </section>
 
-            <section className="pt-4">
+            <section className="flex flex-col pt-4">
               <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Neueste Crew</p>
               {newestCrew ? (
-                <div className="mt-2">
+                <div className="mt-2 flex-1">
                   <CrewCard
                     href={`/crews/${newestCrew.id}`}
                     corpSlug={newestCrewSlug}
@@ -162,6 +162,7 @@ export default async function HomePage() {
                     fte={newestCrewUnitCount}
                     xp={newestCrew.experience}
                     cr={newestCrew.credits}
+                    fill
                   />
                 </div>
               ) : (
