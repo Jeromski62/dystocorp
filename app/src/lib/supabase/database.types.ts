@@ -741,6 +741,7 @@ export type Database = {
           report_text: string | null
           session_date: string | null
           status: string
+          subtitle: string | null
           title: string
         }
         Insert: {
@@ -752,6 +753,7 @@ export type Database = {
           report_text?: string | null
           session_date?: string | null
           status?: string
+          subtitle?: string | null
           title: string
         }
         Update: {
@@ -763,6 +765,7 @@ export type Database = {
           report_text?: string | null
           session_date?: string | null
           status?: string
+          subtitle?: string | null
           title?: string
         }
         Relationships: [

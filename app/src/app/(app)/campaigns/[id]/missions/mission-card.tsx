@@ -10,11 +10,14 @@ type MissionStatus = "planned" | "ongoing" | "report";
 type Mission = {
   id: string;
   title: string;
+  subtitle: string | null;
   description: string | null;
   status: MissionStatus;
   report_text: string | null;
   session_date: string | null;
 };
+
+const MISSION_TITLE_MAX_LENGTH = 30;
 
 type Crew = { id: string; name: string; player_id: string };
 
@@ -49,6 +52,7 @@ export function MissionCard({
 }) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(mission.title);
+  const [subtitle, setSubtitle] = useState(mission.subtitle ?? "");
   const [description, setDescription] = useState(mission.description ?? "");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportText, setReportText] = useState(mission.report_text ?? "");
@@ -58,7 +62,7 @@ export function MissionCard({
   function saveEdit() {
     setError(null);
     startTransition(async () => {
-      const result = await updateMission(mission.id, campaignId, title, description.trim() || null);
+      const result = await updateMission(mission.id, campaignId, title, subtitle.trim() || null, description.trim() || null);
       if (result.error) setError(result.error);
       else setEditing(false);
     });
@@ -95,7 +99,10 @@ export function MissionCard({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
           {!editing ? (
-            <h2 className="font-display text-lg font-semibold tracking-[0.03em] text-text-default uppercase">{mission.title}</h2>
+            <div>
+              <h2 className="font-display text-lg font-semibold tracking-[0.03em] text-text-default uppercase">{mission.title}</h2>
+              {mission.subtitle ? <p className="font-mono text-[14px] text-text-secondary">{mission.subtitle}</p> : null}
+            </div>
           ) : null}
           <span className={`px-2 py-[3px] font-mono text-[14px] tracking-[0.05em] uppercase ${badgeClass}`}>
             {STATUS_LABEL[mission.status]}
@@ -111,10 +118,22 @@ export function MissionCard({
 
       {editing ? (
         <div className="mt-2 flex flex-col gap-2">
+          <div>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={MISSION_TITLE_MAX_LENGTH}
+              className="w-full rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+            />
+            <p className="mt-1 text-right font-mono text-[11px] text-text-subtle">
+              {title.length}/{MISSION_TITLE_MAX_LENGTH}
+            </p>
+          </div>
           <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+            value={subtitle}
+            onChange={(e) => setSubtitle(e.target.value)}
+            placeholder="Untertitel (optional)"
+            className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
           />
           <textarea
             value={description}
@@ -132,6 +151,7 @@ export function MissionCard({
               onClick={() => {
                 setEditing(false);
                 setTitle(mission.title);
+                setSubtitle(mission.subtitle ?? "");
                 setDescription(mission.description ?? "");
               }}
               className="text-sm text-text-secondary hover:text-text-default"

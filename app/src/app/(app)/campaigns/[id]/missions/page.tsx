@@ -27,7 +27,7 @@ export default async function MissionsPage({
   const [{ data: missions }, { data: crews }] = await Promise.all([
     supabase
       .from("missions")
-      .select("id, title, description, status, report_text, session_date, created_at")
+      .select("id, title, subtitle, description, status, report_text, session_date, created_at")
       .eq("campaign_id", campaignId)
       .order("created_at", { ascending: false }),
     supabase.from("crews").select("id, name, player_id").eq("campaign_id", campaignId),
