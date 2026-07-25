@@ -116,13 +116,13 @@ export default function ComponentPlaygroundPage() {
         <TypeGroup label="Überschriften — H1">
           <TypeRow
             label="H1 · Seitentitel"
-            note="Übersicht, Kampagnen, Profil, Meine Crews, ..."
+            note="Übersicht, Kampagnen, Profil, Meine Teams, ..."
             sample="Übersicht"
             sampleClassName="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase"
           />
           <TypeRow
             label="H1 · Entity-Name"
-            note="editierbarer Crew-/Corp-Name"
+            note="editierbarer Team-/Corp-Name"
             sample="Schattenklaue"
             sampleClassName="font-display text-2xl tracking-[2.5px] text-text-default"
           />
@@ -137,8 +137,8 @@ export default function ComponentPlaygroundPage() {
         <TypeGroup label="Überschriften — H2">
           <TypeRow
             label="H2 · Terminal-Sektionslabel"
-            note="// Teilnehmende Crews, // Mitspieler, ..."
-            sample="// Teilnehmende Crews"
+            note="// Teilnehmende Teams, // Mitspieler, ..."
+            sample="// Teilnehmende Teams"
             sampleClassName="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase"
           />
           <TypeRow
@@ -167,13 +167,13 @@ export default function ComponentPlaygroundPage() {
         <p className="font-mono text-[11px] text-text-subtle">H4/H5 — aktuell nirgends im Code verwendet.</p>
 
         <TypeGroup label="Type Scale (Tailwind-Tokens, überschrieben in globals.css)">
-          <TypeRow label="text-xs" note="15px" sample="Die Crew macht sich bereit." sampleClassName="text-xs text-text-default" />
-          <TypeRow label="text-sm" note="16px" sample="Die Crew macht sich bereit." sampleClassName="text-sm text-text-default" />
-          <TypeRow label="text-base" note="18px" sample="Die Crew macht sich bereit." sampleClassName="text-base text-text-default" />
-          <TypeRow label="text-lg" note="20px" sample="Die Crew macht sich bereit." sampleClassName="text-lg text-text-default" />
-          <TypeRow label="text-xl" note="22px" sample="Die Crew macht sich bereit." sampleClassName="text-xl text-text-default" />
-          <TypeRow label="text-2xl" note="26px" sample="Die Crew macht sich bereit." sampleClassName="text-2xl text-text-default" />
-          <TypeRow label="text-3xl" note="32px, ungenutzt" sample="Die Crew macht sich bereit." sampleClassName="text-3xl text-text-default" />
+          <TypeRow label="text-xs" note="15px" sample="Das Team macht sich bereit." sampleClassName="text-xs text-text-default" />
+          <TypeRow label="text-sm" note="16px" sample="Das Team macht sich bereit." sampleClassName="text-sm text-text-default" />
+          <TypeRow label="text-base" note="18px" sample="Das Team macht sich bereit." sampleClassName="text-base text-text-default" />
+          <TypeRow label="text-lg" note="20px" sample="Das Team macht sich bereit." sampleClassName="text-lg text-text-default" />
+          <TypeRow label="text-xl" note="22px" sample="Das Team macht sich bereit." sampleClassName="text-xl text-text-default" />
+          <TypeRow label="text-2xl" note="26px" sample="Das Team macht sich bereit." sampleClassName="text-2xl text-text-default" />
+          <TypeRow label="text-3xl" note="32px, ungenutzt" sample="Das Team macht sich bereit." sampleClassName="text-3xl text-text-default" />
         </TypeGroup>
 
         <TypeGroup label="Schriftfamilien">
@@ -192,7 +192,7 @@ export default function ComponentPlaygroundPage() {
           <TypeRow
             label="body / Standard (Rajdhani)"
             note="Fließtext — font-sans/Inter bleibt separat für Tailwind-Default-Fälle"
-            sample="Die unabhängigen Crews überleben nur, wenn sie zusammenhalten."
+            sample="Die unabhängigen Teams überleben nur, wenn sie zusammenhalten."
             sampleClassName="text-lg text-text-default"
           />
         </TypeGroup>

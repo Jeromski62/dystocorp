@@ -21,7 +21,7 @@ export async function Sidebar() {
       <aside className="hidden md:flex md:w-[210px] md:shrink-0 md:flex-col md:border-r md:border-border md:bg-bg-surface">
         <Link href="/" className="border-b border-border px-4 py-5">
           <span className="font-display text-sm font-bold tracking-[0.04em] text-text-default">DYSTO.CORP_</span>
-          <span className="mt-0.5 block font-mono text-[14px] tracking-[0.08em] text-text-subtle">CREW &amp; CAMPAIGN MGR</span>
+          <span className="mt-0.5 block font-mono text-[14px] tracking-[0.08em] text-text-subtle">TEAM &amp; CAMPAIGN MGR</span>
         </Link>
 
         <div className="flex-1 py-3">

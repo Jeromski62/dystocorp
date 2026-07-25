@@ -29,14 +29,14 @@ export function ImportCrewCard({ campaignId, crews }: { campaignId: string; crew
         onClick={() => setOpen(true)}
         className="flex flex-col items-center justify-center border border-dashed border-border p-4 text-center font-display text-sm font-semibold tracking-[0.06em] text-text-secondary uppercase hover:border-accent hover:text-text-default"
       >
-        ＋ Bestehende Crew importieren
+        ＋ Bestehendes Team importieren
       </button>
     );
   }
 
   return (
     <div className="flex flex-col gap-2 border border-dashed border-border p-4">
-      <label className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Crew wählen</label>
+      <label className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Team wählen</label>
       <select
         value={crewId}
         onChange={(e) => setCrewId(e.target.value)}

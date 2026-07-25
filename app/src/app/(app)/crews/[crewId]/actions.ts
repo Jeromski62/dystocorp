@@ -41,7 +41,7 @@ async function requireOwnedCrew(crewId: string) {
       .maybeSingle(),
   ]);
   if (!user) return { error: "Nicht eingeloggt." } as const;
-  if (!crew || crew.player_id !== user.id) return { error: "Diese Crew gehört dir nicht." } as const;
+  if (!crew || crew.player_id !== user.id) return { error: "Dieses Team gehört dir nicht." } as const;
 
   return { supabase, crew } as const;
 }
@@ -86,7 +86,7 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
 
   if (!user) return { error: "Nicht eingeloggt." };
   if (!crew || crew.player_id !== user.id) {
-    return { error: "Diese Crew gehört dir nicht." };
+    return { error: "Dieses Team gehört dir nicht." };
   }
   if (!background) return { error: "Ungültiger Background." };
 
@@ -237,14 +237,14 @@ export async function addSoldier(
   const soldiers = existingSoldiers ?? [];
 
   if (soldiers.length >= SOLDIER_RULES.maxSoldiers) {
-    return { error: `Crew hat bereits die maximalen ${SOLDIER_RULES.maxSoldiers} Soldiers.` };
+    return { error: `Team hat bereits die maximalen ${SOLDIER_RULES.maxSoldiers} Soldiers.` };
   }
 
   if (soldierType.table_type === "specialist") {
     const maxSpecialists = extraQuarters ? SOLDIER_RULES.maxSpecialistsDefault + 1 : SOLDIER_RULES.maxSpecialistsDefault;
     const specialistCount = soldiers.filter((s) => s.soldier_types?.table_type === "specialist").length;
     if (specialistCount >= maxSpecialists) {
-      return { error: `Crew hat bereits die maximalen ${maxSpecialists} Specialists.` };
+      return { error: `Team hat bereits die maximalen ${maxSpecialists} Specialists.` };
     }
   }
 
@@ -330,7 +330,7 @@ export async function setSoldierBonusGear(
 
   if (equipmentItemId && !crew.campaign_id) {
     return {
-      error: "Der Bonus-Slot ist Campaign Loot -- nur für Crews verfügbar, die in einer Kampagne mitspielen.",
+      error: "Der Bonus-Slot ist Campaign Loot -- nur für Teams verfügbar, die in einer Kampagne mitspielen.",
     };
   }
 

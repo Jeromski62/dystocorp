@@ -42,7 +42,7 @@ export default async function CampaignsPage() {
         <div>
           <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Kampagnen</h1>
           <p className="mt-1 text-sm text-text-secondary">
-            Jede Kampagne bündelt eure Crews. Alle Mitspieler sind gleichberechtigt.
+            Jede Kampagne bündelt eure Teams. Alle Mitspieler sind gleichberechtigt.
           </p>
         </div>
         <div className="flex items-center gap-3">

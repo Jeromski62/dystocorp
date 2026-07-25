@@ -228,7 +228,7 @@ export function MissionCard({
 
       {mission.status !== "planned" ? (
         <div className="mt-4 flex flex-col gap-2 border-t border-border pt-3">
-          <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Crew-Ergebnisse"}</h3>
+          <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Team-Ergebnisse"}</h3>
           {myCrew ? (
             <CrewMissionResultForm
               campaignId={campaignId}

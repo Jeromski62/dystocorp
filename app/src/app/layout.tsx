@@ -15,7 +15,7 @@ const rajdhani = Rajdhani({
 });
 
 export const metadata: Metadata = {
-  title: "DystoCorp — Crew & Campaign Manager",
+  title: "DystoCorp — Team & Campaign Manager",
   description: "Stargrave crew builder and campaign tracker for the DystoCorp setting.",
 };
 

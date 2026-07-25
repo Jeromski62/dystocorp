@@ -41,7 +41,7 @@ export default async function ProfilePage() {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="border border-border bg-bg-surface p-3">
-                <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Crews</p>
+                <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Teams</p>
                 <p className="mt-1 font-display text-lg font-bold text-text-default">{crewCount ?? 0}</p>
               </div>
               <div className="border border-border bg-bg-surface p-3">

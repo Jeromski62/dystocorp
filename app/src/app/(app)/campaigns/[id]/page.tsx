@@ -79,7 +79,7 @@ export default async function CampaignDetailPage({
 
         <div className="mt-6 grid grid-cols-3 gap-3">
           <div className="border border-border bg-bg-surface p-3.5">
-            <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Crews</p>
+            <p className="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase">Teams</p>
             <p className="mt-1 font-display text-lg font-bold text-text-default">{String(crews?.length ?? 0).padStart(2, "0")}</p>
           </div>
           <div className="border border-border bg-bg-surface p-3.5">
@@ -104,7 +104,7 @@ export default async function CampaignDetailPage({
         </section>
 
         <section className="mt-8">
-          <h2 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Teilnehmende Crews"}</h2>
+          <h2 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{"// Teilnehmende Teams"}</h2>
           <div className="mt-2 flex flex-col gap-3">
             {(crews ?? []).map((crew) => {
               const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
@@ -134,7 +134,7 @@ export default async function CampaignDetailPage({
                 href={`/campaigns/${campaign.id}/new-crew`}
                 className="flex flex-col items-center justify-center border border-dashed border-border p-4 text-center font-display text-sm font-semibold tracking-[0.06em] text-text-secondary uppercase hover:border-accent hover:text-text-default"
               >
-                ＋ Eigene Crew erstellen
+                ＋ Eigenes Team erstellen
               </Link>
             ) : null}
 

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 // --corp-* CSS vars (see globals.css), so they render correctly both inside
 // a [data-corp] scope and as the neutral fallback outside one; `cta` is the
 // one deliberately corp-independent solid white/black action color (login,
-// "+ Neue Crew" etc.); `outline`/`destructive` are for generic/neutral or
+// "+ Team Einstellen" etc.); `outline`/`destructive` are for generic/neutral or
 // dangerous actions that shouldn't carry a corp accent at all.
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding font-display text-sm font-semibold tracking-wide uppercase whitespace-nowrap transition-[background-color,opacity,border-color,color,transform] outline-none select-none focus-visible:border-corp-accent focus-visible:ring-3 focus-visible:ring-corp-accent/50 active:not-aria-[haspopup]:translate-y-px disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

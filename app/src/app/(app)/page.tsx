@@ -72,12 +72,12 @@ export default async function HomePage() {
       <div className="hud-grid flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
         <p className="font-display text-2xl tracking-[0.1em] text-text-default">Willkommen bei DystoCorp</p>
         <p className="max-w-sm font-mono text-xs leading-relaxed text-text-secondary">
-          Leg deine erste Crew an oder tritt einer Kampagne bei, um loszulegen.
+          Leg dein erstes Team an oder tritt einer Kampagne bei, um loszulegen.
         </p>
         <div className="mt-4 flex w-full max-w-xs flex-col gap-3">
           <Link href="/crews/new">
             <Button variant="cta" className="w-full">
-              ＋ Erste Crew erstellen
+              ＋ Erstes Team erstellen
             </Button>
           </Link>
           <Link href="/campaigns">
@@ -162,17 +162,17 @@ export default async function HomePage() {
           <section className="flex flex-1 flex-col border border-border bg-black/60">
             <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
               <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
-                Crew-Register // Aktive Einheiten
+                Team-Register // Aktive Einheiten
               </span>
               <span className="font-mono text-[14px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
             </div>
 
             {crewList.length === 0 ? (
-              <p className="px-4 py-6 font-mono text-xs text-text-secondary">Noch keine Crew registriert.</p>
+              <p className="px-4 py-6 font-mono text-xs text-text-secondary">Noch kein Team registriert.</p>
             ) : (
               <div className="overflow-x-auto">
                 <div className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] gap-2 border-b border-border px-4 py-2 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
-                  <span>Crew</span>
+                  <span>Team</span>
                   <span>Corp</span>
                   <span>Captain</span>
                   <span>Lvl</span>

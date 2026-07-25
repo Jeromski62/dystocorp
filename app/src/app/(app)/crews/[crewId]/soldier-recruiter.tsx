@@ -170,7 +170,7 @@ export function SoldierRecruiter({
                   </label>
                 ) : (
                   <p className="mt-2.5 font-mono text-[14px] text-text-subtle">
-                    Bonus-Ausrüstung (Campaign Loot) nur verfügbar, sobald diese Crew in einer Kampagne mitspielt.
+                    Bonus-Ausrüstung (Campaign Loot) nur verfügbar, sobald dieses Team in einer Kampagne mitspielt.
                   </p>
                 )}
 

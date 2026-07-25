@@ -380,7 +380,7 @@ export function OfficerBuilder({
           </h3>
           {!inCampaign ? (
             <p className="mt-1 text-xs text-text-secondary">
-              Advanced Weapon/Technology und Alien Artefact sind Campaign Loot — erst verfügbar, sobald diese Crew in
+              Advanced Weapon/Technology und Alien Artefact sind Campaign Loot — erst verfügbar, sobald dieses Team in
               einer Kampagne mitspielt.
             </p>
           ) : null}

@@ -126,7 +126,7 @@ export async function saveCrewMissionResult(input: {
     .select("id, credits, experience, player_id")
     .eq("id", input.crewId)
     .maybeSingle();
-  if (!crew || crew.player_id !== user.id) return { error: "Diese Crew gehört dir nicht." };
+  if (!crew || crew.player_id !== user.id) return { error: "Dieses Team gehört dir nicht." };
 
   const { data: existing } = await supabase
     .from("crew_session_results")

@@ -27,7 +27,7 @@ export function CampaignDangerZone({
   function handleDelete() {
     if (
       !window.confirm(
-        `"${campaignName}" wirklich unwiderruflich löschen? Dabei werden auch die Crews aller Mitspieler in dieser Kampagne gelöscht.`
+        `"${campaignName}" wirklich unwiderruflich löschen? Dabei werden auch die Teams aller Mitspieler in dieser Kampagne gelöscht.`
       )
     ) {
       return;

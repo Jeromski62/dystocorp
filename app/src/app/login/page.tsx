@@ -19,7 +19,7 @@ export default function LoginPage() {
               DYSTO.CORP
             </p>
             <p className="mt-3.5 font-mono text-[15px] tracking-[0.1em] text-text-secondary">
-              CREW_DATABASE_GATEWAY_v7.2
+              TEAM_DATABASE_GATEWAY_v7.2
             </p>
           </div>
 

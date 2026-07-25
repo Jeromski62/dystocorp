@@ -2,7 +2,7 @@ type NavItem = { href: string; label: string; exact?: boolean };
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Übersicht", exact: true },
-  { href: "/crews", label: "Meine Crews" },
+  { href: "/crews", label: "Meine Teams" },
   { href: "/campaigns", label: "Kampagnen" },
   { href: "/rules", label: "Regeln" },
   { href: "/intel", label: "Intel" },

@@ -56,7 +56,7 @@ export function CrewMissionResultForm({
     return (
       <div className="rounded-md border border-corp-accent/40 bg-bg-raised p-3 text-sm">
         <div className="flex items-center justify-between">
-          <span className="font-medium text-text-default">{crewName} (deine Crew)</span>
+          <span className="font-medium text-text-default">{crewName} (dein Team)</span>
           <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-corp-accent">
             Bearbeiten
           </button>
@@ -75,7 +75,7 @@ export function CrewMissionResultForm({
 
   return (
     <div className="rounded-md border border-corp-accent/40 bg-bg-raised p-3">
-      <p className="text-sm font-medium text-text-default">Ergebnis für {crewName} (deine Crew)</p>
+      <p className="text-sm font-medium text-text-default">Ergebnis für {crewName} (dein Team)</p>
       <div className="mt-2 grid grid-cols-2 gap-2">
         <label className="text-xs text-text-secondary">
           XP-Delta

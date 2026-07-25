@@ -54,12 +54,12 @@ export async function importCrewIntoCampaign(campaignId: string, crewId: string)
   if (!user) return { error: "Nicht eingeloggt." };
 
   const { data: crew } = await supabase.from("crews").select("id, player_id, campaign_id").eq("id", crewId).maybeSingle();
-  if (!crew || crew.player_id !== user.id) return { error: "Crew nicht gefunden." };
-  if (crew.campaign_id) return { error: "Diese Crew gehört bereits zu einer Kampagne." };
+  if (!crew || crew.player_id !== user.id) return { error: "Team nicht gefunden." };
+  if (crew.campaign_id) return { error: "Dieses Team gehört bereits zu einer Kampagne." };
 
   const { error } = await supabase.from("crews").update({ campaign_id: campaignId }).eq("id", crewId);
   if (error) {
-    return { error: error.code === "23505" ? "Du hast bereits eine Crew in dieser Kampagne." : error.message };
+    return { error: error.code === "23505" ? "Du hast bereits ein Team in dieser Kampagne." : error.message };
   }
 
   revalidatePath(`/campaigns/${campaignId}`);
