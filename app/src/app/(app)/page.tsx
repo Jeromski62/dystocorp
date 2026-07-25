@@ -93,7 +93,7 @@ export default async function HomePage() {
 
   return (
     <div className="hud-grid relative min-h-screen overflow-hidden">
-      <StarmapCanvas />
+      <StarmapCanvas className="z-0" />
 
       <div className="relative z-[1] flex min-h-screen flex-col">
         <div className="flex flex-wrap items-stretch border-b border-border bg-black/40 font-mono text-[14px] tracking-[0.05em] text-text-secondary">
