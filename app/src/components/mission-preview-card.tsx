@@ -25,7 +25,7 @@ export function MissionPreviewCard({
   return (
     <Link
       href={href}
-      className="relative flex h-[200px] w-full flex-col justify-between overflow-hidden border border-white p-4 transition-colors hover:border-white/60"
+      className="relative flex h-[200px] w-full flex-col justify-between overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-black" />

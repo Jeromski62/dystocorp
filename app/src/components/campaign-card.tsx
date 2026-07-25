@@ -20,7 +20,7 @@ export function CampaignCard({
   return (
     <Link
       href={href}
-      className={`relative flex h-[200px] w-full flex-col justify-between overflow-hidden border border-white p-4 transition-colors hover:border-white/60 ${
+      className={`relative flex h-[200px] w-full flex-col justify-between overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30 ${
         archived ? "opacity-60 hover:opacity-100" : ""
       }`}
     >

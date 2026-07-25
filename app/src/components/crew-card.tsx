@@ -15,11 +15,12 @@ function corpBackground(slug: string | undefined): string {
 }
 
 // Shared crew-card shell, ported skeleton-for-skeleton from the Figma Team
-// Card component: corp-accent-bordered box with a dimmed photo background,
-// an icon+corp-name+team-name header, one meta line, and a fixed FTE/XP/CR
-// stat footer. --corp-accent/--corp-bg fall back to neutral (white border,
-// no corp) outside a [data-corp] scope, so corpSlug={undefined} alone
-// reproduces the design's neutral "Special Purpose Vehicle" card.
+// Card component: white/12%-bordered box (same border treatment as
+// CampaignCard/MissionPreviewCard) with a dimmed photo background, an
+// icon+corp-name+team-name header, one meta line, and a fixed FTE/XP/CR
+// stat footer. --corp-accent/--corp-bg fall back to neutral outside a
+// [data-corp] scope, so corpSlug={undefined} alone reproduces the design's
+// neutral "Special Purpose Vehicle" card.
 export function CrewCard({
   href,
   corpSlug,
@@ -48,7 +49,7 @@ export function CrewCard({
     <Link
       href={href}
       data-corp={corpSlug}
-      className={`relative flex w-full flex-col gap-2 overflow-hidden border border-corp-accent p-4 transition-colors hover:border-corp-accent/60 ${fill ? "h-full" : "h-[160px]"}`}
+      className={`relative flex w-full flex-col gap-2 overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30 ${fill ? "h-full" : "h-[160px]"}`}
     >
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-black" />
