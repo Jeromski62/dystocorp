@@ -48,6 +48,38 @@ function CorpColumns({ children }: { children: (slug: (typeof CORP_COLUMNS)[numb
   );
 }
 
+function TypeGroup({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div>
+      <p className="mb-1 font-mono text-[11px] tracking-[0.1em] text-text-subtle uppercase">{label}</p>
+      <div className="border border-border">{children}</div>
+    </div>
+  );
+}
+
+function TypeRow({
+  label,
+  note,
+  sample,
+  sampleClassName,
+}: {
+  label: string;
+  note?: string;
+  sample: string;
+  sampleClassName: string;
+}) {
+  return (
+    <div className="border-b border-border/60 px-4 py-3 last:border-b-0">
+      <div className="mb-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <span className="font-mono text-[11px] tracking-wide text-corp-accent uppercase">{label}</span>
+        {note ? <span className="font-mono text-[11px] text-text-subtle">{note}</span> : null}
+      </div>
+      <p className={sampleClassName}>{sample}</p>
+      <code className="mt-1.5 block font-mono text-[11px] break-all text-text-subtle">{sampleClassName}</code>
+    </div>
+  );
+}
+
 export default function ComponentPlaygroundPage() {
   return (
     <div className="hud-grid min-h-screen bg-bg-body p-8">
@@ -57,6 +89,119 @@ export default function ComponentPlaygroundPage() {
       <p className="mb-10 font-mono text-xs text-text-secondary">
         Interner Dev-Screen, nicht verlinkt. Zeigt die geteilten Komponenten aus src/components/ mit Beispiel-Daten.
       </p>
+
+      <Section title="Typography">
+        <TypeGroup label="Überschriften — H1">
+          <TypeRow
+            label="H1 · Seitentitel"
+            note="Übersicht, Kampagnen, Profil, Meine Crews, ..."
+            sample="Übersicht"
+            sampleClassName="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase"
+          />
+          <TypeRow
+            label="H1 · Entity-Name"
+            note="editierbarer Crew-/Corp-Name"
+            sample="Schattenklaue"
+            sampleClassName="font-display text-2xl tracking-[2.5px] text-text-default"
+          />
+          <TypeRow
+            label="H1 · Auth-Screens (Ausreißer)"
+            note="kein font-display — /auth/confirm, /auth/auth-code-error"
+            sample="Login bestätigen"
+            sampleClassName="text-2xl font-semibold text-text-default"
+          />
+        </TypeGroup>
+
+        <TypeGroup label="Überschriften — H2">
+          <TypeRow
+            label="H2 · Terminal-Sektionslabel"
+            note="// Teilnehmende Crews, // Mitspieler, ..."
+            sample="// Teilnehmende Crews"
+            sampleClassName="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase"
+          />
+          <TypeRow
+            label="H2 · Karten-/Listen-Titel"
+            note="Corp-Karten, Rules-Übersicht"
+            sample="Yūgure Syndikat"
+            sampleClassName="font-display text-lg tracking-[2px] text-text-default"
+          />
+          <TypeRow
+            label="H2 · Plain (Ausreißer)"
+            note="kein font-display/mono — power-browser, weapon-browser"
+            sample="Fireball"
+            sampleClassName="font-semibold text-text-default"
+          />
+        </TypeGroup>
+
+        <TypeGroup label="Überschriften — H3">
+          <TypeRow
+            label="H3 · Formular-Sektionslabel"
+            note="officer-builder, ship-panel"
+            sample="Background"
+            sampleClassName="font-display text-sm tracking-[3px] text-text-secondary uppercase"
+          />
+        </TypeGroup>
+
+        <p className="font-mono text-[11px] text-text-subtle">H4/H5 — aktuell nirgends im Code verwendet.</p>
+
+        <TypeGroup label="Type Scale (Tailwind-Tokens, überschrieben in globals.css)">
+          <TypeRow label="text-xs" note="15px" sample="Die Crew macht sich bereit." sampleClassName="text-xs text-text-default" />
+          <TypeRow label="text-sm" note="16px" sample="Die Crew macht sich bereit." sampleClassName="text-sm text-text-default" />
+          <TypeRow label="text-base" note="18px" sample="Die Crew macht sich bereit." sampleClassName="text-base text-text-default" />
+          <TypeRow label="text-lg" note="20px" sample="Die Crew macht sich bereit." sampleClassName="text-lg text-text-default" />
+          <TypeRow label="text-xl" note="22px" sample="Die Crew macht sich bereit." sampleClassName="text-xl text-text-default" />
+          <TypeRow label="text-2xl" note="26px" sample="Die Crew macht sich bereit." sampleClassName="text-2xl text-text-default" />
+          <TypeRow label="text-3xl" note="32px, ungenutzt" sample="Die Crew macht sich bereit." sampleClassName="text-3xl text-text-default" />
+        </TypeGroup>
+
+        <TypeGroup label="Schriftfamilien">
+          <TypeRow
+            label="font-display (Rajdhani)"
+            note="erzwingt uppercase über .font-display"
+            sample="Dysto.Corp"
+            sampleClassName="font-display text-xl text-text-default"
+          />
+          <TypeRow
+            label="font-mono (IBM Plex Mono)"
+            note="Daten, Labels, Systemstrings"
+            sample="SYS_OP_1.09 // ONLINE"
+            sampleClassName="font-mono text-lg text-text-default"
+          />
+          <TypeRow
+            label="body / Standard (Inter)"
+            note="Fließtext"
+            sample="Die unabhängigen Crews überleben nur, wenn sie zusammenhalten."
+            sampleClassName="text-lg text-text-default"
+          />
+        </TypeGroup>
+
+        <TypeGroup label="Weitere Textrollen">
+          <TypeRow
+            label="Body-Copy"
+            note="Beschreibungstexte, Flavor-Text"
+            sample="Reine Optik/Lore — hat keinen Einfluss auf Stats, Powers oder Gear."
+            sampleClassName="text-sm text-text-secondary"
+          />
+          <TypeRow
+            label="Meta-/Label-Text (mono)"
+            note="Karten-Meta, Tabellen-Header"
+            sample="Corp · Captain · Status"
+            sampleClassName="font-mono text-[14px] tracking-[0.06em] text-text-secondary uppercase"
+          />
+          <TypeRow
+            label="Daten-Wert (mono)"
+            note="Credits, Stats, Zahlenwerte"
+            sample="1.250 CR"
+            sampleClassName="font-mono text-[15px] text-text-default"
+          />
+          <TypeRow
+            label="Button-Label"
+            note="aus Button.tsx (alle Varianten)"
+            sample="Speichern"
+            sampleClassName="font-display text-sm font-semibold tracking-wide text-text-default uppercase"
+          />
+        </TypeGroup>
+      </Section>
 
       <Section title="Button">
         <CorpColumns>
