@@ -6,6 +6,7 @@ import { RainCanvas } from "@/components/rain-canvas";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { crewStatus } from "@/lib/crew-status";
 import { CrewCard } from "@/components/crew-card";
+import { CampaignCard } from "@/components/campaign-card";
 
 type CrewRow = {
   id: string;
@@ -27,13 +28,22 @@ export default async function HomePage() {
     supabase.from("players").select("display_name").eq("id", user!.id).maybeSingle(),
     supabase
       .from("campaign_members")
-      .select("campaign_id, campaigns(id, name, description, archived_at)")
+      .select("campaign_id, campaigns(id, name, description, archived_at, crews(corps(key, name)))")
       .eq("player_id", user!.id)
       .order("joined_at", { ascending: false }),
   ]);
 
   const latestCampaign = memberships?.find((m) => m.campaigns && !m.campaigns.archived_at)?.campaigns ?? null;
   const campaignIds = (memberships ?? []).map((m) => m.campaign_id);
+  const latestCampaignCorps = (() => {
+    const seen = new Map<string, { key: string; slug: string; name: string }>();
+    for (const crew of latestCampaign?.crews ?? []) {
+      if (!crew.corps) continue;
+      const slug = corpThemeSlug(crew.corps.key);
+      if (!seen.has(slug)) seen.set(slug, { key: crew.corps.key, slug, name: crew.corps.name });
+    }
+    return Array.from(seen.values());
+  })();
 
   const [{ data: latestMissions }, { data: crews }] = await Promise.all([
     campaignIds.length > 0
@@ -110,12 +120,9 @@ export default async function HomePage() {
             <section className="border border-border bg-black/40 p-4">
               <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Laufende Kampagne</p>
               {latestCampaign ? (
-                <Link href={`/campaigns/${latestCampaign.id}`} className="mt-2 block hover:text-accent">
-                  <p className="font-display text-lg font-semibold text-text-default">{latestCampaign.name}</p>
-                  {latestCampaign.description ? (
-                    <p className="mt-1 font-mono text-[14px] text-text-subtle">{latestCampaign.description}</p>
-                  ) : null}
-                </Link>
+                <div className="mt-2">
+                  <CampaignCard href={`/campaigns/${latestCampaign.id}`} name={latestCampaign.name} corps={latestCampaignCorps} />
+                </div>
               ) : (
                 <Link href="/campaigns" className="mt-2 block font-mono text-xs text-text-secondary hover:text-accent">
                   Noch keine Kampagne — ansehen/beitreten →

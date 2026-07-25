@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CreateCampaignForm } from "./create-campaign-form";
 import { JoinCampaignForm } from "./join-campaign-form";
+import { CampaignCard } from "@/components/campaign-card";
+import { corpThemeSlug } from "@/lib/corp-theme";
 
 export default async function CampaignsPage() {
   const supabase = await createClient();
@@ -11,7 +12,7 @@ export default async function CampaignsPage() {
 
   const { data: memberships } = await supabase
     .from("campaign_members")
-    .select("campaigns(id, name, description, created_at, archived_at)")
+    .select("campaigns(id, name, description, created_at, archived_at, crews(corps(key, name)))")
     .eq("player_id", user!.id)
     .order("joined_at", { ascending: false });
 
@@ -21,6 +22,16 @@ export default async function CampaignsPage() {
 
   const activeCampaigns = campaigns.filter((c) => !c.archived_at);
   const archivedCampaigns = campaigns.filter((c) => c.archived_at);
+
+  function participatingCorps(campaign: (typeof campaigns)[number]) {
+    const seen = new Map<string, { key: string; slug: string; name: string }>();
+    for (const crew of campaign.crews) {
+      if (!crew.corps) continue;
+      const slug = corpThemeSlug(crew.corps.key);
+      if (!seen.has(slug)) seen.set(slug, { key: crew.corps.key, slug, name: crew.corps.name });
+    }
+    return Array.from(seen.values());
+  }
 
   return (
     <div className="hud-grid min-h-screen">
@@ -38,14 +49,7 @@ export default async function CampaignsPage() {
           </p>
         ) : (
           activeCampaigns.map((c) => (
-            <Link
-              key={c.id}
-              href={`/campaigns/${c.id}`}
-              className="rounded-md border border-border bg-bg-surface px-4 py-3 hover:border-accent"
-            >
-              <p className="font-medium text-text-default">{c.name}</p>
-              {c.description ? <p className="mt-1 text-sm text-text-secondary">{c.description}</p> : null}
-            </Link>
+            <CampaignCard key={c.id} href={`/campaigns/${c.id}`} name={c.name} corps={participatingCorps(c)} />
           ))
         )}
       </div>
@@ -55,14 +59,7 @@ export default async function CampaignsPage() {
           <h2 className="text-xs uppercase tracking-widest text-text-secondary">Archiviert</h2>
           <div className="mt-3 flex flex-col gap-3">
             {archivedCampaigns.map((c) => (
-              <Link
-                key={c.id}
-                href={`/campaigns/${c.id}`}
-                className="rounded-md border border-border bg-bg-surface/50 px-4 py-3 opacity-60 hover:opacity-100 hover:border-accent"
-              >
-                <p className="font-medium text-text-default">{c.name}</p>
-                {c.description ? <p className="mt-1 text-sm text-text-secondary">{c.description}</p> : null}
-              </Link>
+              <CampaignCard key={c.id} href={`/campaigns/${c.id}`} name={c.name} corps={participatingCorps(c)} archived />
             ))}
           </div>
         </div>
