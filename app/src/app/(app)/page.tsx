@@ -7,6 +7,7 @@ import { corpThemeSlug } from "@/lib/corp-theme";
 import { crewStatus } from "@/lib/crew-status";
 import { CrewCard } from "@/components/crew-card";
 import { CampaignCard } from "@/components/campaign-card";
+import { MissionPreviewCard } from "@/components/mission-preview-card";
 
 type CrewRow = {
   id: string;
@@ -49,11 +50,13 @@ export default async function HomePage() {
     campaignIds.length > 0
       ? supabase
           .from("missions")
-          .select("id, title, status, campaign_id, campaigns(name)")
+          .select("id, title, subtitle, status, campaign_id, campaigns(name)")
           .in("campaign_id", campaignIds)
           .order("created_at", { ascending: false })
           .limit(1)
-      : Promise.resolve({ data: [] as { id: string; title: string; status: string; campaign_id: string; campaigns: { name: string } | null }[] }),
+      : Promise.resolve({
+          data: [] as { id: string; title: string; subtitle: string | null; status: string; campaign_id: string; campaigns: { name: string } | null }[],
+        }),
     supabase
       .from("crews")
       .select("id, name, credits, experience, corps(key, name), captains(name, level, current_health, health), soldiers(count)")
@@ -141,19 +144,17 @@ export default async function HomePage() {
             </section>
 
             <section className="flex flex-col pt-4">
-              <div className="flex items-center justify-between">
-                <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Neueste Mission</p>
-                {latestMission ? (
-                  <span className="border border-border px-1.5 py-0.5 font-mono text-[14px] text-text-secondary uppercase">
-                    {latestMission.status}
-                  </span>
-                ) : null}
-              </div>
+              <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Nächste Mission</p>
               {latestMission ? (
-                <Link href={`/campaigns/${latestMission.campaign_id}/missions`} className="mt-2 block hover:text-accent">
-                  <p className="font-display text-lg font-semibold text-text-default">{latestMission.title}</p>
-                  <p className="mt-1 font-mono text-[14px] text-text-subtle">{latestMission.campaigns?.name}</p>
-                </Link>
+                <div className="mt-2">
+                  <MissionPreviewCard
+                    href={`/campaigns/${latestMission.campaign_id}/missions`}
+                    title={latestMission.title}
+                    subtitle={latestMission.subtitle}
+                    campaignName={latestMission.campaigns?.name}
+                    status={latestMission.status}
+                  />
+                </div>
               ) : (
                 <div className="flex flex-1 items-center justify-center">
                   <p className="font-mono text-xs text-text-secondary">Noch keine Mission geplant.</p>
