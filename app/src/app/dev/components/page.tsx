@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ResolvedVar } from "./resolved-var";
 import { Button } from "@/components/ui/button";
 import { CrewCard } from "@/components/crew-card";
@@ -23,6 +23,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 // Internal dev-only page: every shared component (app/src/components/) with
 // realistic sample data, grouped by component, one long scrollable page —
@@ -109,6 +110,8 @@ function TypeRow({
 }
 
 export default function ComponentPlaygroundPage() {
+  const [sheetOpen, setSheetOpen] = useState(false);
+
   return (
     <div className="hud-grid min-h-screen bg-bg-body p-8">
       <h1 className="mb-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">
@@ -510,6 +513,22 @@ export default function ComponentPlaygroundPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </Section>
+
+      <Section title="ui/Sheet">
+        <p className="font-mono text-xs text-text-secondary">
+          Bottom-Sheet für den OfficerBuilder-Picker (Captain/First Mate) auf Mobile -- md:hidden, also nur unterhalb
+          768px sichtbar. Fenster schmaler ziehen, um es zu sehen.
+        </p>
+        <Button variant="outline" onClick={() => setSheetOpen(true)}>
+          Sheet öffnen
+        </Button>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetContent>
+            <p className="font-display text-lg font-semibold text-text-default">Beispiel-Sheet</p>
+            <p className="mt-1 text-sm text-text-secondary">Picker-Inhalt würde hier reinlaufen.</p>
+          </SheetContent>
+        </Sheet>
       </Section>
     </div>
   );

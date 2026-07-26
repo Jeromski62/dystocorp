@@ -49,7 +49,7 @@ export default async function CrewEditPage({
 
   return (
     <div className="hud-grid min-h-screen">
-      <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="mx-auto max-w-6xl px-6 py-12">
         <Link href={`/crews/${crewId}`} className="font-mono text-[14px] text-text-secondary hover:text-corp-accent">
           ← Zurück zur Übersicht
         </Link>

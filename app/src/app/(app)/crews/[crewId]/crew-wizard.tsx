@@ -90,7 +90,7 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
 
   return (
     <div className="hud-grid min-h-screen">
-      <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">
             <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
