@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { CorpEmblem } from "@/components/corp-emblem";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { PageHeader } from "@/components/page-header";
+import { CorpCard, type CorpCardVariant } from "@/components/corp-card";
 
 export default async function CorporationsPage() {
   const supabase = await createClient();
@@ -22,20 +22,13 @@ export default async function CorporationsPage() {
 
       <div className="mt-8 flex flex-col gap-4">
         {(corps ?? []).map((corp) => (
-          <Link
-            key={corp.id}
-            href={`/intel/corporations/${corp.id}`}
-            data-corp={corpThemeSlug(corp.key)}
-            className="flex items-start gap-3 rounded-md border border-corp-border bg-bg-surface p-4 hover:border-corp-accent"
-          >
-            <CorpEmblem name={corp.name} slug={corpThemeSlug(corp.key)} />
-            <div>
-              <p className="font-mono text-xs uppercase tracking-wide text-corp-accent">{corp.sector}</p>
-              <h2 className="font-display text-lg tracking-[2px] text-text-default">{corp.name}</h2>
-              <p className="mt-1 line-clamp-2 text-sm text-text-secondary">{corp.lore_markdown}</p>
-            </div>
+          <Link key={corp.id} href={`/intel/corporations/${corp.id}`}>
+            <CorpCard corp={corpThemeSlug(corp.key) as CorpCardVariant} />
           </Link>
         ))}
+        <Link href="/intel/corporations/subcontractor">
+          <CorpCard corp="subcontractor" />
+        </Link>
       </div>
     </div>
     </div>
