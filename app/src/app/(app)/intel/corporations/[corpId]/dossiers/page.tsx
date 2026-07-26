@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { corpThemeSlug } from "@/lib/corp-theme";
+import { PageHeader } from "@/components/page-header";
 
 export default async function CorpDossiersPage({
   params,
@@ -21,7 +22,7 @@ export default async function CorpDossiersPage({
         <Link href={`/intel/corporations/${corp.id}`} className="text-xs text-text-secondary hover:text-corp-accent">
           ← {corp.name}
         </Link>
-        <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Dossiers</h1>
+        <PageHeader className="mt-2" title="Dossiers" />
         <p className="mt-4 rounded-md border border-dashed border-border px-4 py-6 text-sm text-text-secondary">
           Kommt noch — hier entstehen die Charakter-Dossiers von {corp.name}.
         </p>

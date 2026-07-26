@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { corpThemeSlug } from "@/lib/corp-theme";
+import { PageHeader } from "@/components/page-header";
 
 export default async function CorporationsPage() {
   const supabase = await createClient();
@@ -17,8 +18,7 @@ export default async function CorporationsPage() {
       <Link href="/intel" className="text-xs text-text-secondary hover:text-accent">
         ← Intel
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Corporations</h1>
-      <p className="mt-1 text-sm text-text-secondary">Die Mega Corps der DystoCorp-Welt.</p>
+      <PageHeader className="mt-2" title="Corporations" description="Die Mega Corps der DystoCorp-Welt." />
 
       <div className="mt-8 flex flex-col gap-4">
         {(corps ?? []).map((corp) => (

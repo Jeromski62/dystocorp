@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/supabase/actions";
 import { EditDisplayNameForm } from "./edit-display-name-form";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -28,7 +29,7 @@ export default async function ProfilePage() {
   return (
     <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Profil</h1>
+        <PageHeader title="Profil" />
 
         <div className="mt-6 grid gap-4 sm:grid-cols-[1fr_1.2fr]">
           <div className="flex flex-col gap-4">

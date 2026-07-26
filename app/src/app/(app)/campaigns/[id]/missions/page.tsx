@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { NewMissionForm } from "./new-mission-form";
 import { MissionCard } from "./mission-card";
+import { PageHeader } from "@/components/page-header";
 
 const STATUS_ORDER: Record<string, number> = { ongoing: 0, planned: 1, report: 2 };
 
@@ -74,10 +75,11 @@ export default async function MissionsPage({
         <Link href={`/campaigns/${campaignId}`} className="font-mono text-xs text-text-secondary hover:text-corp-accent">
           ← {campaign.name}
         </Link>
-        <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.16em] text-text-default uppercase">Missionen</h1>
-        <p className="mt-1 font-mono text-xs text-text-secondary">
-          Plant die nächste Mission, markiert sie als laufend, sobald ihr spielt, und schreibt danach den Bericht.
-        </p>
+        <PageHeader
+          className="mt-2"
+          title="Missionen"
+          description="Plant die nächste Mission, markiert sie als laufend, sobald ihr spielt, und schreibt danach den Bericht."
+        />
 
         <div className="mt-6">
           <NewMissionForm campaignId={campaignId} />

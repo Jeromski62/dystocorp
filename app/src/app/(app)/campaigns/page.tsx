@@ -5,6 +5,7 @@ import { CampaignCard } from "@/components/campaign-card";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { PageHeader } from "@/components/page-header";
 
 export default async function CampaignsPage() {
   const supabase = await createClient();
@@ -38,14 +39,10 @@ export default async function CampaignsPage() {
   return (
     <div className="hud-grid min-h-screen">
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Kampagnen</h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            Jede Kampagne bündelt eure Teams. Alle Mitspieler sind gleichberechtigt.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
+      <PageHeader
+        title="Kampagnen"
+        description="Jede Kampagne bündelt eure Teams. Alle Mitspieler sind gleichberechtigt."
+        secondary={
           <Dialog>
             <DialogTrigger render={<Button variant="ghost">＋ Kampagne beitreten</Button>} />
             <DialogContent>
@@ -56,6 +53,8 @@ export default async function CampaignsPage() {
               <JoinCampaignForm />
             </DialogContent>
           </Dialog>
+        }
+        cta={
           <Dialog>
             <DialogTrigger render={<Button variant="cta">＋ Neue Kampagne</Button>} />
             <DialogContent>
@@ -65,8 +64,8 @@ export default async function CampaignsPage() {
               <CreateCampaignForm />
             </DialogContent>
           </Dialog>
-        </div>
-      </div>
+        }
+      />
 
       <h2 className="mt-8 text-xs uppercase tracking-widest text-text-secondary">Laufende Kampagnen</h2>
       <div className="mt-3 flex flex-col gap-3">

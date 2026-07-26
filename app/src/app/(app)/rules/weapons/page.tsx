@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { WeaponBrowser } from "./weapon-browser";
+import { PageHeader } from "@/components/page-header";
 
 export default async function WeaponsPage() {
   const supabase = await createClient();
@@ -17,8 +18,11 @@ export default async function WeaponsPage() {
       <Link href="/rules" className="text-xs text-text-secondary hover:text-accent">
         ← Regeln
       </Link>
-      <h1 className="mt-2 font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Weapon Profiles &amp; Rules</h1>
-      <p className="mt-1 text-sm text-text-secondary">Waffen, Advanced Weapons und Rüstung aus dem Ausrüstungskatalog.</p>
+      <PageHeader
+        className="mt-2"
+        title="Weapon Profiles & Rules"
+        description="Waffen, Advanced Weapons und Rüstung aus dem Ausrüstungskatalog."
+      />
 
       <div className="mt-8">
         <WeaponBrowser items={items ?? []} />

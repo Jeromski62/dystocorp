@@ -7,6 +7,7 @@ import { CrewCard } from "@/components/crew-card";
 import { CorpCard } from "@/components/corp-card";
 import { Stepper } from "@/components/stepper";
 import { BackgroundCard } from "@/components/background-card";
+import { PageHeader } from "@/components/page-header";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { StatusBadge } from "@/components/status-badge";
 import { Tabs } from "@/components/tabs";
@@ -422,6 +423,28 @@ export default function ComponentPlaygroundPage() {
             selected={false}
             onSelect={() => {}}
           />
+        </div>
+      </Section>
+
+      <Section title="PageHeader">
+        <p className="font-mono text-xs text-text-secondary">
+          Skeleton aus Figma (Dysto-Corp-Rough-Concept, node 2067:211) — vereinheitlichtes Titel/Actions-Layout für
+          alle Seiten, `items-start` statt `items-end` verhindert das Springen der CTA je nach Subtitle-Länge.
+        </p>
+        <div className="flex flex-col gap-6 border border-border p-4">
+          <PageHeader
+            title="Meine Teams"
+            meta="02 GELISTET"
+            description="Alle deine Teams, campaign-übergreifend — auch Teams ohne Kampagne zum Ausprobieren."
+            cta={<Button variant="cta">＋ Team Einstellen</Button>}
+          />
+          <PageHeader
+            title="Kampagnen"
+            description="Jede Kampagne bündelt eure Teams."
+            secondary={<Button variant="ghost">＋ Beitreten</Button>}
+            cta={<Button variant="cta">＋ Neue Kampagne</Button>}
+          />
+          <PageHeader title="Profil" />
         </div>
       </Section>
 

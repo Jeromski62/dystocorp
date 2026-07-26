@@ -1,11 +1,11 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/page-header";
 
 export default function RulesPage() {
   return (
     <div className="hud-grid min-h-screen">
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Regeln</h1>
-      <p className="mt-1 text-sm text-text-secondary">Nachschlagewerke für Powers und Ausrüstung.</p>
+      <PageHeader title="Regeln" description="Nachschlagewerke für Powers und Ausrüstung." />
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Link href="/powers" className="rounded-md border border-border bg-bg-surface p-5 hover:border-accent">

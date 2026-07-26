@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CrewGrid } from "./crew-grid";
+import { PageHeader } from "@/components/page-header";
 
 export default async function CrewsPage() {
   const supabase = await createClient();
@@ -23,18 +24,16 @@ export default async function CrewsPage() {
   return (
     <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="flex items-baseline gap-3">
-            <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Meine Teams</h1>
-            <span className="font-mono text-[14px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
-          </div>
-          <Link href="/crews/new">
-            <Button variant="cta">＋ Team Einstellen</Button>
-          </Link>
-        </div>
-        <p className="mt-1 font-mono text-xs text-text-secondary">
-          Alle deine Teams, campaign-übergreifend — auch Teams ohne Kampagne zum Ausprobieren.
-        </p>
+        <PageHeader
+          title="Meine Teams"
+          meta={`${String(crewList.length).padStart(2, "0")} GELISTET`}
+          description="Alle deine Teams, campaign-übergreifend — auch Teams ohne Kampagne zum Ausprobieren."
+          cta={
+            <Link href="/crews/new">
+              <Button variant="cta">＋ Team Einstellen</Button>
+            </Link>
+          }
+        />
 
         <div className="mt-8">
           <CrewGrid crews={crewList} />
