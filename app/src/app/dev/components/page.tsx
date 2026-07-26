@@ -3,6 +3,7 @@ import { ResolvedVar } from "./resolved-var";
 import { Button } from "@/components/ui/button";
 import { CrewCard } from "@/components/crew-card";
 import { CorpCard } from "@/components/corp-card";
+import { Stepper } from "@/components/stepper";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { StatusBadge } from "@/components/status-badge";
 import { Tabs } from "@/components/tabs";
@@ -375,6 +376,21 @@ export default function ComponentPlaygroundPage() {
           <CorpCard corp="yugure" />
           <CorpCard corp="subcontractor" />
         </div>
+      </Section>
+
+      <Section title="Stepper">
+        <p className="font-mono text-xs text-text-secondary">
+          Skeleton aus Figma (Dysto-Corp-Rough-Concept, node 2063:153) — Team-Erstellung-Fortschritt. done = grüner Haken,
+          current = weiße gefüllte Kachel, open = 40% Opacity.
+        </p>
+        <Stepper
+          steps={[
+            { label: "Captain", status: "done" },
+            { label: "First Mate", status: "current" },
+            { label: "Soldiers", status: "open", disabled: true },
+            { label: "Ship", status: "open", disabled: true },
+          ]}
+        />
       </Section>
 
       <Section title="CorpEmblem">

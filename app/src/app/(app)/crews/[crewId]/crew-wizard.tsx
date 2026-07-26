@@ -7,6 +7,7 @@ import { OfficerBuilder } from "./officer-builder";
 import { SoldierRecruiter } from "./soldier-recruiter";
 import { ShipPanel } from "./ship-panel";
 import { CorpEmblem } from "@/components/corp-emblem";
+import { Stepper } from "@/components/stepper";
 import { EditCrewNameForm } from "./edit-crew-name-form";
 import { DeleteCrewButton } from "./delete-crew-button";
 import { Button } from "@/components/ui/button";
@@ -104,31 +105,16 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
           {crew.credits.toLocaleString("de-DE")} CR · Team Invest
         </p>
 
-        <ol className="mt-8 flex flex-wrap items-center gap-2 font-mono text-[14px] uppercase tracking-[0.06em]">
-          {STEPS.map((s, i) => {
-            const reached = s.n <= furthestStep;
-            const active = s.n === viewStep;
-            return (
-              <li key={s.n} className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={!reached}
-                  onClick={() => goTo(s.n)}
-                  className={
-                    active
-                      ? "border border-corp-accent bg-corp-accent px-3 py-1.5 text-corp-on-accent"
-                      : reached
-                        ? "border border-corp-accent/40 px-3 py-1.5 text-corp-accent hover:border-corp-accent"
-                        : "cursor-not-allowed border border-border px-3 py-1.5 text-text-subtle"
-                  }
-                >
-                  {s.n}. {s.label}
-                </button>
-                {i < STEPS.length - 1 ? <span className="text-text-subtle">→</span> : null}
-              </li>
-            );
-          })}
-        </ol>
+        <div className="mt-8">
+          <Stepper
+            steps={STEPS.map((s) => ({
+              label: s.label,
+              status: s.n === viewStep ? "current" : s.n < furthestStep ? "done" : "open",
+              disabled: s.n > furthestStep,
+              onClick: () => goTo(s.n),
+            }))}
+          />
+        </div>
 
         <div className="mt-8">
           {viewStep === 1 ? (
