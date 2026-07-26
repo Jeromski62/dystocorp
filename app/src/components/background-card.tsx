@@ -51,42 +51,45 @@ export function BackgroundCard({
 
   return (
     <div
-      className={`flex w-full flex-col items-start border bg-black p-4 transition-colors ${
+      className={`flex w-full items-start gap-2 border bg-black p-4 transition-colors ${
         selected ? "border-corp-accent" : "border-white/12 hover:border-white/30"
       }`}
     >
-      <button type="button" onClick={onSelect} className="flex w-full items-center gap-2 text-left">
-        <span className="flex size-10 shrink-0 items-center justify-center bg-black/60">
-          {iconSrc ? <Image src={iconSrc} alt="" width={32} height={32} /> : null}
-        </span>
-        <span className="min-w-0 flex-1 font-display text-[24px] font-semibold tracking-[2.4px] text-white uppercase">
-          {name}
-        </span>
-        {bonusBadges.map((label) => (
-          <span key={label} className="shrink-0 bg-white/24 px-1.5 py-1 text-[14px] font-semibold tracking-[1.4px] text-white">
-            {label}
-          </span>
-        ))}
-      </button>
+      <span className="flex size-12 shrink-0 items-center justify-center bg-black/60">
+        {iconSrc ? <Image src={iconSrc} alt="" width={40} height={40} /> : null}
+      </span>
 
-      <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between gap-2 pl-12">
-        <p className="text-[16px] leading-none text-white/60">
-          Wähle: <span className="font-bold text-white/80">{chooseCount}</span> von:{" "}
-          {chooseOptionLabels.map((label, i) => (
-            <span key={label}>
-              <span className="font-bold text-white/80">{label}</span>
-              {i < chooseOptionLabels.length - 1 ? ", " : ""}
+      <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
+        <button type="button" onClick={onSelect} className="flex w-full items-center gap-2 text-left">
+          <span className="min-w-0 flex-1 font-display text-[24px] font-semibold tracking-[2.4px] text-white uppercase">
+            {name}
+          </span>
+          {bonusBadges.map((label) => (
+            <span key={label} className="shrink-0 bg-white/24 px-1.5 py-1 text-[14px] font-semibold tracking-[1.4px] text-white">
+              {label}
             </span>
           ))}
-        </p>
-        <ChevronIcon className={`size-6 shrink-0 text-white transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
+        </button>
 
-      {open ? (
-        <div className="w-full pt-2 pl-12">
-          <p className="text-[16px] leading-[1.4] text-white/60">{flavorText}</p>
-        </div>
-      ) : null}
+        <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between gap-2">
+          <p className="text-[16px] leading-none text-white/60">
+            Wähle: <span className="font-bold text-white/80">{chooseCount}</span> von:{" "}
+            {chooseOptionLabels.map((label, i) => (
+              <span key={label}>
+                <span className="font-bold text-white/80">{label}</span>
+                {i < chooseOptionLabels.length - 1 ? ", " : ""}
+              </span>
+            ))}
+          </p>
+          <ChevronIcon className={`size-6 shrink-0 text-white transition-transform ${open ? "rotate-180" : ""}`} />
+        </button>
+
+        {open ? (
+          <div className="w-full pt-2">
+            <p className="text-[16px] leading-[1.4] text-white/60">{flavorText}</p>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
