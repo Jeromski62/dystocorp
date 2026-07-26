@@ -200,9 +200,11 @@ export function OfficerBuilder({
     });
   }
 
-  const stats = background
-    ? computeStatLine(rules.baseStats, background.fixed_stat_mods, chosenStatOptions as ChoosableStat[])
-    : null;
+  const stats = computeStatLine(
+    rules.baseStats,
+    background?.fixed_stat_mods ?? {},
+    chosenStatOptions as ChoosableStat[]
+  );
 
   const statError = background
     ? validateChosenStatOptions(chosenStatOptions, background.choice_stat_options, background.choice_stat_count)
@@ -254,12 +256,10 @@ export function OfficerBuilder({
         />
       </div>
 
-      {stats ? (
-        <div className="rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
-          Level {rules.startLevel} — M{stats.move} · F+{stats.fight} · S+{stats.shoot} · A{stats.armour} · W+
-          {stats.will} · H{stats.health}
-        </div>
-      ) : null}
+      <div className="rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
+        Level {rules.startLevel} — M{stats.move} · F+{stats.fight} · S+{stats.shoot} · A{stats.armour} · W+
+        {stats.will} · H{stats.health}
+      </div>
 
       <section>
         <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h3>
