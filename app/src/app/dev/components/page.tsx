@@ -517,8 +517,8 @@ export default function ComponentPlaygroundPage() {
 
       <Section title="ui/Sheet">
         <p className="font-mono text-xs text-text-secondary">
-          Bottom-Sheet für den OfficerBuilder-Picker (Captain/First Mate) auf Mobile -- md:hidden, also nur unterhalb
-          768px sichtbar. Fenster schmaler ziehen, um es zu sehen.
+          Picker-Drawer für den OfficerBuilder (Captain/First Mate) -- fährt von rechts rein auf Desktop, von unten auf
+          Mobile. Echtes Modal mit Backdrop bei jeder Fenstergröße.
         </p>
         <Button variant="outline" onClick={() => setSheetOpen(true)}>
           Sheet öffnen

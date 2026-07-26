@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { BackgroundCard } from "@/components/background-card";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { useMediaQuery } from "@/lib/use-media-query";
 import {
   computeActivationNumber,
   computeGearSlotTotal,
@@ -86,14 +85,14 @@ function fixedStatModBadges(mods: Record<string, number>): string[] {
 
 // Captain/First Mate creation used to be one long scrolling form -- easy to
 // lose your place in, and the CTA/summary was never visible once you'd
-// scrolled past it. This splits it into a permanent summary column (name,
-// live stats, one line per section) plus a picker for whichever section is
-// active: a fixed pane next to the summary on desktop (md:grid-cols-[...]),
-// a bottom sheet on mobile where there's no room for two columns side by
-// side. Same picker JSX renders in both places -- only the wrapper differs.
-// Starting a *new* officer opens Background immediately (guided); revisiting
-// an existing one (wizard back-nav or the free-edit tabs) starts closed so
-// nothing pops up uninvited.
+// scrolled past it. This keeps a single always-visible summary (name, live
+// stats, one line per section) and moves the actual picking into a Sheet
+// (ui/sheet.tsx) that slides in from the right on desktop / up from the
+// bottom on mobile with a dimming backdrop -- only one thing focused at a
+// time instead of a permanent side-by-side pane, which felt like cognitive
+// overload in practice. Starting a *new* officer opens Background
+// immediately (guided); revisiting an existing one (wizard back-nav or the
+// free-edit tabs) starts closed so nothing pops up uninvited.
 export function OfficerBuilder({
   crewId,
   role,
@@ -134,7 +133,6 @@ export function OfficerBuilder({
   const [saved, setSaved] = useState(false);
   const [pending, startTransition] = useTransition();
   const [activeSection, setActiveSection] = useState<Section | null>(existing ? null : "background");
-  const isMobile = useMediaQuery("(max-width: 767px)");
 
   const background = backgrounds.find((b) => b.id === backgroundId) ?? null;
   const corePowerIdSet = useMemo(
@@ -271,7 +269,7 @@ export function OfficerBuilder({
       <div className="flex flex-col gap-6">
         <div>
           <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h3>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-4">
             {backgrounds.map((b) => (
               <BackgroundCard
                 key={b.id}
@@ -335,7 +333,7 @@ export function OfficerBuilder({
             Powers ({totalSelectedCount}/{rules.powerCount}, Core {selectedCoreCount}/{rules.coreMin}-{rules.coreMax})
           </h3>
 
-          <div className="mt-3 grid gap-6 lg:grid-cols-2">
+          <div className="mt-3 flex flex-col gap-6">
             <div>
               <p className="mb-2 text-xs uppercase tracking-wide text-text-secondary">Core Powers ({background.name})</p>
               <div className="flex flex-col gap-2">
@@ -504,80 +502,68 @@ export function OfficerBuilder({
   const activePanel = renderActivePanel();
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-[360px_1fr] md:items-start">
-      <div className="flex flex-col gap-6">
-        <div>
-          <label htmlFor={`officer-name-${role}`} className="text-xs uppercase tracking-wide text-text-secondary">
-            Name
-          </label>
-          <input
-            id={`officer-name-${role}`}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
-          />
-        </div>
-
-        <div className="rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
-          Level {rules.startLevel} — M{stats.move} · F+{stats.fight} · S+{stats.shoot} · A{stats.armour} · W+
-          {stats.will} · H{stats.health}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <SummaryRow
-            label="Background"
-            active={activeSection === "background"}
-            onClick={() => goToSection("background")}
-          >
-            {background ? (
-              <>
-                {background.name}
-                {chosenStatOptions.length > 0
-                  ? ` — ${chosenStatOptions.map((s) => `+1 ${STAT_LABELS[s as ChoosableStat]}`).join(", ")}`
-                  : null}
-              </>
-            ) : (
-              "Noch nicht gewählt"
-            )}
-          </SummaryRow>
-
-          <SummaryRow
-            label="Powers"
-            active={activeSection === "powers"}
-            disabled={!background}
-            onClick={() => goToSection("powers")}
-          >
-            {background ? `${totalSelectedCount}/${rules.powerCount} gewählt` : "Erst Background wählen"}
-          </SummaryRow>
-
-          <SummaryRow label="Gear" active={activeSection === "gear"} onClick={() => goToSection("gear")}>
-            {gearSlotTotal}/{rules.gearSlots} Slots belegt
-          </SummaryRow>
-        </div>
-
-        <div className="flex flex-col items-start gap-2">
-          <Button disabled={!canSave || pending} onClick={handleSave}>
-            {pending ? "Speichere…" : "Speichern"}
-          </Button>
-          {saved ? <span className="text-sm text-corp-accent">Gespeichert.</span> : null}
-          {error ? <span className="text-sm text-danger">{error}</span> : null}
-          {!canSave && !error
-            ? [statError, powerError, reductionError, gearError].filter(Boolean).map((msg) => (
-                <span key={msg} className="text-sm text-text-secondary">
-                  {msg}
-                </span>
-              ))
-            : null}
-        </div>
+    <div className="flex flex-col gap-6">
+      <div>
+        <label htmlFor={`officer-name-${role}`} className="text-xs uppercase tracking-wide text-text-secondary">
+          Name
+        </label>
+        <input
+          id={`officer-name-${role}`}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="mt-1 block w-full max-w-sm rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+        />
       </div>
 
-      <div className="hidden border border-corp-border bg-corp-surface p-6 md:block">
-        {activePanel ?? (
-          <p className="text-sm text-text-secondary">Wähle links einen Abschnitt, um ihn zu bearbeiten.</p>
-        )}
+      <div className="rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
+        Level {rules.startLevel} — M{stats.move} · F+{stats.fight} · S+{stats.shoot} · A{stats.armour} · W+
+        {stats.will} · H{stats.health}
       </div>
 
-      <Sheet open={isMobile && activeSection !== null} onOpenChange={(open) => !open && setActiveSection(null)}>
+      <div className="flex flex-col gap-2">
+        <SummaryRow label="Background" active={activeSection === "background"} onClick={() => goToSection("background")}>
+          {background ? (
+            <>
+              {background.name}
+              {chosenStatOptions.length > 0
+                ? ` — ${chosenStatOptions.map((s) => `+1 ${STAT_LABELS[s as ChoosableStat]}`).join(", ")}`
+                : null}
+            </>
+          ) : (
+            "Noch nicht gewählt"
+          )}
+        </SummaryRow>
+
+        <SummaryRow
+          label="Powers"
+          active={activeSection === "powers"}
+          disabled={!background}
+          onClick={() => goToSection("powers")}
+        >
+          {background ? `${totalSelectedCount}/${rules.powerCount} gewählt` : "Erst Background wählen"}
+        </SummaryRow>
+
+        <SummaryRow label="Gear" active={activeSection === "gear"} onClick={() => goToSection("gear")}>
+          {gearSlotTotal}/{rules.gearSlots} Slots belegt
+        </SummaryRow>
+      </div>
+
+      <div className="flex flex-col items-start gap-2">
+        <Button disabled={!canSave || pending} onClick={handleSave}>
+          {pending ? "Speichere…" : "Speichern"}
+        </Button>
+        {saved ? <span className="text-sm text-corp-accent">Gespeichert.</span> : null}
+        {error ? <span className="text-sm text-danger">{error}</span> : null}
+        {!canSave && !error
+          ? [statError, powerError, reductionError, gearError].filter(Boolean).map((msg) => (
+              <span key={msg} className="text-sm text-text-secondary">
+                {msg}
+              </span>
+            ))
+          : null}
+      </div>
+
+      <Sheet open={activeSection !== null} onOpenChange={(open) => !open && setActiveSection(null)}>
         <SheetContent>{activePanel}</SheetContent>
       </Sheet>
     </div>
