@@ -10,7 +10,7 @@ export function CorpPicker({
 }: {
   eyebrow?: string;
   corps: Corp[];
-  createAction: (corpId: string) => Promise<void>;
+  createAction: (corpId: string | null) => Promise<void>;
 }) {
   return (
     <div className="hud-grid min-h-screen">
@@ -29,6 +29,11 @@ export function CorpPicker({
             </button>
           </form>
         ))}
+        <form action={createAction.bind(null, null)}>
+          <button type="submit" className="block w-full appearance-none text-left">
+            <CorpCard corp="subcontractor" />
+          </button>
+        </form>
       </div>
     </div>
     </div>

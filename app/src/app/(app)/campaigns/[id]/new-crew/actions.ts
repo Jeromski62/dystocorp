@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export async function createCrew(campaignId: string | null, corpId: string) {
+export async function createCrew(campaignId: string | null, corpId: string | null) {
   const supabase = await createClient();
   const {
     data: { user },

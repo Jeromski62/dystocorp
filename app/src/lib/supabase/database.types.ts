@@ -449,7 +449,7 @@ export type Database = {
       crews: {
         Row: {
           campaign_id: string | null
-          corp_id: string
+          corp_id: string | null
           created_at: string
           credits: number
           experience: number
@@ -464,7 +464,7 @@ export type Database = {
         }
         Insert: {
           campaign_id?: string | null
-          corp_id: string
+          corp_id?: string | null
           created_at?: string
           credits?: number
           experience?: number
@@ -479,7 +479,7 @@ export type Database = {
         }
         Update: {
           campaign_id?: string | null
-          corp_id?: string
+          corp_id?: string | null
           created_at?: string
           credits?: number
           experience?: number
