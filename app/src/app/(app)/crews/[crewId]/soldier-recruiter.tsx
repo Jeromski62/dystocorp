@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addSoldier, removeSoldier, setSoldierBonusGear, setSoldierRobot } from "./actions";
+import { addSoldier, removeSoldier, setSoldierBonusGear, setSoldierName, setSoldierRobot } from "./actions";
 import {
   EQUIPMENT_CATEGORY_LABELS,
   SOLDIER_RULES,
@@ -108,6 +108,12 @@ export function SoldierRecruiter({
     });
   }
 
+  function handleNameChange(soldierId: string, name: string) {
+    startTransition(async () => {
+      await setSoldierName(crewId, soldierId, name);
+    });
+  }
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap gap-6 border border-corp-border bg-corp-surface px-4 py-3 font-mono text-[15px] text-text-secondary uppercase">
@@ -130,16 +136,36 @@ export function SoldierRecruiter({
           <div className="border border-corp-border">
             {soldiers.map((s) => (
               <div key={s.id} className="border-b border-corp-border/60 bg-corp-surface px-3 py-3 last:border-b-0">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-medium text-text-default">
-                    {s.soldier_types.name}
-                    {s.name ? <span className="text-text-secondary"> &quot;{s.name}&quot;</span> : null}
-                    <span className="ml-2 font-mono text-[14px] text-text-secondary uppercase">
-                      {s.soldier_types.table_type === "specialist" ? "Specialist" : "Standard"}
-                    </span>
-                  </span>
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    {s.name ? (
+                      <p className="font-semibold text-text-default">{s.name}</p>
+                    ) : (
+                      <p className="font-semibold text-text-default">{s.soldier_types.name}</p>
+                    )}
+                    <p className="font-mono text-[14px] text-text-secondary uppercase">
+                      {s.name ? s.soldier_types.name : null}
+                      <span className={s.name ? "ml-2" : ""}>
+                        {s.soldier_types.table_type === "specialist" ? "Specialist" : "Standard"}
+                      </span>
+                    </p>
+                  </div>
                   <StatusBadge currentHealth={s.current_health} health={s.soldier_types.health} />
                 </div>
+
+                <label className="mt-2.5 flex items-center gap-2 font-mono text-[14px] text-text-secondary">
+                  Name
+                  <input
+                    type="text"
+                    defaultValue={s.name ?? ""}
+                    onBlur={(e) => handleNameChange(s.id, e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") e.currentTarget.blur();
+                    }}
+                    placeholder="z. B. Spitzname (optional)"
+                    className="flex-1 rounded-md border border-corp-border bg-corp-surface px-2 py-1 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
+                  />
+                </label>
 
                 <div className="mt-2.5">
                   <SoldierStatGrid stats={s.soldier_types} />
