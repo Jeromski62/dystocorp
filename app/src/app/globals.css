@@ -241,6 +241,51 @@ body {
     );
 }
 
+/* ui/sheet.tsx slide-in panel + backdrop. Written as plain CSS (not Tailwind
+   data-*: utilities) because the enter/exit transition needs Base UI's
+   `data-starting-style`/`data-ending-style` attributes to win over `data-open`
+   during the single frame both are present -- that only works if the
+   starting/ending-style rule is *later* in source order than the data-open
+   rule (same specificity either way), which plain authored CSS guarantees
+   and stacking independently-sorted Tailwind utility classes does not.
+   Without this, the popup has no "before" state to transition from and just
+   snaps straight to its open position instead of animating in. */
+.sheet-panel {
+  transition: transform 0.8s ease-out;
+  transform: translateY(100%);
+}
+.sheet-panel[data-open] {
+  transform: translateY(0);
+}
+.sheet-panel[data-starting-style],
+.sheet-panel[data-ending-style] {
+  transform: translateY(100%);
+}
+@media (min-width: 768px) {
+  .sheet-panel {
+    transform: translateX(100%);
+  }
+  .sheet-panel[data-open] {
+    transform: translateX(0);
+  }
+  .sheet-panel[data-starting-style],
+  .sheet-panel[data-ending-style] {
+    transform: translateX(100%);
+  }
+}
+
+.sheet-overlay {
+  transition: opacity 0.8s ease-out;
+  opacity: 0;
+}
+.sheet-overlay[data-open] {
+  opacity: 1;
+}
+.sheet-overlay[data-starting-style],
+.sheet-overlay[data-ending-style] {
+  opacity: 0;
+}
+
 @keyframes dcflare {
   0%,
   100% {
