@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS, isNavItemActive } from "./nav-items";
@@ -17,8 +18,8 @@ export function MobileNav({ identity }: { identity: string }) {
   return (
     <div className="border-b border-border bg-bg-surface md:hidden">
       <div className="flex h-14 items-center justify-between px-4">
-        <Link href="/" className="font-display text-sm font-bold tracking-[0.04em] text-text-default" onClick={() => setOpen(false)}>
-          DYSTO.CORP_
+        <Link href="/" onClick={() => setOpen(false)}>
+          <Image src="/logo/dc-logo.svg" alt="Dysto.Corp" width={130} height={30} />
         </Link>
         <button
           type="button"
