@@ -1,6 +1,5 @@
-import { CorpEmblem } from "@/components/corp-emblem";
 import { corpThemeSlug } from "@/lib/corp-theme";
-import { Button } from "@/components/ui/button";
+import { CorpCard, type CorpCardVariant } from "@/components/corp-card";
 
 type Corp = { id: string; key: string; name: string; sector: string; lore_markdown: string };
 
@@ -22,27 +21,13 @@ export function CorpPicker({
         Reine Optik/Lore — hat keinen Einfluss auf Stats, Powers oder Gear.
       </p>
 
-      <div className="mt-8 flex flex-col gap-6">
+      <div className="mt-8 flex flex-col gap-4">
         {corps.map((corp) => (
-          <article
-            key={corp.id}
-            data-corp={corpThemeSlug(corp.key)}
-            className="rounded-md border border-corp-border bg-bg-surface p-5"
-          >
-            <div className="flex items-center gap-3">
-              <CorpEmblem name={corp.name} slug={corpThemeSlug(corp.key)} />
-              <div>
-                <p className="font-mono text-xs uppercase tracking-wide text-corp-accent">{corp.sector}</p>
-                <h2 className="font-display text-lg tracking-[2px] text-text-default">{corp.name}</h2>
-              </div>
-            </div>
-            <p className="mt-3 max-h-40 overflow-y-auto whitespace-pre-line text-sm text-text-secondary">
-              {corp.lore_markdown}
-            </p>
-            <form action={createAction.bind(null, corp.id)} className="mt-4">
-              <Button type="submit">In Team investieren</Button>
-            </form>
-          </article>
+          <form key={corp.id} action={createAction.bind(null, corp.id)}>
+            <button type="submit" className="block w-full appearance-none text-left">
+              <CorpCard corp={corpThemeSlug(corp.key) as CorpCardVariant} />
+            </button>
+          </form>
         ))}
       </div>
     </div>

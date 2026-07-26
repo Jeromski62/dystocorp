@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ResolvedVar } from "./resolved-var";
 import { Button } from "@/components/ui/button";
 import { CrewCard } from "@/components/crew-card";
+import { CorpCard } from "@/components/corp-card";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { StatusBadge } from "@/components/status-badge";
 import { Tabs } from "@/components/tabs";
@@ -361,6 +362,18 @@ export default function ComponentPlaygroundPage() {
             xp={150}
             cr={1250}
           />
+        </div>
+      </Section>
+
+      <Section title="CorpCard">
+        <p className="font-mono text-xs text-text-secondary">
+          Skeleton aus Figma (Dysto-Corp-Rough-Concept, node 2061:116) — Corp-Auswahlkarte für die Team-Erstellung.
+          bionexx/yugure zeigen das Logo-Lockup, subcontractor (kein echter Corp) fällt auf einen Zweizeiler zurück.
+        </p>
+        <div className="flex flex-col gap-4">
+          <CorpCard corp="bionexx" />
+          <CorpCard corp="yugure" />
+          <CorpCard corp="subcontractor" />
         </div>
       </Section>
 
