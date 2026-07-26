@@ -434,13 +434,12 @@ export default function ComponentPlaygroundPage() {
         <div className="flex flex-col gap-6 border border-border p-4">
           <PageHeader
             title="Meine Teams"
-            meta="02 GELISTET"
-            description="Alle deine Teams, campaign-übergreifend — auch Teams ohne Kampagne zum Ausprobieren."
+            meta="Human Resource Investments"
             cta={<Button variant="cta">＋ Team Einstellen</Button>}
           />
           <PageHeader
             title="Kampagnen"
-            description="Jede Kampagne bündelt eure Teams."
+            meta="Wir glauben an Value Share"
             secondary={<Button variant="ghost">＋ Beitreten</Button>}
             cta={<Button variant="cta">＋ Neue Kampagne</Button>}
           />

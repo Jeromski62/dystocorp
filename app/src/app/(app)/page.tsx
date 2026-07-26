@@ -7,6 +7,7 @@ import { corpThemeSlug } from "@/lib/corp-theme";
 import { crewStatus } from "@/lib/crew-status";
 import { CampaignCard } from "@/components/campaign-card";
 import { MissionPreviewCard } from "@/components/mission-preview-card";
+import { PageHeader } from "@/components/page-header";
 
 type CrewRow = {
   id: string;
@@ -110,20 +111,20 @@ export default async function HomePage() {
         </div>
 
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-6 py-8 md:px-10">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div className="flex items-baseline gap-3">
-              <h1 className="font-display text-2xl font-semibold tracking-[0.2em] text-text-default uppercase">Übersicht</h1>
-              <span className="font-mono text-[14px] tracking-[0.08em] text-text-subtle">{"// LAGEZENTRUM_v7.2"}</span>
-            </div>
-            <div className="flex items-center gap-3">
+          <PageHeader
+            title="Übersicht"
+            meta="Lagezentrum // v7.2"
+            secondary={
               <Link href="/campaigns">
                 <Button variant="ghost">＋ Kampagne beitreten</Button>
               </Link>
+            }
+            cta={
               <Link href="/crews/new">
                 <Button variant="cta">＋ Team Einstellen</Button>
               </Link>
-            </div>
-          </div>
+            }
+          />
 
           <div className="grid gap-3.5 sm:grid-cols-2">
             <section className="pt-4">

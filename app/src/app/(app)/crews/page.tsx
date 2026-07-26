@@ -26,8 +26,7 @@ export default async function CrewsPage() {
       <div className="mx-auto max-w-3xl px-6 py-12">
         <PageHeader
           title="Meine Teams"
-          meta={`${String(crewList.length).padStart(2, "0")} GELISTET`}
-          description="Alle deine Teams, campaign-übergreifend — auch Teams ohne Kampagne zum Ausprobieren."
+          meta="Human Resource Investments"
           cta={
             <Link href="/crews/new">
               <Button variant="cta">＋ Team Einstellen</Button>

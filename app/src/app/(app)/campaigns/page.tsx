@@ -41,7 +41,7 @@ export default async function CampaignsPage() {
     <div className="mx-auto max-w-3xl px-6 py-12">
       <PageHeader
         title="Kampagnen"
-        description="Jede Kampagne bündelt eure Teams. Alle Mitspieler sind gleichberechtigt."
+        meta="Wir glauben an Value Share"
         secondary={
           <Dialog>
             <DialogTrigger render={<Button variant="ghost">＋ Kampagne beitreten</Button>} />
