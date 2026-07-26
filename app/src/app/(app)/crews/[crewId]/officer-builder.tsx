@@ -10,6 +10,7 @@ import {
   type OfficerRole,
 } from "@/lib/stargrave/constants";
 import { Button } from "@/components/ui/button";
+import { BackgroundCard } from "@/components/background-card";
 import {
   computeActivationNumber,
   computeGearSlotTotal,
@@ -22,6 +23,7 @@ import {
 
 type Background = {
   id: string;
+  key: string;
   name: string;
   flavor_text: string;
   fixed_stat_mods: Record<string, number>;
@@ -74,10 +76,8 @@ const FULL_STAT_LABELS: Record<string, string> = {
   health: "Health",
 };
 
-function formatFixedStatMods(mods: Record<string, number>): string {
-  return STAT_ORDER.filter((stat) => mods[stat])
-    .map((stat) => `+${mods[stat]} ${FULL_STAT_LABELS[stat]}`)
-    .join(", ");
+function fixedStatModBadges(mods: Record<string, number>): string[] {
+  return STAT_ORDER.filter((stat) => mods[stat]).map((stat) => `+${mods[stat]} ${FULL_STAT_LABELS[stat]}`);
 }
 
 export function OfficerBuilder({
@@ -262,33 +262,27 @@ export function OfficerBuilder({
       ) : null}
 
       <section>
-        <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">Background</h3>
-        <div className="mt-2 grid gap-3 sm:grid-cols-2">
+        <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h3>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {backgrounds.map((b) => (
-            <button
+            <BackgroundCard
               key={b.id}
-              type="button"
-              onClick={() => selectBackground(b.id)}
-              className={`rounded-md border p-3 text-left text-sm ${
-                backgroundId === b.id ? "border-corp-accent bg-corp-surface" : "border-corp-border bg-corp-surface hover:border-corp-accent"
-              }`}
-            >
-              <p className="font-medium text-text-default">{b.name}</p>
-              {formatFixedStatMods(b.fixed_stat_mods) ? (
-                <p className="mt-0.5 font-mono text-[11px] text-text-secondary">{formatFixedStatMods(b.fixed_stat_mods)}</p>
-              ) : null}
-              <p className="mt-1 text-xs text-text-secondary">{b.flavor_text}</p>
-              <p className="mt-2 text-xs text-corp-accent">
-                Wähle {b.choice_stat_count} von: {b.choice_stat_options.map((s) => STAT_LABELS[s as ChoosableStat]).join(", ")}
-              </p>
-            </button>
+              backgroundKey={b.key}
+              name={b.name}
+              bonusBadges={fixedStatModBadges(b.fixed_stat_mods)}
+              chooseCount={b.choice_stat_count}
+              chooseOptionLabels={b.choice_stat_options.map((s) => STAT_LABELS[s as ChoosableStat])}
+              flavorText={b.flavor_text}
+              selected={backgroundId === b.id}
+              onSelect={() => selectBackground(b.id)}
+            />
           ))}
         </div>
       </section>
 
       {background ? (
         <section>
-          <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">
+          <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
             Stat-Bonus wählen ({chosenStatOptions.length}/{background.choice_stat_count})
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -317,7 +311,7 @@ export function OfficerBuilder({
 
       {background ? (
         <section>
-          <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">
+          <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
             Powers ({totalSelectedCount}/{rules.powerCount}, Core {selectedCoreCount}/{rules.coreMin}-{rules.coreMax})
           </h3>
 
@@ -375,7 +369,7 @@ export function OfficerBuilder({
 
       {background ? (
         <section>
-          <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">
+          <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
             Gear ({gearSlotTotal}/{rules.gearSlots} Slots)
           </h3>
           {!inCampaign ? (

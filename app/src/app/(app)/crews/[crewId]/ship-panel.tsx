@@ -132,7 +132,7 @@ export function ShipPanel({
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 
       <section>
-        <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">
+        <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
           Ship Upgrades ({credits}cr verfügbar)
         </h3>
         {crewShipUpgrades.length > 0 ? (
@@ -182,7 +182,7 @@ export function ShipPanel({
       </section>
 
       <section>
-        <h3 className="font-display text-sm tracking-[3px] text-text-secondary uppercase">Ship&apos;s Hold</h3>
+        <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Ship&apos;s Hold</h3>
         {holdItems.length > 0 ? (
           <div className="mt-2 flex flex-col gap-1.5">
             {holdItems.map((item) => (

@@ -1,9 +1,12 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { ResolvedVar } from "./resolved-var";
 import { Button } from "@/components/ui/button";
 import { CrewCard } from "@/components/crew-card";
 import { CorpCard } from "@/components/corp-card";
 import { Stepper } from "@/components/stepper";
+import { BackgroundCard } from "@/components/background-card";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { StatusBadge } from "@/components/status-badge";
 import { Tabs } from "@/components/tabs";
@@ -162,7 +165,7 @@ export default function ComponentPlaygroundPage() {
             label="H3 · Formular-Sektionslabel"
             note="officer-builder, ship-panel"
             sample="Background"
-            sampleClassName="font-display text-sm tracking-[3px] text-text-secondary uppercase"
+            sampleClassName="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none"
           />
         </TypeGroup>
 
@@ -391,6 +394,35 @@ export default function ComponentPlaygroundPage() {
             { label: "Ship", status: "open", disabled: true },
           ]}
         />
+      </Section>
+
+      <Section title="BackgroundCard">
+        <p className="font-mono text-xs text-text-secondary">
+          Skeleton aus Figma (Dysto-Corp-Rough-Concept, node 2063:560 / Grid node 2063:293) — Background-Auswahl im
+          Officer-Builder. Geschlossen per Default, Accordion zeigt den Flavor-Text erst auf Klick.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <BackgroundCard
+            backgroundKey="cyborg"
+            name="Cyborg"
+            bonusBadges={["+1 Health"]}
+            chooseCount={2}
+            chooseOptionLabels={["Move", "Fight", "Shoot"]}
+            flavorText="Man-machine fusion, ex-military specialist now mercenary/bounty hunter/investigator. Appearance ranges from fully human-looking to fully robotic."
+            selected
+            onSelect={() => {}}
+          />
+          <BackgroundCard
+            backgroundKey="mystic"
+            name="Mystic"
+            bonusBadges={["+2 Will", "+1 Health"]}
+            chooseCount={1}
+            chooseOptionLabels={["Move", "Fight", "Shoot"]}
+            flavorText="Doomsday-cultist or monastic-order adept with reality-bending 'magic'. Loose robes, rarely wears armour (interferes with powers)."
+            selected={false}
+            onSelect={() => {}}
+          />
+        </div>
       </Section>
 
       <Section title="CorpEmblem">

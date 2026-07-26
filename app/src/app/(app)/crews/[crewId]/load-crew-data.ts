@@ -39,7 +39,7 @@ export async function loadCrewDetail(crewId: string) {
       .maybeSingle(),
     supabase
       .from("backgrounds")
-      .select("id, name, flavor_text, fixed_stat_mods, choice_stat_count, choice_stat_options, background_core_powers(power_id)"),
+      .select("id, key, name, flavor_text, fixed_stat_mods, choice_stat_count, choice_stat_options, background_core_powers(power_id)"),
     supabase.from("powers").select("id, name, activation_number, strain, full_text").order("name"),
     supabase
       .from("equipment_items")
