@@ -251,7 +251,7 @@ body {
    Without this, the popup has no "before" state to transition from and just
    snaps straight to its open position instead of animating in. */
 .sheet-panel {
-  transition: transform 0.8s ease-out;
+  transition: transform 0.4s ease-out;
   transform: translateY(100%);
 }
 .sheet-panel[data-open] {
@@ -275,7 +275,7 @@ body {
 }
 
 .sheet-overlay {
-  transition: opacity 0.8s ease-out;
+  transition: opacity 0.4s ease-out;
   opacity: 0;
 }
 .sheet-overlay[data-open] {
