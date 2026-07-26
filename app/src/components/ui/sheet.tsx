@@ -52,7 +52,7 @@ function SheetContent({
           // generated keyframe and ended up reading as a "grow from the
           // bottom" scale instead of a clean slide. This is just translateX
           // (desktop) / translateY (mobile) between two fixed states.
-          "fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] translate-y-full flex-col gap-3 rounded-t-lg border-t border-border bg-bg-surface p-4 text-sm text-text-default outline-none transition-transform duration-300 ease-out data-open:translate-y-0 md:inset-x-auto md:inset-y-0 md:right-0 md:bottom-auto md:left-auto md:h-full md:max-h-none md:w-full md:max-w-lg md:translate-x-full md:translate-y-0 md:rounded-t-none md:rounded-l-lg md:border-t-0 md:border-l md:data-open:translate-x-0",
+          "fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] translate-y-full flex-col gap-3 rounded-t-lg border-t border-border bg-bg-surface p-4 text-sm text-text-default outline-none transition-transform duration-[0.8s] ease-out data-open:translate-y-0 md:inset-x-auto md:inset-y-0 md:right-0 md:bottom-auto md:left-auto md:h-full md:max-h-none md:w-full md:max-w-lg md:translate-x-full md:translate-y-0 md:rounded-t-none md:rounded-l-lg md:border-t-0 md:border-l md:data-open:translate-x-0",
           className
         )}
         {...props}
