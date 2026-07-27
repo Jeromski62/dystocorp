@@ -212,7 +212,14 @@ export function OfficerBuilder({
     });
   }
 
+  function wouldExceedGearLimit(item: EquipmentItem): boolean {
+    const prospectiveTotal = computeGearSlotTotal([...gearFlatList, { key: item.key, gearSlots: item.gear_slots }]);
+    return prospectiveTotal > rules.gearSlots;
+  }
+
   function addGear(id: string) {
+    const item = equipment.find((e) => e.id === id);
+    if (!item || wouldExceedGearLimit(item)) return;
     setGearQuantities((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
   }
 
@@ -432,6 +439,7 @@ export function OfficerBuilder({
         <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
           Gear ({gearSlotTotal}/{rules.gearSlots} Slots)
         </h3>
+        {gearError ? <p className="mt-1 text-sm text-danger">{gearError}</p> : null}
         {!inCampaign ? (
           <p className="mt-1 text-xs text-text-secondary">
             Advanced Weapon/Technology und Alien Artefact sind Campaign Loot — erst verfügbar, sobald dieses Team in
@@ -487,8 +495,9 @@ export function OfficerBuilder({
                     <button
                       type="button"
                       onClick={() => addGear(id)}
+                      disabled={wouldExceedGearLimit(item)}
                       aria-label={`${item.name} hinzufügen`}
-                      className="px-2 text-text-secondary hover:text-accent"
+                      className="px-2 text-text-secondary hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-text-secondary"
                     >
                       +
                     </button>
@@ -505,7 +514,8 @@ export function OfficerBuilder({
               key={item.id}
               type="button"
               onClick={() => addGear(item.id)}
-              className="flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-left text-sm hover:border-accent"
+              disabled={wouldExceedGearLimit(item)}
+              className="flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-left text-sm hover:border-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border"
               title={item.effect_text}
             >
               <span className="text-text-default">{item.name}</span>
@@ -651,12 +661,14 @@ export function OfficerBuilder({
           ) : selectedCorePowers.length > 0 ? (
             <div className="flex flex-wrap gap-4">
               {selectedCorePowers.map((power) => (
-                <span
+                <button
                   key={power.id}
-                  className="border border-border bg-black px-4 py-4 font-display text-sm font-semibold tracking-[1.6px] text-white uppercase"
+                  type="button"
+                  onClick={() => goToSection("powers")}
+                  className="border border-border bg-black px-4 py-4 font-display text-sm font-semibold tracking-[1.6px] text-white uppercase transition-colors hover:border-accent"
                 >
                   {power.name}
-                </span>
+                </button>
               ))}
             </div>
           ) : (
@@ -673,12 +685,14 @@ export function OfficerBuilder({
           ) : selectedOtherPowers.length > 0 ? (
             <div className="flex flex-wrap gap-4">
               {selectedOtherPowers.map((power) => (
-                <span
+                <button
                   key={power.id}
-                  className="border border-border bg-black px-4 py-4 font-display text-sm font-semibold tracking-[1.6px] text-white uppercase"
+                  type="button"
+                  onClick={() => goToSection("powers")}
+                  className="border border-border bg-black px-4 py-4 font-display text-sm font-semibold tracking-[1.6px] text-white uppercase transition-colors hover:border-accent"
                 >
                   {power.name}
-                </span>
+                </button>
               ))}
             </div>
           ) : (
@@ -709,7 +723,12 @@ export function OfficerBuilder({
         <div className="flex flex-col gap-2">
           <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
             {gearCells.map((cell) => (
-              <GearSlotItem key={cell.cellKey} size={cell.size} label={cell.label} />
+              <GearSlotItem
+                key={cell.cellKey}
+                size={cell.size}
+                label={cell.label}
+                onClick={() => goToSection("gear")}
+              />
             ))}
             {Array.from({ length: emptyGearSlotCount }, (_, i) => (
               <GearSlotItem key={`empty-${i}`} size={1} />
@@ -720,6 +739,7 @@ export function OfficerBuilder({
               <GearSlotIndicator key={i} filled={i < filledIndicatorCount} />
             ))}
           </div>
+          {gearError ? <p className="text-sm text-danger">{gearError}</p> : null}
         </div>
       </section>
 
