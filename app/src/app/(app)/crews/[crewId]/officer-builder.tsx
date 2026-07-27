@@ -721,23 +721,25 @@ export function OfficerBuilder({
         </button>
 
         <div className="flex flex-col gap-2">
-          <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
-            {gearCells.map((cell) => (
-              <GearSlotItem
-                key={cell.cellKey}
-                size={cell.size}
-                label={cell.label}
-                onClick={() => goToSection("gear")}
-              />
-            ))}
-            {Array.from({ length: emptyGearSlotCount }, (_, i) => (
-              <GearSlotItem key={`empty-${i}`} size={1} />
-            ))}
-          </div>
-          <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
-            {Array.from({ length: rules.gearSlots }, (_, i) => (
-              <GearSlotIndicator key={i} filled={i < filledIndicatorCount} />
-            ))}
+          <div>
+            <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
+              {gearCells.map((cell) => (
+                <GearSlotItem
+                  key={cell.cellKey}
+                  size={cell.size}
+                  label={cell.label}
+                  onClick={() => goToSection("gear")}
+                />
+              ))}
+              {Array.from({ length: emptyGearSlotCount }, (_, i) => (
+                <GearSlotItem key={`empty-${i}`} size={1} />
+              ))}
+            </div>
+            <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
+              {Array.from({ length: rules.gearSlots }, (_, i) => (
+                <GearSlotIndicator key={i} filled={i < filledIndicatorCount} />
+              ))}
+            </div>
           </div>
           {gearError ? <p className="text-sm text-danger">{gearError}</p> : null}
         </div>
