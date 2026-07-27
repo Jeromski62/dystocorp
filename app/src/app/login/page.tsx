@@ -17,9 +17,6 @@ export default function LoginPage() {
         <div className="flex flex-1 flex-col items-center justify-start gap-9 pt-[14vh]">
           <div className="text-center">
             <Image src="/logo/dc-logo-vert.svg" alt="Dysto.Corp" width={887} height={598} className="h-auto w-full" />
-            <p className="mt-3.5 font-mono text-[15px] tracking-[0.1em] text-text-secondary">
-              TEAM_DATABASE_GATEWAY_v7.2
-            </p>
           </div>
 
           <LoginForm />
