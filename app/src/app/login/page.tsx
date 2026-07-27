@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { StarmapCanvas } from "@/components/starmap-canvas";
 import { LensFlare } from "./lens-flare";
 import { LoginForm } from "./login-form";
@@ -15,9 +16,7 @@ export default function LoginPage() {
 
         <div className="flex flex-1 flex-col items-center justify-start gap-9 pt-[14vh]">
           <div className="text-center">
-            <p className="font-display text-[44px] leading-none font-semibold tracking-[0.12em] text-text-default">
-              DYSTO.CORP
-            </p>
+            <Image src="/logo/dc-logo-vert.svg" alt="Dysto.Corp" width={222} height={150} className="mx-auto" />
             <p className="mt-3.5 font-mono text-[15px] tracking-[0.1em] text-text-secondary">
               TEAM_DATABASE_GATEWAY_v7.2
             </p>
