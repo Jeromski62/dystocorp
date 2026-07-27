@@ -40,7 +40,7 @@
   --radius-lg: 0px;
 
   /* motion */
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease: cubic-bezier(0.63, 0.26, 0.4, 0.87);
   --dur-hover: 120ms;
   --dur-ui: 300ms;
   --dur-page: 400ms;
@@ -251,7 +251,7 @@ body {
    Without this, the popup has no "before" state to transition from and just
    snaps straight to its open position instead of animating in. */
 .sheet-panel {
-  transition: transform 0.4s ease-out;
+  transition: transform 0.4s var(--ease);
   transform: translateY(100%);
 }
 .sheet-panel[data-open] {
@@ -275,7 +275,7 @@ body {
 }
 
 .sheet-overlay {
-  transition: opacity 0.4s ease-out;
+  transition: opacity 0.4s var(--ease);
   opacity: 0;
 }
 .sheet-overlay[data-open] {

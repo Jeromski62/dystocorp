@@ -11,7 +11,7 @@ export function LensFlare() {
         top: "24%",
         transform: "translate(-50%, -50%)",
         filter: "blur(3px)",
-        animation: "dcflare 6s cubic-bezier(0.2,0.8,0.2,1) infinite",
+        animation: "dcflare 6s var(--ease) infinite",
       }}
     >
       <div
