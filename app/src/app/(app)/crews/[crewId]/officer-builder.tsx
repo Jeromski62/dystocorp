@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition, type ReactNode } from "react";
+import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import { saveOfficer } from "./actions";
 import {
@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { BackgroundCard, BACKGROUND_ICONS } from "@/components/background-card";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { GearSlotItem } from "@/components/gear-slot-item";
+import { GearSlotIndicator } from "@/components/gear-slot-indicator";
 import { CheckIcon } from "lucide-react";
 import {
   computeActivationNumber,
@@ -255,6 +257,15 @@ export function OfficerBuilder({
   });
   const gearSlotTotal = computeGearSlotTotal(gearFlatList);
   const gearError = validateGearSlots(gearSlotTotal, rules.gearSlots);
+
+  const gearCells = Object.entries(gearQuantities).flatMap(([id, qty]) => {
+    const item = equipment.find((e) => e.id === id);
+    if (!item) return [];
+    const size = Math.min(3, Math.max(1, item.gear_slots)) as 1 | 2 | 3;
+    return Array.from({ length: qty }, (_, i) => ({ cellKey: `${id}-${i}`, label: item.name, size }));
+  });
+  const emptyGearSlotCount = Math.max(0, rules.gearSlots - gearSlotTotal);
+  const filledIndicatorCount = Math.min(gearSlotTotal, rules.gearSlots);
 
   const canSave = name.trim().length > 0 && !statError && !powerError && !reductionError && !gearError;
 
@@ -677,11 +688,39 @@ export function OfficerBuilder({
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Gear</h2>
+        <button
+          type="button"
+          onClick={() => goToSection("gear")}
+          className="flex w-full items-center justify-between text-left"
+        >
+          <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Gear</h2>
+          <span className="flex items-center gap-3">
+            <span className="font-display text-[24px] font-normal tracking-[2.4px] text-white uppercase leading-none">
+              {gearSlotTotal}/{rules.gearSlots}
+            </span>
+            {!gearError ? (
+              <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#11FF70]">
+                <CheckIcon className="size-3 text-black" strokeWidth={3} />
+              </span>
+            ) : null}
+          </span>
+        </button>
 
-        <SummaryRow label="Gear" active={activeSection === "gear"} onClick={() => goToSection("gear")}>
-          {gearSlotTotal}/{rules.gearSlots} Slots belegt
-        </SummaryRow>
+        <div className="flex flex-col gap-2">
+          <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
+            {gearCells.map((cell) => (
+              <GearSlotItem key={cell.cellKey} size={cell.size} label={cell.label} />
+            ))}
+            {Array.from({ length: emptyGearSlotCount }, (_, i) => (
+              <GearSlotItem key={`empty-${i}`} size={1} />
+            ))}
+          </div>
+          <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
+            {Array.from({ length: rules.gearSlots }, (_, i) => (
+              <GearSlotIndicator key={i} filled={i < filledIndicatorCount} />
+            ))}
+          </div>
+        </div>
       </section>
 
       <div className="flex flex-col items-start gap-2">
@@ -703,34 +742,6 @@ export function OfficerBuilder({
         <SheetContent>{activePanel}</SheetContent>
       </Sheet>
     </div>
-  );
-}
-
-function SummaryRow({
-  label,
-  active,
-  disabled,
-  onClick,
-  children,
-}: {
-  label: string;
-  active: boolean;
-  disabled?: boolean;
-  onClick: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className={`flex flex-col items-start gap-0.5 border px-3 py-2 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-        active ? "border-accent bg-bg-surface" : "border-border bg-bg-surface hover:border-accent"
-      }`}
-    >
-      <span className="font-display text-xs tracking-[2px] text-text-secondary uppercase">{label}</span>
-      <span className="text-sm text-text-default">{children}</span>
-    </button>
   );
 }
 
