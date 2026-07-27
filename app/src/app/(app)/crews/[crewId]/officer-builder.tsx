@@ -597,7 +597,7 @@ export function OfficerBuilder({
       </section>
 
       <div className="flex flex-col items-start gap-2">
-        <Button disabled={!canSave || pending} onClick={handleSave}>
+        <Button variant="cta" disabled={!canSave || pending} onClick={handleSave}>
           {pending ? "Speichere…" : "Speichern"}
         </Button>
         {saved ? <span className="text-sm text-accent">Gespeichert.</span> : null}

@@ -206,7 +206,7 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
             {!stepReady[viewStep] ? (
               <span className="font-mono text-sm text-text-secondary">{blockedReason[viewStep]}</span>
             ) : null}
-            <Button disabled={!stepReady[viewStep] || pending} onClick={handleNext}>
+            <Button variant="cta" disabled={!stepReady[viewStep] || pending} onClick={handleNext}>
               {pending ? "…" : viewStep < 4 ? "Weiter →" : "Team abschließen"}
             </Button>
           </div>
