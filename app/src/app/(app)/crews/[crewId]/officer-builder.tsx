@@ -502,25 +502,31 @@ export function OfficerBuilder({
   const activePanel = renderActivePanel();
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <label htmlFor={`officer-name-${role}`} className="text-xs uppercase tracking-wide text-text-secondary">
-          Name
-        </label>
-        <input
-          id={`officer-name-${role}`}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mt-1 block w-full max-w-sm rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
-        />
-      </div>
+    <div className="flex flex-col gap-8">
+      <section className="flex flex-col gap-4 border-b border-corp-border pb-8">
+        <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Dossier</h2>
 
-      <div className="rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
-        Level {rules.startLevel} — M{stats.move} · F+{stats.fight} · S+{stats.shoot} · A{stats.armour} · W+
-        {stats.will} · H{stats.health}
-      </div>
+        <div>
+          <label htmlFor={`officer-name-${role}`} className="text-xs uppercase tracking-wide text-text-secondary">
+            Name
+          </label>
+          <input
+            id={`officer-name-${role}`}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mt-1 block w-full max-w-sm rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+          />
+        </div>
 
-      <div className="flex flex-col gap-2">
+        <div className="rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
+          Level {rules.startLevel} — M{stats.move} · F+{stats.fight} · S+{stats.shoot} · A{stats.armour} · W+
+          {stats.will} · H{stats.health}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4 border-b border-corp-border pb-8">
+        <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h2>
+
         <SummaryRow label="Background" active={activeSection === "background"} onClick={() => goToSection("background")}>
           {background ? (
             <>
@@ -533,6 +539,10 @@ export function OfficerBuilder({
             "Noch nicht gewählt"
           )}
         </SummaryRow>
+      </section>
+
+      <section className="flex flex-col gap-4 border-b border-corp-border pb-8">
+        <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Powers</h2>
 
         <SummaryRow
           label="Powers"
@@ -542,11 +552,15 @@ export function OfficerBuilder({
         >
           {background ? `${totalSelectedCount}/${rules.powerCount} gewählt` : "Erst Background wählen"}
         </SummaryRow>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Gear</h2>
 
         <SummaryRow label="Gear" active={activeSection === "gear"} onClick={() => goToSection("gear")}>
           {gearSlotTotal}/{rules.gearSlots} Slots belegt
         </SummaryRow>
-      </div>
+      </section>
 
       <div className="flex flex-col items-start gap-2">
         <Button disabled={!canSave || pending} onClick={handleSave}>
