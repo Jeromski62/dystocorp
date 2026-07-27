@@ -569,7 +569,14 @@ export function OfficerBuilder({
       </section>
 
       <section className="flex flex-col gap-4 border-b border-border pb-8">
-        <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h2>
+          {background ? (
+            <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#11FF70]">
+              <CheckIcon className="size-3 text-black" strokeWidth={3} />
+            </span>
+          ) : null}
+        </div>
 
         {background ? (
           <button
