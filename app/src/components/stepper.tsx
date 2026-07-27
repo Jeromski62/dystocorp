@@ -1,9 +1,11 @@
 // Ported from Figma "Dysto-Corp-Rough-Concept" Stepper (node 2063:153):
-// 36px badge + uppercase label per step, joined by 16px connector bars.
+// 36px badge + uppercase label per step, joined by connector bars that grow
+// to fill the row so the stepper always spans the full container width.
 // "done" gets a green check badge, "current" a filled-white badge with a
 // bold step number, "open" (not yet completed) the same white badge but at
 // 40% opacity on the whole step -- badge, label and the connector leading
-// into the *next* step all fade together.
+// into the *next* step all fade together. Labels are dropped below `md` --
+// only the numbered/checked badges survive on narrow screens.
 function CheckIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 36 36" fill="none" className={className} aria-hidden>
@@ -20,14 +22,14 @@ export function Stepper({
   steps: { label: string; status: StepStatus; onClick?: () => void; disabled?: boolean }[];
 }) {
   return (
-    <ol className="flex flex-wrap items-center gap-2">
+    <ol className="flex w-full items-center gap-2">
       {steps.map((step, i) => (
-        <li key={i} className="flex items-center gap-2">
+        <li key={i} className={`flex items-center gap-2 ${i < steps.length - 1 ? "flex-1" : "shrink-0"}`}>
           <button
             type="button"
             disabled={step.disabled}
             onClick={step.onClick}
-            className={`flex items-center gap-2 p-2 ${step.status === "open" ? "opacity-40" : ""} ${
+            className={`flex shrink-0 items-center gap-2 p-2 ${step.status === "open" ? "opacity-40" : ""} ${
               step.disabled ? "cursor-not-allowed" : ""
             }`}
           >
@@ -40,10 +42,12 @@ export function Stepper({
                 {i + 1}
               </span>
             )}
-            <span className="font-display text-[16px] font-semibold tracking-[1.6px] text-white uppercase">{step.label}</span>
+            <span className="hidden font-display text-[16px] font-semibold tracking-[1.6px] text-white uppercase md:inline">
+              {step.label}
+            </span>
           </button>
           {i < steps.length - 1 ? (
-            <span aria-hidden className={`h-0.5 w-4 shrink-0 bg-white ${step.status === "done" ? "" : "opacity-40"}`} />
+            <span aria-hidden className={`h-0.5 flex-1 bg-white ${step.status === "done" ? "" : "opacity-40"}`} />
           ) : null}
         </li>
       ))}
