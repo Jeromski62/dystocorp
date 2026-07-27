@@ -220,6 +220,18 @@ export function OfficerBuilder({
     chosenStatOptions as ChoosableStat[]
   );
 
+  // Per Figma node 2091:534 -- Start Level stands apart (no fill, bold,
+  // left-aligned) from the five/six stat cells (filled header, centered).
+  const statColumns = [
+    { label: "Start Level", value: String(rules.startLevel), header: true },
+    { label: "Move", value: String(stats.move) },
+    { label: "Fight", value: `+${stats.fight}` },
+    { label: "Shoot", value: `+${stats.shoot}` },
+    { label: "Armor", value: String(stats.armour) },
+    { label: "Will", value: `+${stats.will}` },
+    { label: "Health", value: String(stats.health) },
+  ];
+
   const statError = background
     ? validateChosenStatOptions(chosenStatOptions, background.choice_stat_options, background.choice_stat_count)
     : "Wähle einen Background.";
@@ -514,13 +526,35 @@ export function OfficerBuilder({
             id={`officer-name-${role}`}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full max-w-sm rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+            className="mt-1 block w-full rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
           />
         </div>
 
-        <div className="rounded-md border border-corp-border bg-corp-surface px-4 py-3 font-mono text-sm text-text-default">
-          Level {rules.startLevel} — M{stats.move} · F+{stats.fight} · S+{stats.shoot} · A{stats.armour} · W+
-          {stats.will} · H{stats.health}
+        <div>
+          <p className="text-xs uppercase tracking-wide text-text-secondary">Stats</p>
+          <div className="mt-2 flex flex-col gap-2">
+            <div className="flex gap-[5px]">
+              {statColumns.map((col) => (
+                <div
+                  key={col.label}
+                  className={`flex flex-1 items-center py-2 ${col.header ? "justify-start" : "justify-center bg-white/[0.24]"}`}
+                >
+                  <span
+                    className={`font-display text-sm tracking-[1.6px] text-white uppercase ${col.header ? "font-bold" : "font-semibold"}`}
+                  >
+                    {col.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-[5px]">
+              {statColumns.map((col) => (
+                <div key={col.label} className="flex flex-1 items-center justify-center">
+                  <span className="font-display text-sm font-medium tracking-[1.6px] text-white">{col.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
