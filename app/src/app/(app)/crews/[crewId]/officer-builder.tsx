@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { BackgroundCard, BACKGROUND_ICONS } from "@/components/background-card";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { CheckIcon } from "lucide-react";
 import {
   computeActivationNumber,
   computeGearSlotTotal,
@@ -154,6 +155,8 @@ export function OfficerBuilder({
 
   const selectedCoreCount = selectedPowerIds.filter((id) => corePowerIdSet.has(id)).length;
   const totalSelectedCount = selectedPowerIds.length;
+  const selectedCorePowers = powers.filter((p) => selectedPowerIds.includes(p.id) && corePowerIdSet.has(p.id));
+  const selectedOtherPowers = powers.filter((p) => selectedPowerIds.includes(p.id) && !corePowerIdSet.has(p.id));
 
   // Advanced Weapon/Tech/Alien Artefact are campaign loot (rulebook p.77
   // "Counting Loot") -- only obtainable, and thus only choosable, once this
@@ -602,16 +605,68 @@ export function OfficerBuilder({
       </section>
 
       <section className="flex flex-col gap-4 border-b border-border pb-8">
-        <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Powers</h2>
-
-        <SummaryRow
-          label="Powers"
-          active={activeSection === "powers"}
+        <button
+          type="button"
           disabled={!background}
           onClick={() => goToSection("powers")}
+          className="flex w-full items-center justify-between text-left disabled:cursor-not-allowed"
         >
-          {background ? `${totalSelectedCount}/${rules.powerCount} gewählt` : "Erst Background wählen"}
-        </SummaryRow>
+          <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Powers</h2>
+          <span className="flex items-center gap-3">
+            <span className="font-display text-[24px] font-normal tracking-[2.4px] text-white uppercase leading-none">
+              {totalSelectedCount}/{rules.powerCount}
+            </span>
+            {background && powersDone ? (
+              <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#11FF70]">
+                <CheckIcon className="size-3 text-black" strokeWidth={3} />
+              </span>
+            ) : null}
+          </span>
+        </button>
+
+        <div className="flex flex-col gap-2">
+          <p className="font-display text-sm font-medium tracking-[1.6px] text-white uppercase">Core</p>
+          {!background ? (
+            <p className="flex items-center justify-center py-4 text-center text-sm tracking-[1.4px] text-white/50 uppercase">
+              Select background first
+            </p>
+          ) : selectedCorePowers.length > 0 ? (
+            <div className="flex flex-wrap gap-4">
+              {selectedCorePowers.map((power) => (
+                <span
+                  key={power.id}
+                  className="border border-border bg-black px-4 py-4 font-display text-sm font-semibold tracking-[1.6px] text-white uppercase"
+                >
+                  {power.name}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="py-4 text-center text-sm tracking-[1.4px] text-white/50 uppercase">Noch keine gewählt</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p className="font-display text-sm font-medium tracking-[1.6px] text-white uppercase">Others</p>
+          {!background ? (
+            <p className="flex items-center justify-center py-4 text-center text-sm tracking-[1.4px] text-white/50 uppercase">
+              Select background first
+            </p>
+          ) : selectedOtherPowers.length > 0 ? (
+            <div className="flex flex-wrap gap-4">
+              {selectedOtherPowers.map((power) => (
+                <span
+                  key={power.id}
+                  className="border border-border bg-black px-4 py-4 font-display text-sm font-semibold tracking-[1.6px] text-white uppercase"
+                >
+                  {power.name}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="py-4 text-center text-sm tracking-[1.4px] text-white/50 uppercase">Noch keine gewählt</p>
+          )}
+        </div>
       </section>
 
       <section className="flex flex-col gap-4">
