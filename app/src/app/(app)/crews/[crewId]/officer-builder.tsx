@@ -315,8 +315,8 @@ export function OfficerBuilder({
                     onClick={() => toggleStatOption(stat)}
                     className={`rounded-full border px-3 py-1 text-sm ${
                       selected
-                        ? "border-corp-accent bg-corp-accent text-corp-on-accent"
-                        : "border-corp-border bg-corp-surface text-text-default disabled:opacity-40"
+                        ? "border-accent bg-accent text-accent-foreground"
+                        : "border-border bg-bg-surface text-text-default disabled:opacity-40"
                     }`}
                   >
                     +1 {STAT_LABELS[stat as ChoosableStat]}
@@ -373,7 +373,7 @@ export function OfficerBuilder({
                 value={powerSearch}
                 onChange={(e) => setPowerSearch(e.target.value)}
                 placeholder="Suchen…"
-                className="mb-2 w-full rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
+                className="mb-2 w-full rounded-md border border-border bg-bg-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
               />
               <div className="flex max-h-96 flex-col gap-2 overflow-y-auto pr-1">
                 {otherPowers.map((power) => (
@@ -422,12 +422,12 @@ export function OfficerBuilder({
             value={gearSearch}
             onChange={(e) => setGearSearch(e.target.value)}
             placeholder="Gear suchen…"
-            className="flex-1 rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
+            className="flex-1 rounded-md border border-border bg-bg-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
           />
           <select
             value={gearCategory}
             onChange={(e) => setGearCategory(e.target.value)}
-            className="rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+            className="rounded-md border border-border bg-bg-surface px-3 py-1.5 text-sm text-text-default focus:border-accent focus:outline-none"
           >
             <option value="all">Alle Kategorien</option>
             {Object.entries(EQUIPMENT_CATEGORY_LABELS)
@@ -448,7 +448,7 @@ export function OfficerBuilder({
               return (
                 <div
                   key={id}
-                  className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-sm"
+                  className="flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-sm"
                 >
                   <span className="text-text-default">
                     {item.name} × {qty}{" "}
@@ -467,7 +467,7 @@ export function OfficerBuilder({
                       type="button"
                       onClick={() => addGear(id)}
                       aria-label={`${item.name} hinzufügen`}
-                      className="px-2 text-text-secondary hover:text-corp-accent"
+                      className="px-2 text-text-secondary hover:text-accent"
                     >
                       +
                     </button>
@@ -484,7 +484,7 @@ export function OfficerBuilder({
               key={item.id}
               type="button"
               onClick={() => addGear(item.id)}
-              className="flex items-center justify-between rounded-md border border-corp-border bg-corp-surface px-3 py-1.5 text-left text-sm hover:border-corp-accent"
+              className="flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-left text-sm hover:border-accent"
               title={item.effect_text}
             >
               <span className="text-text-default">{item.name}</span>
@@ -515,7 +515,7 @@ export function OfficerBuilder({
 
   return (
     <div className="flex flex-col gap-8">
-      <section className="flex flex-col gap-4 border-b border-corp-border pb-8">
+      <section className="flex flex-col gap-4 border-b border-border pb-8">
         <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Dossier</h2>
 
         <div>
@@ -526,7 +526,7 @@ export function OfficerBuilder({
             id={`officer-name-${role}`}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-corp-border bg-corp-surface px-3 py-2 text-sm text-text-default focus:border-corp-accent focus:outline-none"
+            className="mt-1 block w-full rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-text-default focus:border-accent focus:outline-none"
           />
         </div>
 
@@ -558,7 +558,7 @@ export function OfficerBuilder({
         </div>
       </section>
 
-      <section className="flex flex-col gap-4 border-b border-corp-border pb-8">
+      <section className="flex flex-col gap-4 border-b border-border pb-8">
         <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h2>
 
         <SummaryRow label="Background" active={activeSection === "background"} onClick={() => goToSection("background")}>
@@ -575,7 +575,7 @@ export function OfficerBuilder({
         </SummaryRow>
       </section>
 
-      <section className="flex flex-col gap-4 border-b border-corp-border pb-8">
+      <section className="flex flex-col gap-4 border-b border-border pb-8">
         <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Powers</h2>
 
         <SummaryRow
@@ -600,7 +600,7 @@ export function OfficerBuilder({
         <Button disabled={!canSave || pending} onClick={handleSave}>
           {pending ? "Speichere…" : "Speichern"}
         </Button>
-        {saved ? <span className="text-sm text-corp-accent">Gespeichert.</span> : null}
+        {saved ? <span className="text-sm text-accent">Gespeichert.</span> : null}
         {error ? <span className="text-sm text-danger">{error}</span> : null}
         {!canSave && !error
           ? [statError, powerError, reductionError, gearError].filter(Boolean).map((msg) => (
@@ -637,7 +637,7 @@ function SummaryRow({
       disabled={disabled}
       onClick={onClick}
       className={`flex flex-col items-start gap-0.5 border px-3 py-2 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-        active ? "border-corp-accent bg-corp-surface" : "border-corp-border bg-corp-surface hover:border-corp-accent"
+        active ? "border-accent bg-bg-surface" : "border-border bg-bg-surface hover:border-accent"
       }`}
     >
       <span className="font-display text-xs tracking-[2px] text-text-secondary uppercase">{label}</span>
@@ -670,7 +670,7 @@ function PowerRow({
   return (
     <div
       className={`rounded-md border px-3 py-2 text-sm ${
-        selected ? "border-corp-accent bg-corp-surface" : "border-corp-border bg-corp-surface"
+        selected ? "border-accent bg-bg-surface" : "border-border bg-bg-surface"
       }`}
     >
       <button type="button" onClick={onToggle} className="flex w-full items-center justify-between text-left">
@@ -688,7 +688,7 @@ function PowerRow({
             checked={reduced}
             disabled={reductionLocked}
             onChange={onToggleReduced}
-            className="accent-[var(--corp-accent)]"
+            className="accent-[var(--accent)]"
           />
           Activation −1
         </label>
