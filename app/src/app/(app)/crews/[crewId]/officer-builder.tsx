@@ -90,9 +90,9 @@ function fixedStatModBadges(mods: Record<string, number>): string[] {
 // (ui/sheet.tsx) that slides in from the right on desktop / up from the
 // bottom on mobile with a dimming backdrop -- only one thing focused at a
 // time instead of a permanent side-by-side pane, which felt like cognitive
-// overload in practice. Starting a *new* officer opens Background
-// immediately (guided); revisiting an existing one (wizard back-nav or the
-// free-edit tabs) starts closed so nothing pops up uninvited.
+// overload in practice. Starts closed either way -- new or existing officer
+// -- so nothing pops up uninvited; the Sheet only opens once the user taps
+// the Background summary row.
 export function OfficerBuilder({
   crewId,
   role,
@@ -132,7 +132,7 @@ export function OfficerBuilder({
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [pending, startTransition] = useTransition();
-  const [activeSection, setActiveSection] = useState<Section | null>(existing ? null : "background");
+  const [activeSection, setActiveSection] = useState<Section | null>(null);
 
   const background = backgrounds.find((b) => b.id === backgroundId) ?? null;
   const corePowerIdSet = useMemo(
