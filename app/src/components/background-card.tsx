@@ -8,7 +8,7 @@ import Image from "next/image";
 // flavor_text (nice-to-know, not needed while building); the stat-choice
 // summary that used to sit at the bottom of the old card now lives right
 // under the title so it's visible without opening anything.
-const BACKGROUND_ICONS: Record<string, string> = {
+export const BACKGROUND_ICONS: Record<string, string> = {
   biomorph: "/icons/backgrounds/biomorph.svg",
   cyborg: "/icons/backgrounds/cyborg.svg",
   mystic: "/icons/backgrounds/mystic.svg",

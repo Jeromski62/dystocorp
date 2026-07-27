@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition, type ReactNode } from "react";
+import Image from "next/image";
 import { saveOfficer } from "./actions";
 import {
   OFFICER_RULES,
@@ -10,7 +11,7 @@ import {
   type OfficerRole,
 } from "@/lib/stargrave/constants";
 import { Button } from "@/components/ui/button";
-import { BackgroundCard } from "@/components/background-card";
+import { BackgroundCard, BACKGROUND_ICONS } from "@/components/background-card";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
   computeActivationNumber,
@@ -135,6 +136,12 @@ export function OfficerBuilder({
   const [activeSection, setActiveSection] = useState<Section | null>(null);
 
   const background = backgrounds.find((b) => b.id === backgroundId) ?? null;
+  const backgroundBadges = background
+    ? [
+        ...fixedStatModBadges(background.fixed_stat_mods),
+        ...chosenStatOptions.map((s) => `+1 ${STAT_LABELS[s as ChoosableStat]}`),
+      ]
+    : [];
   const corePowerIdSet = useMemo(
     () => new Set(backgroundId ? corePowersByBackground[backgroundId] ?? [] : []),
     [backgroundId, corePowersByBackground]
@@ -561,18 +568,37 @@ export function OfficerBuilder({
       <section className="flex flex-col gap-4 border-b border-border pb-8">
         <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h2>
 
-        <SummaryRow label="Background" active={activeSection === "background"} onClick={() => goToSection("background")}>
-          {background ? (
-            <>
+        {background ? (
+          <button
+            type="button"
+            onClick={() => goToSection("background")}
+            className="flex w-full items-center gap-4 border border-border bg-black p-4 text-left transition-colors hover:border-accent"
+          >
+            <span className="flex size-12 shrink-0 items-center justify-center bg-black/60">
+              {BACKGROUND_ICONS[background.key] ? (
+                <Image src={BACKGROUND_ICONS[background.key]} alt="" width={40} height={40} />
+              ) : null}
+            </span>
+            <span className="min-w-0 flex-1 font-display text-[18px] font-semibold tracking-[1.8px] text-white uppercase">
               {background.name}
-              {chosenStatOptions.length > 0
-                ? ` — ${chosenStatOptions.map((s) => `+1 ${STAT_LABELS[s as ChoosableStat]}`).join(", ")}`
-                : null}
-            </>
-          ) : (
-            "Noch nicht gewählt"
-          )}
-        </SummaryRow>
+            </span>
+            {backgroundBadges.length > 0 ? (
+              <span className="flex shrink-0 items-center gap-2">
+                {backgroundBadges.map((label) => (
+                  <span key={label} className="bg-white/24 px-1.5 py-1.5 text-[14px] font-semibold tracking-[1.4px] text-white">
+                    {label}
+                  </span>
+                ))}
+              </span>
+            ) : null}
+          </button>
+        ) : (
+          <div className="flex items-center justify-center py-8">
+            <Button variant="outline" onClick={() => goToSection("background")}>
+              Select Background
+            </Button>
+          </div>
+        )}
       </section>
 
       <section className="flex flex-col gap-4 border-b border-border pb-8">
