@@ -20,6 +20,7 @@ import {
   computeActivationNumber,
   computeGearSlotTotal,
   computeStatLine,
+  validateArmourLimit,
   validateChosenStatOptions,
   validateGearSlots,
   validatePowerSelection,
@@ -231,9 +232,22 @@ export function OfficerBuilder({
     });
   }
 
+  function armourCountIn(quantities: Record<string, number>): number {
+    return Object.entries(quantities).reduce((sum, [id, qty]) => {
+      const it = equipment.find((e) => e.id === id);
+      return it?.category === "armour" ? sum + qty : sum;
+    }, 0);
+  }
+
   function wouldExceedGearLimit(item: EquipmentItem): boolean {
     const prospectiveTotal = computeGearSlotTotal([...gearFlatList, { key: item.key, gearSlots: item.gear_slots }]);
-    return prospectiveTotal > rules.gearSlots;
+    if (prospectiveTotal > rules.gearSlots) return true;
+    // A figure may never wear more than one armour type at once (Light/Heavy/
+    // Combat Armour + Shield all share the "armour" category) -- already-
+    // equipped armour is filtered out of the browse list, so this only ever
+    // fires for a *different* armour item while one is already carried.
+    if (item.category === "armour" && armourCountIn(gearQuantities) >= 1) return true;
+    return false;
   }
 
   function addGear(id: string) {
@@ -254,6 +268,7 @@ export function OfficerBuilder({
       });
       const prospectiveTotal = computeGearSlotTotal([...flatList, { key: item.key, gearSlots: item.gear_slots }]);
       if (prospectiveTotal > rules.gearSlots) return prev;
+      if (item.category === "armour" && armourCountIn(prev) >= 1) return prev;
       return { ...prev, [id]: (prev[id] ?? 0) + 1 };
     });
   }
@@ -299,6 +314,7 @@ export function OfficerBuilder({
   });
   const gearSlotTotal = computeGearSlotTotal(gearFlatList);
   const gearError = validateGearSlots(gearSlotTotal, rules.gearSlots);
+  const armourError = validateArmourLimit(armourCountIn(gearQuantities));
 
   const gearCells = Object.entries(gearQuantities).flatMap(([id, qty]) => {
     const item = equipment.find((e) => e.id === id);
@@ -309,7 +325,7 @@ export function OfficerBuilder({
   const emptyGearSlotCount = Math.max(0, rules.gearSlots - gearSlotTotal);
   const filledIndicatorCount = Math.min(gearSlotTotal, rules.gearSlots);
 
-  const canSave = name.trim().length > 0 && !statError && !powerError && !reductionError && !gearError;
+  const canSave = name.trim().length > 0 && !statError && !powerError && !reductionError && !gearError && !armourError;
 
   const backgroundDone = !statError;
   const powersDone = !powerError && !reductionError;
@@ -498,9 +514,10 @@ export function OfficerBuilder({
       <div className="flex h-full flex-col">
         <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Gear</h3>
         <div className="mt-2 border border-border bg-bg-surface px-3 py-2 text-sm text-text-secondary">
-          Wähle Gear für bis zu {rules.gearSlots} Slots.
+          Wähle Gear für bis zu {rules.gearSlots} Slots. Maximal 1 Rüstungsitem gleichzeitig.
         </div>
         {gearError ? <p className="mt-1 text-sm text-danger">{gearError}</p> : null}
+        {armourError ? <p className="mt-1 text-sm text-danger">{armourError}</p> : null}
         {!inCampaign ? (
           <p className="mt-1 text-xs text-text-secondary">
             Advanced Weapon/Technology und Alien Artefact sind Campaign Loot — erst verfügbar, sobald dieses Team in
@@ -789,7 +806,7 @@ export function OfficerBuilder({
             <span className="font-display text-[24px] font-normal tracking-[2.4px] text-white uppercase leading-none">
               {gearSlotTotal}/{rules.gearSlots}
             </span>
-            {gearSlotTotal === rules.gearSlots ? (
+            {gearSlotTotal === rules.gearSlots && !armourError ? (
               <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#11FF70]">
                 <CheckIcon className="size-3 text-black" strokeWidth={3} />
               </span>
@@ -799,6 +816,8 @@ export function OfficerBuilder({
 
         {gearError ? (
           <p className="text-sm text-danger">{gearError}</p>
+        ) : armourError ? (
+          <p className="text-sm text-danger">{armourError}</p>
         ) : gearSlotTotal < rules.gearSlots ? (
           <p className="text-sm text-danger">Wähle Gear für {rules.gearSlots} Slots</p>
         ) : null}
@@ -836,7 +855,7 @@ export function OfficerBuilder({
         {!hideSaveButton && saved ? <span className="text-sm text-accent">Gespeichert.</span> : null}
         {error ? <span className="text-sm text-danger">{error}</span> : null}
         {!hideSaveButton && !canSave && !error
-          ? [statError, powerError, reductionError, gearError].filter(Boolean).map((msg) => (
+          ? [statError, powerError, reductionError, gearError, armourError].filter(Boolean).map((msg) => (
               <span key={msg} className="text-sm text-text-secondary">
                 {msg}
               </span>

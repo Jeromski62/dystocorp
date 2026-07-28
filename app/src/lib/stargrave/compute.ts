@@ -87,3 +87,14 @@ export function validateGearSlots(totalCost: number, limit: number): string | nu
   }
   return null;
 }
+
+// Rulebook p.29 "General Equipment List": "A figure may never wear more
+// than one armour type at the same time" -- Light/Heavy/Combat Armour and
+// Shield all share the "armour" category, so this is just a cap of 1 total
+// unit across that category (not "1 per type").
+export function validateArmourLimit(armourCount: number): string | null {
+  if (armourCount > 1) {
+    return "Maximal 1 Rüstungsitem gleichzeitig.";
+  }
+  return null;
+}

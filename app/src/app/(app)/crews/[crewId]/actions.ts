@@ -15,6 +15,7 @@ import {
   computeActivationNumber,
   computeGearSlotTotal,
   computeStatLine,
+  validateArmourLimit,
   validateChosenStatOptions,
   validateGearSlots,
   validatePowerSelection,
@@ -126,6 +127,13 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
   );
   const gearError = validateGearSlots(gearSlotTotal, rules.gearSlots);
   if (gearError) return { error: gearError };
+
+  // Rulebook: "A figure may never wear more than one armour type at the
+  // same time" -- Light/Heavy/Combat Armour and Shield all share the
+  // "armour" category, so this is a cap of 1 total unit across it.
+  const armourCount = input.gearItemIds.filter((id) => gearById.get(id)!.category === "armour").length;
+  const armourError = validateArmourLimit(armourCount);
+  if (armourError) return { error: armourError };
 
   const stats = computeStatLine(rules.baseStats, background.fixed_stat_mods as Record<string, number>, input.chosenStatOptions);
   const defaultName = input.role === "captain" ? "Captain" : "First Mate";
