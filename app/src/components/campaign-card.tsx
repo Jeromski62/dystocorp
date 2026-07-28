@@ -20,7 +20,7 @@ export function CampaignCard({
   return (
     <Link
       href={href}
-      className={`relative flex h-[200px] w-full flex-col justify-between overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30 ${
+      className={`group relative flex h-[200px] w-full flex-col justify-between overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30 ${
         archived ? "opacity-60 hover:opacity-100" : ""
       }`}
     >
@@ -29,7 +29,11 @@ export function CampaignCard({
         {/* eslint-disable-next-line @next/next/no-img-element -- fills an
             absolutely-positioned decorative layer; next/image's fixed
             intrinsic sizing doesn't fit this object-cover/opacity overlay */}
-        <img src="/campaigncards/background.png" alt="" className="absolute size-full max-w-none object-cover opacity-70" />
+        <img
+          src="/campaigncards/background.png"
+          alt=""
+          className="absolute size-full max-w-none scale-100 object-cover opacity-70 transition-transform group-hover:scale-110"
+        />
       </div>
 
       <div className="relative flex flex-col leading-none">

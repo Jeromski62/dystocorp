@@ -26,14 +26,18 @@ export function CorpCard({ corp, className = "" }: { corp: CorpCardVariant; clas
   return (
     <div
       data-corp={corp === "subcontractor" ? undefined : corp}
-      className={`relative flex h-[200px] w-full flex-col items-center justify-center overflow-hidden border border-white/12 bg-black p-4 transition-colors hover:border-white/30 ${className}`}
+      className={`group relative flex h-[200px] w-full flex-col items-center justify-center overflow-hidden border border-white/12 bg-black p-4 transition-colors hover:border-white/30 ${className}`}
     >
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-black" />
         {/* eslint-disable-next-line @next/next/no-img-element -- fills an
             absolutely-positioned decorative layer; next/image's fixed
             intrinsic sizing doesn't fit this object-cover/opacity overlay */}
-        <img src={CORP_CARD_BACKGROUNDS[corp]} alt="" className="absolute size-full max-w-none object-cover opacity-30" />
+        <img
+          src={CORP_CARD_BACKGROUNDS[corp]}
+          alt=""
+          className="absolute size-full max-w-none scale-100 object-cover opacity-30 transition-transform group-hover:scale-110"
+        />
       </div>
 
       {logo ? (

@@ -44,14 +44,18 @@ export function CrewCard({
     <Link
       href={href}
       data-corp={corpSlug}
-      className="relative flex h-[200px] w-full flex-col gap-2 overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30"
+      className="group relative flex h-[200px] w-full flex-col gap-2 overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-black" />
         {/* eslint-disable-next-line @next/next/no-img-element -- fills an
             absolutely-positioned decorative layer; next/image's fixed
             intrinsic sizing doesn't fit this object-cover/opacity overlay */}
-        <img src={corpBackground(corpSlug)} alt="" className="absolute size-full max-w-none object-cover opacity-60" />
+        <img
+          src={corpBackground(corpSlug)}
+          alt=""
+          className="absolute size-full max-w-none scale-100 object-cover opacity-60 transition-transform group-hover:scale-110"
+        />
       </div>
 
       <div className="relative flex w-full shrink-0 items-center gap-4">
