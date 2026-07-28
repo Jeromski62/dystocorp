@@ -592,7 +592,7 @@ export function OfficerBuilder({
       <section className="flex flex-col gap-4 pb-8">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h2>
-          {background ? (
+          {!statError ? (
             <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#11FF70]">
               <CheckIcon className="size-3 text-black" strokeWidth={3} />
             </span>
@@ -630,6 +630,8 @@ export function OfficerBuilder({
             </Button>
           </div>
         )}
+
+        {background && statError ? <p className="text-sm text-danger">{statError}</p> : null}
       </section>
 
       <section className="flex flex-col gap-4 pb-8">
@@ -652,6 +654,8 @@ export function OfficerBuilder({
           </span>
         </button>
 
+        {background && powerError ? <p className="text-sm text-danger">{powerError}</p> : null}
+
         <div className="flex flex-col gap-2">
           <p className="font-display text-sm font-medium tracking-[1.6px] text-white uppercase">Core</p>
           {!background ? (
@@ -672,7 +676,13 @@ export function OfficerBuilder({
               ))}
             </div>
           ) : (
-            <p className="py-4 text-center text-sm tracking-[1.4px] text-white/50 uppercase">Noch keine gewählt</p>
+            <button
+              type="button"
+              onClick={() => goToSection("powers")}
+              className="w-full py-4 text-center font-display text-sm font-semibold tracking-[1.4px] text-white/50 uppercase transition-colors hover:text-white"
+            >
+              Wähle Powers
+            </button>
           )}
         </div>
 
@@ -696,7 +706,13 @@ export function OfficerBuilder({
               ))}
             </div>
           ) : (
-            <p className="py-4 text-center text-sm tracking-[1.4px] text-white/50 uppercase">Noch keine gewählt</p>
+            <button
+              type="button"
+              onClick={() => goToSection("powers")}
+              className="w-full py-4 text-center font-display text-sm font-semibold tracking-[1.4px] text-white/50 uppercase transition-colors hover:text-white"
+            >
+              Wähle Powers
+            </button>
           )}
         </div>
       </section>
@@ -712,13 +728,19 @@ export function OfficerBuilder({
             <span className="font-display text-[24px] font-normal tracking-[2.4px] text-white uppercase leading-none">
               {gearSlotTotal}/{rules.gearSlots}
             </span>
-            {!gearError ? (
+            {gearSlotTotal === rules.gearSlots ? (
               <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#11FF70]">
                 <CheckIcon className="size-3 text-black" strokeWidth={3} />
               </span>
             ) : null}
           </span>
         </button>
+
+        {gearError ? (
+          <p className="text-sm text-danger">{gearError}</p>
+        ) : gearSlotTotal < rules.gearSlots ? (
+          <p className="text-sm text-danger">Wähle Gear für {rules.gearSlots} Slots</p>
+        ) : null}
 
         <div className="flex flex-col gap-2">
           <div>
@@ -732,7 +754,7 @@ export function OfficerBuilder({
                 />
               ))}
               {Array.from({ length: emptyGearSlotCount }, (_, i) => (
-                <GearSlotItem key={`empty-${i}`} size={1} />
+                <GearSlotItem key={`empty-${i}`} size={1} onClick={() => goToSection("gear")} />
               ))}
             </div>
             <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
@@ -741,7 +763,6 @@ export function OfficerBuilder({
               ))}
             </div>
           </div>
-          {gearError ? <p className="text-sm text-danger">{gearError}</p> : null}
         </div>
       </section>
 
