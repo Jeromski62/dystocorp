@@ -183,6 +183,7 @@ export function OfficerBuilder({
   // crew is actually playing in a campaign.
   const availableEquipment = inCampaign ? equipment : equipment.filter((item) => !isCampaignLootCategory(item.category));
   const filteredEquipment = availableEquipment.filter((item) => {
+    if (gearQuantities[item.id]) return false; // already in the loadout -- adjust its quantity via the +/- row above instead
     if (gearCategory !== "all" && item.category !== gearCategory) return false;
     return item.name.toLowerCase().includes(gearSearch.toLowerCase());
   });
@@ -237,8 +238,24 @@ export function OfficerBuilder({
 
   function addGear(id: string) {
     const item = equipment.find((e) => e.id === id);
-    if (!item || wouldExceedGearLimit(item)) return;
-    setGearQuantities((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
+    if (!item) return;
+    // Validate against `prev`, not the render-time gearFlatList/gearSlotTotal
+    // closure -- two rapid clicks (e.g. a fast double-click) both fire
+    // before React re-renders, so a render-time check lets both slip through
+    // even when only the first one actually fits, since each read the same
+    // stale total. The functional updater runs against the real queued
+    // state instead, so the second click correctly sees the first one's
+    // effect already applied.
+    setGearQuantities((prev) => {
+      const flatList = Object.entries(prev).flatMap(([qid, qty]) => {
+        const qItem = equipment.find((e) => e.id === qid);
+        if (!qItem) return [];
+        return Array.from({ length: qty }, () => ({ key: qItem.key, gearSlots: qItem.gear_slots }));
+      });
+      const prospectiveTotal = computeGearSlotTotal([...flatList, { key: item.key, gearSlots: item.gear_slots }]);
+      if (prospectiveTotal > rules.gearSlots) return prev;
+      return { ...prev, [id]: (prev[id] ?? 0) + 1 };
+    });
   }
 
   function removeGear(id: string) {
@@ -527,12 +544,12 @@ export function OfficerBuilder({
                     {item.name} × {qty}{" "}
                     <span className="text-text-secondary">({item.gear_slots * qty} Slots)</span>
                   </span>
-                  <div className="flex gap-1">
+                  <div className="flex shrink-0 gap-1.5">
                     <button
                       type="button"
                       onClick={() => removeGear(id)}
                       aria-label={`${item.name} entfernen`}
-                      className="px-2 text-text-secondary hover:text-danger"
+                      className="flex size-7 items-center justify-center rounded-md border border-border bg-bg-surface text-text-default transition-colors hover:border-danger hover:text-danger"
                     >
                       −
                     </button>
@@ -541,7 +558,7 @@ export function OfficerBuilder({
                       onClick={() => addGear(id)}
                       disabled={wouldExceedGearLimit(item)}
                       aria-label={`${item.name} hinzufügen`}
-                      className="px-2 text-text-secondary hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-text-secondary"
+                      className="flex size-7 items-center justify-center rounded-md border border-border bg-bg-surface text-text-default transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:text-text-default"
                     >
                       +
                     </button>
@@ -559,9 +576,7 @@ export function OfficerBuilder({
               type="button"
               onClick={() => addGear(item.id)}
               disabled={wouldExceedGearLimit(item)}
-              className={`flex items-center justify-between rounded-md border px-3 py-1.5 text-left text-sm transition-colors hover:border-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border ${
-                (gearQuantities[item.id] ?? 0) > 0 ? "border-accent" : "border-border"
-              } bg-bg-surface`}
+              className="flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-left text-sm transition-colors hover:border-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border"
               title={item.effect_text}
             >
               <span className="text-text-default">{item.name}</span>
