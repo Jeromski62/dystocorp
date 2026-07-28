@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { advanceWizardStep } from "./actions";
-import { OfficerBuilder } from "./officer-builder";
+import { OfficerBuilder, type OfficerBuilderHandle } from "./officer-builder";
 import { SoldierRecruiter } from "./soldier-recruiter";
 import { ShipPanel } from "./ship-panel";
 import { CorpEmblem } from "@/components/corp-emblem";
@@ -54,16 +54,25 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
+  // Captain/First Mate no longer gate on "has this been saved to the DB at
+  // least once" (captain/firstMate !== null) -- that forced a separate
+  // Speichern click before Weiter would even unlock. officerRef lets this
+  // single Weiter button save the currently-mounted OfficerBuilder itself
+  // (only one of the two is ever mounted, matching viewStep) before
+  // advancing, so readiness now reflects live client-side validity instead.
+  const officerRef = useRef<OfficerBuilderHandle>(null);
+  const [officerReady, setOfficerReady] = useState(false);
+
   const furthestStep = crew.wizard_step;
   const stepReady: Record<number, boolean> = {
-    1: captain !== null,
-    2: firstMate !== null,
+    1: officerReady,
+    2: officerReady,
     3: soldiers.length > 0,
     4: true,
   };
   const blockedReason: Record<number, string> = {
-    1: "Speichere zuerst den Captain, um fortzufahren.",
-    2: "Speichere zuerst den First Mate, um fortzufahren.",
+    1: "Vervollständige den Captain, um fortzufahren.",
+    2: "Vervollständige den First Mate, um fortzufahren.",
     3: "Rekrutiere mindestens einen Soldier, um fortzufahren.",
     4: "",
   };
@@ -76,11 +85,16 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
   function handleNext() {
     if (!stepReady[viewStep]) return;
     startTransition(async () => {
+      if (viewStep === 1 || viewStep === 2) {
+        const saved = await officerRef.current?.save();
+        if (!saved) return;
+      }
       await advanceWizardStep(crewId, viewStep);
       if (viewStep >= 4) {
         router.push(`/crews/${crewId}`);
         router.refresh();
       } else {
+        setOfficerReady(false);
         setViewStep((s) => Math.min(4, s + 1));
       }
     });
@@ -120,6 +134,9 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
           {viewStep === 1 ? (
             <OfficerBuilder
               key="captain"
+              ref={officerRef}
+              onReadyChange={setOfficerReady}
+              hideSaveButton
               crewId={crewId}
               role="captain"
               inCampaign={inCampaign}
@@ -144,6 +161,9 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
           {viewStep === 2 ? (
             <OfficerBuilder
               key="first_mate"
+              ref={officerRef}
+              onReadyChange={setOfficerReady}
+              hideSaveButton
               crewId={crewId}
               role="first_mate"
               inCampaign={inCampaign}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useImperativeHandle, useMemo, useState, useTransition, type Ref } from "react";
 import Image from "next/image";
 import { saveOfficer } from "./actions";
 import {
@@ -64,6 +64,13 @@ type ExistingOfficer = {
 
 type Section = "background" | "powers" | "gear";
 
+// Exposed to CrewWizard so its single "Weiter" button can both save this
+// officer and (only then) advance the wizard step, instead of requiring a
+// separate "Speichern" click before "Weiter" would even unlock.
+export type OfficerBuilderHandle = {
+  save: () => Promise<boolean>;
+};
+
 const STAT_LABELS: Record<ChoosableStat, string> = {
   move: "Move",
   fight: "Fight",
@@ -106,6 +113,9 @@ export function OfficerBuilder({
   powers,
   equipment,
   existing,
+  onReadyChange,
+  hideSaveButton,
+  ref,
 }: {
   crewId: string;
   role: OfficerRole;
@@ -115,6 +125,14 @@ export function OfficerBuilder({
   powers: Power[];
   equipment: EquipmentItem[];
   existing: ExistingOfficer | null;
+  // Wizard-mode-only: report client-side validity up so the wizard's own
+  // "Weiter" button can gate on it, and hide this component's own
+  // "Speichern" button/checklist since the wizard button now triggers
+  // save() itself via the ref. Unset (standalone/edit-tabs usage) keeps
+  // the original always-visible Speichern button.
+  onReadyChange?: (ready: boolean) => void;
+  hideSaveButton?: boolean;
+  ref?: Ref<OfficerBuilderHandle>;
 }) {
   const rules = OFFICER_RULES[role];
 
@@ -284,25 +302,41 @@ export function OfficerBuilder({
     setActiveSection(section);
   }
 
-  function handleSave() {
+  async function performSave(): Promise<boolean> {
     setError(null);
     setSaved(false);
-    startTransition(async () => {
-      const gearItemIds = Object.entries(gearQuantities).flatMap(([id, qty]) => Array(qty).fill(id));
-      const result = await saveOfficer({
-        crewId,
-        role,
-        name: name.trim(),
-        backgroundId: backgroundId!,
-        chosenStatOptions: chosenStatOptions as ChoosableStat[],
-        powerIds: selectedPowerIds,
-        reducedPowerIds,
-        gearItemIds,
-      });
-      if (result.error) setError(result.error);
-      else setSaved(true);
+    if (!canSave) return false;
+    const gearItemIds = Object.entries(gearQuantities).flatMap(([id, qty]) => Array(qty).fill(id));
+    const result = await saveOfficer({
+      crewId,
+      role,
+      name: name.trim(),
+      backgroundId: backgroundId!,
+      chosenStatOptions: chosenStatOptions as ChoosableStat[],
+      powerIds: selectedPowerIds,
+      reducedPowerIds,
+      gearItemIds,
+    });
+    if (result.error) {
+      setError(result.error);
+      return false;
+    }
+    setSaved(true);
+    return true;
+  }
+
+  function handleSave() {
+    startTransition(() => {
+      void performSave();
     });
   }
+
+  useImperativeHandle(ref, () => ({ save: performSave }));
+
+  useEffect(() => {
+    onReadyChange?.(canSave);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canSave]);
 
   function BackgroundPicker() {
     return (
@@ -767,12 +801,14 @@ export function OfficerBuilder({
       </section>
 
       <div className="flex flex-col items-start gap-2">
-        <Button variant="cta" disabled={!canSave || pending} onClick={handleSave}>
-          {pending ? "Speichere…" : "Speichern"}
-        </Button>
-        {saved ? <span className="text-sm text-accent">Gespeichert.</span> : null}
+        {!hideSaveButton ? (
+          <Button variant="cta" disabled={!canSave || pending} onClick={handleSave}>
+            {pending ? "Speichere…" : "Speichern"}
+          </Button>
+        ) : null}
+        {!hideSaveButton && saved ? <span className="text-sm text-accent">Gespeichert.</span> : null}
         {error ? <span className="text-sm text-danger">{error}</span> : null}
-        {!canSave && !error
+        {!hideSaveButton && !canSave && !error
           ? [statError, powerError, reductionError, gearError].filter(Boolean).map((msg) => (
               <span key={msg} className="text-sm text-text-secondary">
                 {msg}
