@@ -2,7 +2,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Clock } from "@/components/clock";
-import { StarmapCanvas } from "@/components/starmap-canvas";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { crewStatus } from "@/lib/crew-status";
 import { CampaignCard } from "@/components/campaign-card";
@@ -92,125 +91,121 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="hud-grid relative min-h-screen overflow-hidden">
-      <StarmapCanvas className="z-0" />
+    <div className="hud-grid flex min-h-screen flex-col">
+      <div className="flex flex-wrap items-stretch border-b border-border bg-black/40 font-mono text-[14px] tracking-[0.05em] text-text-secondary">
+        <span className="border-r border-border px-4 py-2 text-text-default">SYS_OP_1.09</span>
+        <span className="border-r border-border px-4 py-2 text-accent">[ONLINE]</span>
+        <span className="border-r border-border px-4 py-2">{(player?.display_name || user!.email)?.toUpperCase()}</span>
+        {newestCrew?.corps ? (
+          <span className="border-r border-border px-4 py-2 text-corp-accent" data-corp={newestCrewSlug}>
+            {newestCrew.corps.name.toUpperCase()}
+          </span>
+        ) : null}
+        <span className="border-r border-border px-4 py-2">{totalCredits.toLocaleString("de-DE")} CR</span>
+        <span className="flex-1" />
+        <Clock className="px-4 py-2" />
+      </div>
 
-      <div className="relative z-[1] flex min-h-screen flex-col">
-        <div className="flex flex-wrap items-stretch border-b border-border bg-black/40 font-mono text-[14px] tracking-[0.05em] text-text-secondary">
-          <span className="border-r border-border px-4 py-2 text-text-default">SYS_OP_1.09</span>
-          <span className="border-r border-border px-4 py-2 text-accent">[ONLINE]</span>
-          <span className="border-r border-border px-4 py-2">{(player?.display_name || user!.email)?.toUpperCase()}</span>
-          {newestCrew?.corps ? (
-            <span className="border-r border-border px-4 py-2 text-corp-accent" data-corp={newestCrewSlug}>
-              {newestCrew.corps.name.toUpperCase()}
-            </span>
-          ) : null}
-          <span className="border-r border-border px-4 py-2">{totalCredits.toLocaleString("de-DE")} CR</span>
-          <span className="flex-1" />
-          <Clock className="px-4 py-2" />
-        </div>
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-6 py-8 md:px-10">
+        <PageHeader
+          title="Übersicht"
+          meta="Lagezentrum // v7.2"
+          secondary={
+            <Link href="/campaigns">
+              <Button variant="ghost">＋ Kampagne beitreten</Button>
+            </Link>
+          }
+          cta={
+            <Link href="/crews/new">
+              <Button variant="cta">＋ Team Einstellen</Button>
+            </Link>
+          }
+        />
 
-        <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-6 py-8 md:px-10">
-          <PageHeader
-            title="Übersicht"
-            meta="Lagezentrum // v7.2"
-            secondary={
-              <Link href="/campaigns">
-                <Button variant="ghost">＋ Kampagne beitreten</Button>
-              </Link>
-            }
-            cta={
-              <Link href="/crews/new">
-                <Button variant="cta">＋ Team Einstellen</Button>
-              </Link>
-            }
-          />
-
-          <div className="grid gap-3.5 sm:grid-cols-2">
-            <section className="pt-4">
-              <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Laufende Kampagne</p>
-              {latestCampaign ? (
-                <div className="mt-2">
-                  <CampaignCard href={`/campaigns/${latestCampaign.id}`} name={latestCampaign.name} corps={latestCampaignCorps} />
-                </div>
-              ) : (
-                <Link href="/campaigns" className="mt-2 block font-mono text-xs text-text-secondary hover:text-accent">
-                  Noch keine Kampagne — ansehen/beitreten →
-                </Link>
-              )}
-            </section>
-
-            <section className="flex flex-col pt-4">
-              <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Nächste Mission</p>
-              {latestMission ? (
-                <div className="mt-2">
-                  <MissionPreviewCard
-                    href={`/campaigns/${latestMission.campaign_id}/missions`}
-                    title={latestMission.title}
-                    subtitle={latestMission.subtitle}
-                    campaignName={latestMission.campaigns?.name}
-                    status={latestMission.status}
-                  />
-                </div>
-              ) : (
-                <div className="flex flex-1 items-center justify-center">
-                  <p className="font-mono text-xs text-text-secondary">Noch keine Mission geplant.</p>
-                </div>
-              )}
-            </section>
-          </div>
-
-          <section className="flex flex-1 flex-col border border-border bg-black/60">
-            <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
-              <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
-                Team-Register // Aktive Einheiten
-              </span>
-              <span className="font-mono text-[14px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
-            </div>
-
-            {crewList.length === 0 ? (
-              <p className="px-4 py-6 font-mono text-xs text-text-secondary">Noch kein Team registriert.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <div className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] gap-2 border-b border-border px-4 py-2 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
-                  <span>Team</span>
-                  <span>Corp</span>
-                  <span>Captain</span>
-                  <span>Lvl</span>
-                  <span>Credits</span>
-                  <span>Status</span>
-                </div>
-                {crewList.map((crew) => {
-                  const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
-                  const status = crewStatus(crew.captains);
-                  return (
-                    <Link
-                      key={crew.id}
-                      href={`/crews/${crew.id}`}
-                      data-corp={slug}
-                      className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] items-center gap-2 border-b border-border/60 px-4 py-2.5 text-sm text-text-default last:border-b-0 hover:bg-corp-accent/[0.06]"
-                    >
-                      <span className="font-medium tracking-[0.02em]">{crew.name}</span>
-                      <span className="flex items-center gap-1.5 font-mono text-[15px] text-corp-accent">
-                        <span className="h-1.5 w-1.5 rounded-full bg-corp-accent" />
-                        {crew.corps?.name.toUpperCase() ?? "—"}
-                      </span>
-                      <span className="font-mono text-[15px] text-text-mid">{crew.captains?.name ?? "—"}</span>
-                      <span>{crew.captains?.level ?? "—"}</span>
-                      <span className="font-mono text-[15px]">{crew.credits.toLocaleString("de-DE")}</span>
-                      <span className={`font-mono text-[14px] ${status.className}`}>● {status.label}</span>
-                    </Link>
-                  );
-                })}
+        <div className="grid gap-3.5 sm:grid-cols-2">
+          <section className="pt-4">
+            <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Laufende Kampagne</p>
+            {latestCampaign ? (
+              <div className="mt-2">
+                <CampaignCard href={`/campaigns/${latestCampaign.id}`} name={latestCampaign.name} corps={latestCampaignCorps} />
               </div>
+            ) : (
+              <Link href="/campaigns" className="mt-2 block font-mono text-xs text-text-secondary hover:text-accent">
+                Noch keine Kampagne — ansehen/beitreten →
+              </Link>
             )}
           </section>
 
-          <div className="flex justify-end">
-            <Link href="/powers" className="font-mono text-[15px] text-text-secondary hover:text-text-default">
-              POWER-DATENBANK →
-            </Link>
+          <section className="flex flex-col pt-4">
+            <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Nächste Mission</p>
+            {latestMission ? (
+              <div className="mt-2">
+                <MissionPreviewCard
+                  href={`/campaigns/${latestMission.campaign_id}/missions`}
+                  title={latestMission.title}
+                  subtitle={latestMission.subtitle}
+                  campaignName={latestMission.campaigns?.name}
+                  status={latestMission.status}
+                />
+              </div>
+            ) : (
+              <div className="flex flex-1 items-center justify-center">
+                <p className="font-mono text-xs text-text-secondary">Noch keine Mission geplant.</p>
+              </div>
+            )}
+          </section>
+        </div>
+
+        <section className="flex flex-1 flex-col border border-border bg-black/60">
+          <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+            <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
+              Team-Register // Aktive Einheiten
+            </span>
+            <span className="font-mono text-[14px] text-text-subtle">{String(crewList.length).padStart(2, "0")} GELISTET</span>
           </div>
+
+          {crewList.length === 0 ? (
+            <p className="px-4 py-6 font-mono text-xs text-text-secondary">Noch kein Team registriert.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <div className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] gap-2 border-b border-border px-4 py-2 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
+                <span>Team</span>
+                <span>Corp</span>
+                <span>Captain</span>
+                <span>Lvl</span>
+                <span>Credits</span>
+                <span>Status</span>
+              </div>
+              {crewList.map((crew) => {
+                const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
+                const status = crewStatus(crew.captains);
+                return (
+                  <Link
+                    key={crew.id}
+                    href={`/crews/${crew.id}`}
+                    data-corp={slug}
+                    className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] items-center gap-2 border-b border-border/60 px-4 py-2.5 text-sm text-text-default last:border-b-0 hover:bg-corp-accent/[0.06]"
+                  >
+                    <span className="font-medium tracking-[0.02em]">{crew.name}</span>
+                    <span className="flex items-center gap-1.5 font-mono text-[15px] text-corp-accent">
+                      <span className="h-1.5 w-1.5 rounded-full bg-corp-accent" />
+                      {crew.corps?.name.toUpperCase() ?? "—"}
+                    </span>
+                    <span className="font-mono text-[15px] text-text-mid">{crew.captains?.name ?? "—"}</span>
+                    <span>{crew.captains?.level ?? "—"}</span>
+                    <span className="font-mono text-[15px]">{crew.credits.toLocaleString("de-DE")}</span>
+                    <span className={`font-mono text-[14px] ${status.className}`}>● {status.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        <div className="flex justify-end">
+          <Link href="/powers" className="font-mono text-[15px] text-text-secondary hover:text-text-default">
+            POWER-DATENBANK →
+          </Link>
         </div>
       </div>
     </div>

@@ -223,7 +223,11 @@ body {
 
 /* schematic/HUD backdrop — evenly spaced hairline grid, per the terminal redesign */
 .hud-grid {
-  background-color: var(--bg-body);
+  /* No background-color here (was var(--bg-body), solid) -- (app)/layout.tsx
+     now renders a shared fixed StarmapCanvas behind every page, and an
+     opaque fill here would hide it. body's own var(--bg-body) still backs
+     any page without a starmap behind it (e.g. reached outside that
+     layout). */
   background-image:
     repeating-linear-gradient(
       to bottom,

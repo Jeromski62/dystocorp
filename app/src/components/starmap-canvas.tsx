@@ -76,6 +76,8 @@ export function StarmapCanvas({
   twinkle = true,
   crtIntensity = "medium",
   scanlines = true,
+  showLabels = true,
+  overlayOpacity = 0,
 }: {
   className?: string;
   parallaxStrength?: number;
@@ -83,6 +85,12 @@ export function StarmapCanvas({
   twinkle?: boolean;
   crtIntensity?: CrtIntensity;
   scanlines?: boolean;
+  // Corp-system name/RA/DEC/class labels -- off for the plain site-wide
+  // background usage (layout.tsx), on for the login/dashboard hero usage.
+  showLabels?: boolean;
+  // Extra flat black wash on top of the whole stack, for callers that want
+  // the starmap dimmer than its own built-in vignette (0-1).
+  overlayOpacity?: number;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const glCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -281,7 +289,7 @@ export function StarmapCanvas({
       const my = mouse.y * parallaxStrength;
 
       drawStars(mx, my, time);
-      drawLabels(mx, my, time);
+      if (showLabels) drawLabels(mx, my, time);
 
       if (flickRef.current) {
         flickRef.current.style.opacity = String(preset.flick * (0.25 + Math.random() * 0.75));
@@ -316,7 +324,7 @@ export function StarmapCanvas({
       // Single static frame instead of the animation loop -- no parallax,
       // twinkle, sweep/glitch/flicker/grain motion.
       drawStars(0, 0, 0);
-      drawLabels(0, 0, 0);
+      if (showLabels) drawLabels(0, 0, 0);
     } else {
       raf = requestAnimationFrame(frameLoop);
     }
@@ -326,7 +334,7 @@ export function StarmapCanvas({
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
     };
-  }, [parallaxStrength, starCount, twinkle, crtIntensity, scanlines]);
+  }, [parallaxStrength, starCount, twinkle, crtIntensity, scanlines, showLabels]);
 
   return (
     <div
@@ -398,6 +406,9 @@ export function StarmapCanvas({
             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
         }}
       />
+      {overlayOpacity > 0 ? (
+        <div className="absolute inset-0 z-[9] bg-black" style={{ opacity: overlayOpacity }} />
+      ) : null}
     </div>
   );
 }
