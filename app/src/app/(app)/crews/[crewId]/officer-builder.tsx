@@ -403,29 +403,34 @@ export function OfficerBuilder({
     return (
       <div className="flex h-full flex-col gap-6">
         <div className="flex min-h-0 flex-1 flex-col">
-          <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
-            Powers ({totalSelectedCount}/{rules.powerCount}, Core {selectedCoreCount}/{rules.coreMin}-{rules.coreMax})
-          </h3>
+          <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Powers</h3>
+          <div className="mt-2 border border-border bg-bg-surface px-3 py-2 text-sm text-text-secondary">
+            Wähle genau {rules.powerCount} Powers, davon {rules.coreMin}-{rules.coreMax} Core Powers ({background.name}).
+          </div>
 
           <div className="mt-3 flex min-h-0 flex-1 flex-col gap-6">
             <div>
               <p className="mb-2 text-xs uppercase tracking-wide text-text-secondary">Core Powers ({background.name})</p>
               <div className="flex flex-col gap-2">
-                {corePowers.map((power) => (
-                  <PowerRow
-                    key={power.id}
-                    power={power}
-                    selected={selectedPowerIds.includes(power.id)}
-                    reduced={reducedPowerIds.includes(power.id)}
-                    canReduce={rules.maxReductions > 0}
-                    reductionLocked={
-                      !reducedPowerIds.includes(power.id) && reducedPowerIds.length >= rules.maxReductions
-                    }
-                    activationOffset={rules.coreActivationOffset}
-                    onToggle={() => toggleCorePower(power.id)}
-                    onToggleReduced={() => toggleReduced(power.id)}
-                  />
-                ))}
+                {corePowers.map((power) => {
+                  const isSelected = selectedPowerIds.includes(power.id);
+                  return (
+                    <PowerRow
+                      key={power.id}
+                      power={power}
+                      selected={isSelected}
+                      disabled={!isSelected && selectedCoreCount >= rules.coreMax}
+                      reduced={reducedPowerIds.includes(power.id)}
+                      canReduce={rules.maxReductions > 0}
+                      reductionLocked={
+                        !reducedPowerIds.includes(power.id) && reducedPowerIds.length >= rules.maxReductions
+                      }
+                      activationOffset={rules.coreActivationOffset}
+                      onToggle={() => toggleCorePower(power.id)}
+                      onToggleReduced={() => toggleReduced(power.id)}
+                    />
+                  );
+                })}
               </div>
             </div>
 
@@ -438,21 +443,25 @@ export function OfficerBuilder({
                 className="mb-2 w-full rounded-md border border-border bg-bg-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
               />
               <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
-                {otherPowers.map((power) => (
-                  <PowerRow
-                    key={power.id}
-                    power={power}
-                    selected={selectedPowerIds.includes(power.id)}
-                    reduced={reducedPowerIds.includes(power.id)}
-                    canReduce={rules.maxReductions > 0}
-                    reductionLocked={
-                      !reducedPowerIds.includes(power.id) && reducedPowerIds.length >= rules.maxReductions
-                    }
-                    activationOffset={rules.nonCoreActivationOffset}
-                    onToggle={() => toggleNonCorePower(power.id)}
-                    onToggleReduced={() => toggleReduced(power.id)}
-                  />
-                ))}
+                {otherPowers.map((power) => {
+                  const isSelected = selectedPowerIds.includes(power.id);
+                  return (
+                    <PowerRow
+                      key={power.id}
+                      power={power}
+                      selected={isSelected}
+                      disabled={!isSelected && totalSelectedCount >= rules.powerCount}
+                      reduced={reducedPowerIds.includes(power.id)}
+                      canReduce={rules.maxReductions > 0}
+                      reductionLocked={
+                        !reducedPowerIds.includes(power.id) && reducedPowerIds.length >= rules.maxReductions
+                      }
+                      activationOffset={rules.nonCoreActivationOffset}
+                      onToggle={() => toggleNonCorePower(power.id)}
+                      onToggleReduced={() => toggleReduced(power.id)}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -470,9 +479,10 @@ export function OfficerBuilder({
   function GearPicker() {
     return (
       <div className="flex h-full flex-col">
-        <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
-          Gear ({gearSlotTotal}/{rules.gearSlots} Slots)
-        </h3>
+        <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Gear</h3>
+        <div className="mt-2 border border-border bg-bg-surface px-3 py-2 text-sm text-text-secondary">
+          Wähle Gear für bis zu {rules.gearSlots} Slots.
+        </div>
         {gearError ? <p className="mt-1 text-sm text-danger">{gearError}</p> : null}
         {!inCampaign ? (
           <p className="mt-1 text-xs text-text-secondary">
@@ -511,7 +521,7 @@ export function OfficerBuilder({
               return (
                 <div
                   key={id}
-                  className="flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-sm"
+                  className="flex items-center justify-between rounded-md border border-accent bg-bg-surface px-3 py-1.5 text-sm"
                 >
                   <span className="text-text-default">
                     {item.name} × {qty}{" "}
@@ -549,7 +559,9 @@ export function OfficerBuilder({
               type="button"
               onClick={() => addGear(item.id)}
               disabled={wouldExceedGearLimit(item)}
-              className="flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-left text-sm hover:border-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border"
+              className={`flex items-center justify-between rounded-md border px-3 py-1.5 text-left text-sm transition-colors hover:border-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border ${
+                (gearQuantities[item.id] ?? 0) > 0 ? "border-accent" : "border-border"
+              } bg-bg-surface`}
               title={item.effect_text}
             >
               <span className="text-text-default">{item.name}</span>
@@ -827,6 +839,7 @@ export function OfficerBuilder({
 function PowerRow({
   power,
   selected,
+  disabled,
   reduced,
   canReduce,
   reductionLocked,
@@ -836,6 +849,7 @@ function PowerRow({
 }: {
   power: Power;
   selected: boolean;
+  disabled: boolean;
   reduced: boolean;
   canReduce: boolean;
   reductionLocked: boolean;
@@ -849,9 +863,14 @@ function PowerRow({
     <div
       className={`rounded-md border px-3 py-2 text-sm ${
         selected ? "border-accent bg-bg-surface" : "border-border bg-bg-surface"
-      }`}
+      } ${disabled ? "opacity-40" : ""}`}
     >
-      <button type="button" onClick={onToggle} className="flex w-full items-center justify-between text-left">
+      <button
+        type="button"
+        onClick={onToggle}
+        disabled={disabled}
+        className="flex w-full items-center justify-between text-left disabled:cursor-not-allowed"
+      >
         <span className="text-text-default" title={power.full_text}>
           {power.name}
         </span>
