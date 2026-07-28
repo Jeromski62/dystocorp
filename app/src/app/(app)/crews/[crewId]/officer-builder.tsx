@@ -546,7 +546,7 @@ export function OfficerBuilder({
 
   return (
     <div className="flex flex-col gap-8">
-      <section className="flex flex-col gap-4 border-b border-border pb-8">
+      <section className="flex flex-col gap-4 pb-8">
         <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Dossier</h2>
 
         <div>
@@ -589,7 +589,7 @@ export function OfficerBuilder({
         </div>
       </section>
 
-      <section className="flex flex-col gap-4 border-b border-border pb-8">
+      <section className="flex flex-col gap-4 pb-8">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h2>
           {background ? (
@@ -632,7 +632,7 @@ export function OfficerBuilder({
         )}
       </section>
 
-      <section className="flex flex-col gap-4 border-b border-border pb-8">
+      <section className="flex flex-col gap-4 pb-8">
         <button
           type="button"
           disabled={!background}
