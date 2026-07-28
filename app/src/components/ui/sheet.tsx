@@ -52,7 +52,7 @@ function SheetContent({
           // depends on source order (guaranteed in authored CSS, not
           // guaranteed by how Tailwind orders independently-stacked utility
           // classes).
-          "sheet-panel fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] flex-col gap-3 rounded-t-lg border-t border-border bg-bg-surface p-4 text-sm text-text-default outline-none md:inset-x-auto md:inset-y-0 md:right-0 md:bottom-auto md:left-auto md:h-full md:max-h-none md:w-full md:max-w-lg md:rounded-t-none md:rounded-l-lg md:border-t-0 md:border-l",
+          "sheet-panel fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] flex-col gap-3 rounded-t-lg border-t border-border bg-bg-surface p-4 pt-6 text-sm text-text-default outline-none md:inset-x-auto md:inset-y-0 md:right-0 md:bottom-auto md:left-auto md:h-full md:max-h-none md:w-full md:max-w-lg md:rounded-t-none md:rounded-l-lg md:border-t-0 md:border-l",
           className
         )}
         {...props}

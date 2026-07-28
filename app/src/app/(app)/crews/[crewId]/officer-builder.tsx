@@ -306,10 +306,10 @@ export function OfficerBuilder({
 
   function BackgroundPicker() {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex h-full flex-col gap-6">
         <div>
           <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Background</h3>
-          <div className="mt-4 grid grid-cols-1 gap-4">
+          <div className="mt-4 grid grid-cols-1 gap-2">
             {backgrounds.map((b) => (
               <BackgroundCard
                 key={b.id}
@@ -367,13 +367,13 @@ export function OfficerBuilder({
   function PowersPicker() {
     if (!background) return null;
     return (
-      <div className="flex flex-col gap-6">
-        <div>
+      <div className="flex h-full flex-col gap-6">
+        <div className="flex min-h-0 flex-1 flex-col">
           <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
             Powers ({totalSelectedCount}/{rules.powerCount}, Core {selectedCoreCount}/{rules.coreMin}-{rules.coreMax})
           </h3>
 
-          <div className="mt-3 flex flex-col gap-6">
+          <div className="mt-3 flex min-h-0 flex-1 flex-col gap-6">
             <div>
               <p className="mb-2 text-xs uppercase tracking-wide text-text-secondary">Core Powers ({background.name})</p>
               <div className="flex flex-col gap-2">
@@ -395,7 +395,7 @@ export function OfficerBuilder({
               </div>
             </div>
 
-            <div>
+            <div className="flex min-h-0 flex-1 flex-col">
               <p className="mb-2 text-xs uppercase tracking-wide text-text-secondary">Andere Powers</p>
               <input
                 value={powerSearch}
@@ -403,7 +403,7 @@ export function OfficerBuilder({
                 placeholder="Suchen…"
                 className="mb-2 w-full rounded-md border border-border bg-bg-surface px-3 py-1.5 text-sm text-text-default placeholder:text-text-secondary focus:border-accent focus:outline-none"
               />
-              <div className="flex max-h-96 flex-col gap-2 overflow-y-auto pr-1">
+              <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
                 {otherPowers.map((power) => (
                   <PowerRow
                     key={power.id}
@@ -435,7 +435,7 @@ export function OfficerBuilder({
 
   function GearPicker() {
     return (
-      <div>
+      <div className="flex h-full flex-col">
         <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
           Gear ({gearSlotTotal}/{rules.gearSlots} Slots)
         </h3>
@@ -508,7 +508,7 @@ export function OfficerBuilder({
           </div>
         ) : null}
 
-        <div className="mt-3 flex max-h-72 flex-col gap-1 overflow-y-auto pr-1">
+        <div className="mt-3 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
           {filteredEquipment.map((item) => (
             <button
               key={item.id}
