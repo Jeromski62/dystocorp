@@ -741,13 +741,13 @@ export function OfficerBuilder({
               Select background first
             </p>
           ) : selectedCorePowers.length > 0 ? (
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-1">
               {selectedCorePowers.map((power) => (
                 <button
                   key={power.id}
                   type="button"
                   onClick={() => goToSection("powers")}
-                  className="border border-border bg-black px-4 py-4 font-display text-sm font-semibold tracking-[1.6px] text-white uppercase transition-colors hover:border-accent"
+                  className="flex h-11 items-center border border-border bg-black px-4 font-display text-sm font-semibold tracking-[1.6px] text-white uppercase transition-colors hover:border-accent"
                 >
                   {power.name}
                 </button>
@@ -824,7 +824,7 @@ export function OfficerBuilder({
 
         <div className="flex flex-col gap-2">
           <div>
-            <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
+            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
               {gearCells.map((cell) => (
                 <GearSlotItem
                   key={cell.cellKey}
@@ -837,7 +837,7 @@ export function OfficerBuilder({
                 <GearSlotItem key={`empty-${i}`} size={1} onClick={() => goToSection("gear")} />
               ))}
             </div>
-            <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
+            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
               {Array.from({ length: rules.gearSlots }, (_, i) => (
                 <GearSlotIndicator key={i} filled={i < filledIndicatorCount} />
               ))}
