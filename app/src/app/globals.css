@@ -221,29 +221,11 @@ body {
   text-transform: uppercase;
 }
 
-/* schematic/HUD backdrop — evenly spaced hairline grid, per the terminal redesign */
-.hud-grid {
-  /* No background-color here (was var(--bg-body), solid) -- (app)/layout.tsx
-     now renders a shared fixed StarmapCanvas behind every page, and an
-     opaque fill here would hide it. body's own var(--bg-body) still backs
-     any page without a starmap behind it (e.g. reached outside that
-     layout). */
-  background-image:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.05) 0,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 1px,
-      transparent 64px
-    ),
-    repeating-linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.028) 0,
-      rgba(255, 255, 255, 0.028) 1px,
-      transparent 1px,
-      transparent 64px
-    );
-}
+/* .hud-grid used to paint a hairline grid background-image here (schematic/
+   HUD backdrop) -- removed per user request now that the starmap sits
+   behind every page instead. The class name itself is still applied as a
+   wrapper marker on ~20 pages; left in place rather than touched everywhere
+   since it's harmless with no matching rule. */
 
 /* ui/sheet.tsx slide-in panel + backdrop. Written as plain CSS (not Tailwind
    data-*: utilities) because the enter/exit transition needs Base UI's
