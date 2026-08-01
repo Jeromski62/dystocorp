@@ -10,7 +10,7 @@ import { Stepper } from "@/components/stepper";
 import { EditCrewNameForm } from "./edit-crew-name-form";
 import { CrewOverflowMenu } from "./crew-overflow-menu";
 import { CorpEmblem } from "@/components/corp-emblem";
-import { corpBackground } from "@/lib/corp-theme";
+import { corpHeaderBackground } from "@/lib/corp-theme";
 import { Button } from "@/components/ui/button";
 import type { CrewDetail } from "./load-crew-data";
 
@@ -122,7 +122,7 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
           <div className="absolute inset-0 bg-black" />
           {/* eslint-disable-next-line @next/next/no-img-element -- decorative
               absolutely-positioned background layer, same treatment as CrewCard */}
-          <img src={corpBackground(corpSlug)} alt="" className="absolute size-full max-w-none object-cover opacity-40" />
+          <img src={corpHeaderBackground(corpSlug)} alt="" className="absolute size-full max-w-none object-cover opacity-40" />
         </div>
 
         <div className="relative mx-auto flex w-full max-w-4xl items-start justify-between gap-4">
