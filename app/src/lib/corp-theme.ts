@@ -9,3 +9,15 @@ const CORP_THEME_SLUGS: Record<string, string> = {
 export function corpThemeSlug(corpKey: string): string {
   return CORP_THEME_SLUGS[corpKey] ?? corpKey;
 }
+
+// Background photo per corp — Figma "Dysto-Corp-Rough-Concept" Team Cards
+// (node 2039:282). Neutral/no-corp always falls back to the "Special
+// Purpose Vehicle" freelance variant, same as CorpEmblem's "n/a" tile.
+const CORP_BACKGROUNDS: Record<string, string> = {
+  yugure: "/teamcards/yugure.png",
+  bionexx: "/teamcards/bionexx.png",
+};
+
+export function corpBackground(slug: string | undefined): string {
+  return (slug && CORP_BACKGROUNDS[slug]) || "/teamcards/freelance.png";
+}

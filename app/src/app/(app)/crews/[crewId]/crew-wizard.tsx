@@ -9,6 +9,8 @@ import { ShipPanel } from "./ship-panel";
 import { Stepper } from "@/components/stepper";
 import { EditCrewNameForm } from "./edit-crew-name-form";
 import { CrewOverflowMenu } from "./crew-overflow-menu";
+import { CorpEmblem } from "@/components/corp-emblem";
+import { corpBackground } from "@/lib/corp-theme";
 import { Button } from "@/components/ui/button";
 import type { CrewDetail } from "./load-crew-data";
 
@@ -28,6 +30,7 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
   const {
     crewId,
     crew,
+    corpSlug,
     backgrounds,
     corePowersByBackground,
     powers,
@@ -119,14 +122,15 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
           <div className="absolute inset-0 bg-black" />
           {/* eslint-disable-next-line @next/next/no-img-element -- decorative
               absolutely-positioned background layer, same treatment as CrewCard */}
-          <img src="/teamcards/freelance.png" alt="" className="absolute size-full max-w-none object-cover opacity-40" />
+          <img src={corpBackground(corpSlug)} alt="" className="absolute size-full max-w-none object-cover opacity-40" />
         </div>
 
         <div className="relative mx-auto flex w-full max-w-4xl items-start justify-between gap-4">
           <EditCrewNameForm crewId={crewId} name={crew.name} />
           <CrewOverflowMenu crewId={crewId} crewName={crew.name} />
         </div>
-        <p className="relative mx-auto mt-2 w-full max-w-4xl font-display text-[16px] font-medium tracking-[3.2px] text-white/50 uppercase">
+        <p className="relative mx-auto mt-2 flex w-full max-w-4xl items-center gap-2 font-display text-[16px] font-medium tracking-[3.2px] text-white/50 uppercase">
+          <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} size={20} />
           {crew.credits.toLocaleString("de-DE")} CR · Team Invest
         </p>
       </div>

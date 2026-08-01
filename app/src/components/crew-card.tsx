@@ -1,18 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CorpEmblem } from "@/components/corp-emblem";
-
-// Background photo per corp — Figma "Dysto-Corp-Rough-Concept" Team Cards
-// (node 2039:282). Neutral/no-corp always falls back to the "Special
-// Purpose Vehicle" freelance variant, same as CorpEmblem's "n/a" tile.
-const CORP_BACKGROUNDS: Record<string, string> = {
-  yugure: "/teamcards/yugure.png",
-  bionexx: "/teamcards/bionexx.png",
-};
-
-function corpBackground(slug: string | undefined): string {
-  return (slug && CORP_BACKGROUNDS[slug]) || "/teamcards/freelance.png";
-}
+import { corpBackground } from "@/lib/corp-theme";
 
 // Shared crew-card shell, ported skeleton-for-skeleton from the Figma Team
 // Card component: white/12%-bordered box (same border treatment as

@@ -97,6 +97,7 @@ export function SoldierRecruiter({
     startTransition(async () => {
       const result = await addSoldier(crewId, soldierTypeId, false);
       if (result.error) setError(result.error);
+      else setDrawerOpen(false);
     });
   }
 
@@ -128,18 +129,6 @@ export function SoldierRecruiter({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-wrap gap-6 border border-corp-border bg-corp-surface px-4 py-3 font-mono text-[15px] text-text-secondary uppercase">
-        <span>
-          Budget <b className="text-corp-accent">{credits.toLocaleString("de-DE")}</b> CR
-        </span>
-        <span>
-          Soldiers <b className="text-text-default">{soldiers.length}</b>/{SOLDIER_RULES.maxSoldiers}
-        </span>
-        <span>
-          Specialists <b className="text-text-default">{specialistCount}</b>/{maxSpecialists}
-        </span>
-      </div>
-
       {error ? <p className="font-mono text-sm text-danger">{error}</p> : null}
 
       <div className="flex flex-col gap-6">

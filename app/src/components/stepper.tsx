@@ -35,7 +35,7 @@ export function Stepper({
           >
             {step.status === "done" ? (
               <span className="flex size-9 shrink-0 items-center justify-center bg-[#11FF70]">
-                <CheckIcon className="size-6" />
+                <CheckIcon className="size-9" />
               </span>
             ) : (
               <span className="flex size-9 shrink-0 items-center justify-center bg-white font-display text-[16px] font-bold tracking-[1.6px] text-black">

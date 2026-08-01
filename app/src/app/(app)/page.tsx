@@ -9,6 +9,8 @@ import { MissionPreviewCard } from "@/components/mission-preview-card";
 import { PageHeader } from "@/components/page-header";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { CorpCard, type CorpCardVariant } from "@/components/corp-card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { JoinCampaignForm } from "@/app/(app)/campaigns/join-campaign-form";
 
 type CrewRow = {
   id: string;
@@ -111,9 +113,16 @@ export default async function HomePage() {
           title="Übersicht"
           meta="Lagezentrum // v7.2"
           secondary={
-            <Link href="/campaigns">
-              <Button variant="ghost">＋ Kampagne beitreten</Button>
-            </Link>
+            <Dialog>
+              <DialogTrigger render={<Button variant="ghost">Kampagne beitreten</Button>} />
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Kampagne beitreten</DialogTitle>
+                  <DialogDescription>Lass dir die Kampagnen-ID von einem Mitspieler geben (auf der Kampagnen-Seite sichtbar).</DialogDescription>
+                </DialogHeader>
+                <JoinCampaignForm />
+              </DialogContent>
+            </Dialog>
           }
           cta={
             <Link href="/crews/new">

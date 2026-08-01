@@ -44,7 +44,7 @@ export default async function CampaignsPage() {
         meta="Wir glauben an Value Share"
         secondary={
           <Dialog>
-            <DialogTrigger render={<Button variant="ghost">＋ Kampagne beitreten</Button>} />
+            <DialogTrigger render={<Button variant="ghost">Kampagne beitreten</Button>} />
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Kampagne beitreten</DialogTitle>
