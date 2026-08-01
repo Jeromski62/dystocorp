@@ -7,6 +7,8 @@ import { crewStatus } from "@/lib/crew-status";
 import { CampaignCard } from "@/components/campaign-card";
 import { MissionPreviewCard } from "@/components/mission-preview-card";
 import { PageHeader } from "@/components/page-header";
+import { CorpEmblem } from "@/components/corp-emblem";
+import { CorpCard, type CorpCardVariant } from "@/components/corp-card";
 
 type CrewRow = {
   id: string;
@@ -43,7 +45,7 @@ export default async function HomePage() {
     return Array.from(seen.values());
   })();
 
-  const [{ data: latestMissions }, { data: crews }] = await Promise.all([
+  const [{ data: latestMissions }, { data: crews }, { data: corps }] = await Promise.all([
     campaignIds.length > 0
       ? supabase
           .from("missions")
@@ -59,13 +61,13 @@ export default async function HomePage() {
       .select("id, name, credits, corps(key, name), captains(name, level, current_health, health)")
       .eq("player_id", user!.id)
       .order("created_at", { ascending: false }),
+    supabase.from("corps").select("id, key").order("sort_order"),
   ]);
 
   const latestMission = latestMissions?.[0] ?? null;
   const crewList = (crews ?? []) as CrewRow[];
   const newestCrew = crewList[0] ?? null;
   const totalCredits = crewList.reduce((sum, c) => sum + c.credits, 0);
-  const newestCrewSlug = newestCrew?.corps ? corpThemeSlug(newestCrew.corps.key) : undefined;
 
   if (!latestCampaign && !newestCrew) {
     return (
@@ -97,9 +99,7 @@ export default async function HomePage() {
         <span className="border-r border-border px-4 py-2 text-accent">[ONLINE]</span>
         <span className="border-r border-border px-4 py-2">{(player?.display_name || user!.email)?.toUpperCase()}</span>
         {newestCrew?.corps ? (
-          <span className="border-r border-border px-4 py-2 text-corp-accent" data-corp={newestCrewSlug}>
-            {newestCrew.corps.name.toUpperCase()}
-          </span>
+          <span className="border-r border-border px-4 py-2 text-accent">{newestCrew.corps.name.toUpperCase()}</span>
         ) : null}
         <span className="border-r border-border px-4 py-2">{totalCredits.toLocaleString("de-DE")} CR</span>
         <span className="flex-1" />
@@ -183,12 +183,11 @@ export default async function HomePage() {
                   <Link
                     key={crew.id}
                     href={`/crews/${crew.id}`}
-                    data-corp={slug}
-                    className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] items-center gap-2 border-b border-border/60 px-4 py-2.5 text-sm text-text-default last:border-b-0 hover:bg-corp-accent/[0.06]"
+                    className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] items-center gap-2 border-b border-border/60 px-4 py-2.5 text-sm text-text-default last:border-b-0 hover:bg-accent/[0.06]"
                   >
                     <span className="font-medium tracking-[0.02em]">{crew.name}</span>
-                    <span className="flex items-center gap-1.5 font-mono text-[15px] text-corp-accent">
-                      <span className="h-1.5 w-1.5 rounded-full bg-corp-accent" />
+                    <span className="flex items-center gap-2 font-mono text-[15px] text-accent">
+                      {crew.corps ? <CorpEmblem name={crew.corps.name} slug={slug} size={20} /> : null}
                       {crew.corps?.name.toUpperCase() ?? "—"}
                     </span>
                     <span className="font-mono text-[15px] text-text-mid">{crew.captains?.name ?? "—"}</span>
@@ -202,11 +201,18 @@ export default async function HomePage() {
           )}
         </section>
 
-        <div className="flex justify-end">
-          <Link href="/powers" className="font-mono text-[15px] text-text-secondary hover:text-text-default">
-            POWER-DATENBANK →
-          </Link>
-        </div>
+        {corps && corps.length > 0 ? (
+          <section>
+            <p className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Mega Corps</p>
+            <div className="mt-2 grid gap-3.5 sm:grid-cols-2">
+              {corps.map((corp) => (
+                <Link key={corp.id} href={`/intel/corporations/${corp.id}`}>
+                  <CorpCard corp={corpThemeSlug(corp.key) as CorpCardVariant} />
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
     </div>
   );

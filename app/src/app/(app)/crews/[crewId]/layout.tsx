@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { corpThemeSlug } from "@/lib/corp-theme";
 
+// Teams always render in the neutral theme -- a crew's corp is lore/flavor
+// only and no longer scopes --corp-accent/--corp-bg (see corp-picker's own
+// "hat keinen Einfluss auf..." copy, now also true visually).
 export default async function CrewLayout({
   children,
   params,
@@ -12,17 +14,9 @@ export default async function CrewLayout({
   const { crewId } = await params;
   const supabase = await createClient();
 
-  const { data: crew } = await supabase
-    .from("crews")
-    .select("id, corps(key)")
-    .eq("id", crewId)
-    .maybeSingle();
+  const { data: crew } = await supabase.from("crews").select("id").eq("id", crewId).maybeSingle();
 
   if (!crew) notFound();
 
-  return (
-    <div data-corp={corpThemeSlug(crew.corps?.key ?? "")} className="bg-corp-bg min-h-screen">
-      {children}
-    </div>
-  );
+  return <div className="bg-corp-bg min-h-screen">{children}</div>;
 }

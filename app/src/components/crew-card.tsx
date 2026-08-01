@@ -18,9 +18,9 @@ function corpBackground(slug: string | undefined): string {
 // Card component: white/12%-bordered box (same border treatment as
 // CampaignCard/MissionPreviewCard) with a dimmed photo background, an
 // icon+corp-name+team-name header, one meta line, and a fixed FTE/XP/CR
-// stat footer. --corp-accent/--corp-bg fall back to neutral outside a
-// [data-corp] scope, so corpSlug={undefined} alone reproduces the design's
-// neutral "Special Purpose Vehicle" card.
+// stat footer. Teams always use the neutral theme now (corp is lore/flavor
+// only), so --corp-accent/--corp-bg just resolve to their neutral fallback --
+// only the background photo and CorpEmblem glyph still vary by corp.
 export function CrewCard({
   href,
   corpSlug,
@@ -43,7 +43,6 @@ export function CrewCard({
   return (
     <Link
       href={href}
-      data-corp={corpSlug}
       className="group relative flex h-[200px] w-full flex-col gap-2 overflow-hidden border border-white/12 p-4 transition-colors hover:border-white/30"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0">

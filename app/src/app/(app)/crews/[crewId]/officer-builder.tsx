@@ -15,6 +15,7 @@ import { BackgroundCard, BACKGROUND_ICONS } from "@/components/background-card";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { GearSlotItem } from "@/components/gear-slot-item";
 import { GearSlotIndicator } from "@/components/gear-slot-indicator";
+import { StatLine } from "@/components/stat-line";
 import { CheckIcon } from "lucide-react";
 import {
   computeActivationNumber,
@@ -322,8 +323,15 @@ export function OfficerBuilder({
     const size = Math.min(3, Math.max(1, item.gear_slots)) as 1 | 2 | 3;
     return Array.from({ length: qty }, (_, i) => ({ cellKey: `${id}-${i}`, label: item.name, size }));
   });
-  const emptyGearSlotCount = Math.max(0, rules.gearSlots - gearSlotTotal);
-  const filledIndicatorCount = Math.min(gearSlotTotal, rules.gearSlots);
+  // Empty/filled cell counts must mirror gearCells' own per-item sizing
+  // (each cell sized by its item's printed gear_slots), not gearSlotTotal --
+  // that total gets a -1 "first knife is free" discount for the slot-budget
+  // check, which would otherwise conjure a phantom extra empty cell (e.g. a
+  // First Mate with 3 one-slot items showed 3 filled + 3 "empty" = 6 cells
+  // instead of the 5 the grid actually has room for).
+  const visualGearSlotTotal = gearCells.reduce((sum, cell) => sum + cell.size, 0);
+  const emptyGearSlotCount = Math.max(0, rules.gearSlots - visualGearSlotTotal);
+  const filledIndicatorCount = Math.min(visualGearSlotTotal, rules.gearSlots);
 
   const canSave = name.trim().length > 0 && !statError && !powerError && !reductionError && !gearError && !armourError;
 
@@ -641,28 +649,8 @@ export function OfficerBuilder({
 
         <div>
           <p className="text-xs uppercase tracking-wide text-text-secondary">Stats</p>
-          <div className="mt-2 flex flex-col gap-2">
-            <div className="flex gap-[5px]">
-              {statColumns.map((col) => (
-                <div
-                  key={col.label}
-                  className={`flex flex-1 items-center py-2 ${col.header ? "justify-start" : "justify-center bg-white/[0.24]"}`}
-                >
-                  <span
-                    className={`font-display text-sm tracking-[1.6px] text-white uppercase ${col.header ? "font-bold" : "font-semibold"}`}
-                  >
-                    {col.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="flex gap-[5px]">
-              {statColumns.map((col) => (
-                <div key={col.label} className="flex flex-1 items-center justify-center">
-                  <span className="font-display text-sm font-medium tracking-[1.6px] text-white">{col.value}</span>
-                </div>
-              ))}
-            </div>
+          <div className="mt-2">
+            <StatLine columns={statColumns} />
           </div>
         </div>
       </section>

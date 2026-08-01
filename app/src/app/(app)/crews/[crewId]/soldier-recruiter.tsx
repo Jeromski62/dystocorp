@@ -8,8 +8,10 @@ import {
   isSoldierEligibleGear,
   type SoldierGearContext,
 } from "@/lib/stargrave/constants";
-import { StatusBadge } from "@/components/status-badge";
+import { EmployeeCard } from "./employee-card";
 import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 type SoldierType = {
   id: string;
@@ -36,6 +38,12 @@ type Soldier = {
   soldier_types: SoldierType;
 };
 
+type TableType = "specialist" | "standard";
+
+const TAB_LABEL: Record<TableType, string> = { specialist: "Senior Rollen", standard: "Bewerber" };
+const ADD_LABEL: Record<TableType, string> = { specialist: "Senior Hinzufügen", standard: "Bewerber Hinzufügen" };
+const EMPTY_LABEL: Record<TableType, string> = { specialist: "Wähle aus Senior-Liste", standard: "Wähle aus Bewerberliste" };
+
 const EMPTY_CONTEXT: SoldierGearContext = { weaponKeys: [], hasDeck: false, hasPicks: false };
 
 export function SoldierRecruiter({
@@ -61,13 +69,15 @@ export function SoldierRecruiter({
 }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState<TableType>("specialist");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Soldier bonus slot is "campaign loot only", excludes Captain/First-Mate-only
   // items (e.g. Alien Artefacts), and further depends on this specific soldier
   // type's starting gear (Advanced Weapons must match a weapon type they
   // already carry; Deck/Picks items need that type to carry a Deck/Picks) —
   // see isSoldierEligibleGear.
-  function equipmentByCategoryFor(soldierTypeId: string) {
+  function bonusGearOptionsFor(soldierTypeId: string) {
     const context = weaponContextByType[soldierTypeId] ?? EMPTY_CONTEXT;
     const eligibleEquipment = equipment.filter((item) => isSoldierEligibleGear(item, context));
     return Object.entries(EQUIPMENT_CATEGORY_LABELS).map(([category, label]) => ({
@@ -78,7 +88,9 @@ export function SoldierRecruiter({
   }
 
   const specialistCount = soldiers.filter((s) => s.soldier_types.table_type === "specialist").length;
+  const standardCount = soldiers.filter((s) => s.soldier_types.table_type === "standard").length;
   const canRecruitMore = soldiers.length < SOLDIER_RULES.maxSoldiers;
+  const tabSoldiers = soldiers.filter((s) => s.soldier_types.table_type === activeTab);
 
   function handleAdd(soldierTypeId: string) {
     setError(null);
@@ -130,134 +142,85 @@ export function SoldierRecruiter({
 
       {error ? <p className="font-mono text-sm text-danger">{error}</p> : null}
 
-      <section>
-        <p className="mb-2 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Trupp-Register</p>
-        {soldiers.length > 0 ? (
-          <div className="border border-corp-border">
-            {soldiers.map((s) => (
-              <div key={s.id} className="border-b border-corp-border/60 bg-corp-surface px-3 py-3 last:border-b-0">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    {s.name ? (
-                      <p className="font-semibold text-text-default">{s.name}</p>
-                    ) : (
-                      <p className="font-semibold text-text-default">{s.soldier_types.name}</p>
-                    )}
-                    <p className="font-mono text-[14px] text-text-secondary uppercase">
-                      {s.name ? s.soldier_types.name : null}
-                      <span className={s.name ? "ml-2" : ""}>
-                        {s.soldier_types.table_type === "specialist" ? "Specialist" : "Standard"}
-                      </span>
-                    </p>
-                  </div>
-                  <StatusBadge currentHealth={s.current_health} health={s.soldier_types.health} />
-                </div>
+      <div className="flex flex-col gap-6">
+        <div className="flex w-full border-b border-white font-display text-[16px] tracking-[1.6px] uppercase">
+          {(["specialist", "standard"] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`flex h-10 items-center gap-2 px-4 ${
+                activeTab === tab ? "border-b-[3px] border-white text-white" : "text-white/70 hover:text-white"
+              }`}
+            >
+              <span>{TAB_LABEL[tab]}</span>
+              <span className="text-white/50">
+                {tab === "specialist" ? `(${specialistCount}/${maxSpecialists})` : `(${standardCount})`}
+              </span>
+            </button>
+          ))}
+        </div>
 
-                <label className="mt-2.5 flex items-center gap-2 font-mono text-[14px] text-text-secondary">
-                  Name
-                  <input
-                    type="text"
-                    defaultValue={s.name ?? ""}
-                    onBlur={(e) => handleNameChange(s.id, e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") e.currentTarget.blur();
-                    }}
-                    placeholder="z. B. Spitzname (optional)"
-                    className="flex-1 rounded-md border border-corp-border bg-corp-surface px-2 py-1 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
-                  />
-                </label>
+        <div className="flex w-full justify-end">
+          <Button variant="outline" onClick={() => setDrawerOpen(true)}>
+            {ADD_LABEL[activeTab]}
+          </Button>
+        </div>
 
-                <div className="mt-2.5">
-                  <SoldierStatGrid stats={s.soldier_types} />
-                </div>
-                <GearTags items={gearByType[s.soldier_types.id] ?? []} />
-
-                {inCampaign ? (
-                  <label className="mt-2.5 flex items-center gap-2 font-mono text-[14px] text-text-secondary">
-                    Bonus-Ausrüstung
-                    <select
-                      value={s.bonus_gear_item_id ?? ""}
-                      onChange={(e) => handleBonusGearChange(s.id, e.target.value)}
-                      className="rounded-md border border-corp-border bg-corp-surface px-2 py-1 text-sm text-text-default focus:border-corp-accent focus:outline-none"
-                    >
-                      <option value="">— keine —</option>
-                      {equipmentByCategoryFor(s.soldier_types.id).map(({ category, label, items }) =>
-                        items.length > 0 ? (
-                          <optgroup key={category} label={label}>
-                            {items.map((item) => (
-                              <option key={item.id} value={item.id}>
-                                {item.name}
-                              </option>
-                            ))}
-                          </optgroup>
-                        ) : null
-                      )}
-                    </select>
-                  </label>
-                ) : (
-                  <p className="mt-2.5 font-mono text-[14px] text-text-subtle">
-                    Bonus-Ausrüstung (Campaign Loot) nur verfügbar, sobald dieses Team in einer Kampagne mitspielt.
-                  </p>
-                )}
-
-                <div className="mt-2.5 flex items-center gap-3">
-                  <label className="flex items-center gap-1.5 font-mono text-[14px] text-text-secondary">
-                    <input
-                      type="checkbox"
-                      checked={s.is_robot}
-                      onChange={(e) => handleRobotToggle(s.id, e.target.checked)}
-                      className="accent-[var(--corp-accent)]"
-                    />
-                    Robot
-                  </label>
-                  <button
-                    type="button"
-                    disabled={pending}
-                    onClick={() => {
-                      const label = s.soldier_types.name + (s.name ? ` "${s.name}"` : "");
-                      if (window.confirm(`${label} wirklich entlassen?`)) {
-                        handleRemove(s.id);
-                      }
-                    }}
-                    className="font-mono text-[14px] text-text-secondary hover:text-danger"
-                  >
-                    Entlassen
-                  </button>
-                </div>
-              </div>
+        {tabSoldiers.length > 0 ? (
+          <div className="flex flex-col">
+            {tabSoldiers.map((s) => (
+              <EmployeeCard
+                key={s.id}
+                soldier={s}
+                gearItems={gearByType[s.soldier_types.id] ?? []}
+                pending={pending}
+                inCampaign={inCampaign}
+                bonusGearOptions={bonusGearOptionsFor(s.soldier_types.id)}
+                onNameChange={(name) => handleNameChange(s.id, name)}
+                onRobotToggle={(isRobot) => handleRobotToggle(s.id, isRobot)}
+                onBonusGearChange={(equipmentItemId) => handleBonusGearChange(s.id, equipmentItemId)}
+                onRemove={() => handleRemove(s.id)}
+              />
             ))}
           </div>
         ) : (
-          <p className="font-mono text-sm text-text-secondary">Noch keine Soldiers rekrutiert.</p>
+          <div className="flex w-full items-center justify-center py-8">
+            <Button variant="outline" onClick={() => setDrawerOpen(true)}>
+              {EMPTY_LABEL[activeTab]}
+            </Button>
+          </div>
         )}
-      </section>
+      </div>
 
-      <div className="flex flex-col gap-6">
-        {(["standard", "specialist"] as const).map((tableType) => (
-          <section key={tableType}>
-            <p className="mb-2 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
-              {tableType === "standard" ? "Standard" : "Specialist"}
-            </p>
-            <div className="border border-corp-border">
+      <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <SheetContent>
+          <div className="flex h-full flex-col gap-4">
+            <h3 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">
+              {ADD_LABEL[activeTab]}
+            </h3>
+            <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
               {soldierTypes
-                .filter((t) => t.table_type === tableType)
+                .filter((t) => t.table_type === activeTab)
                 .map((t) => {
                   const disabled =
                     pending ||
                     !canRecruitMore ||
                     t.cost_cr > credits ||
-                    (tableType === "specialist" && specialistCount >= maxSpecialists);
+                    (activeTab === "specialist" && specialistCount >= maxSpecialists);
                   return (
                     <button
                       key={t.id}
                       type="button"
                       disabled={disabled}
                       onClick={() => handleAdd(t.id)}
-                      className="block w-full border-b border-corp-border/60 bg-corp-surface px-3 py-3 text-left last:border-b-0 hover:bg-corp-accent/[0.06] disabled:opacity-40"
+                      className="block w-full border border-border bg-black px-4 py-3 text-left transition-colors hover:border-accent disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-text-default">{t.name}</span>
-                        <span className="font-mono text-[15px] text-corp-accent">{t.cost_cr === 0 ? "FREE" : `${t.cost_cr} CR`}</span>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-display text-[18px] font-semibold tracking-[1.8px] text-white uppercase">
+                          {t.name}
+                        </span>
+                        <span className="font-mono text-[15px] text-accent">{t.cost_cr === 0 ? "FREE" : `${t.cost_cr} CR`}</span>
                       </div>
                       <div className="mt-2.5">
                         <SoldierStatGrid stats={t} />
@@ -267,9 +230,9 @@ export function SoldierRecruiter({
                   );
                 })}
             </div>
-          </section>
-        ))}
-      </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -2,14 +2,13 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { advanceWizardStep } from "./actions";
+import { advanceWizardStep, deleteCrew } from "./actions";
 import { OfficerBuilder, type OfficerBuilderHandle } from "./officer-builder";
 import { SoldierRecruiter } from "./soldier-recruiter";
 import { ShipPanel } from "./ship-panel";
-import { CorpEmblem } from "@/components/corp-emblem";
 import { Stepper } from "@/components/stepper";
 import { EditCrewNameForm } from "./edit-crew-name-form";
-import { DeleteCrewButton } from "./delete-crew-button";
+import { CrewOverflowMenu } from "./crew-overflow-menu";
 import { Button } from "@/components/ui/button";
 import type { CrewDetail } from "./load-crew-data";
 
@@ -29,7 +28,6 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
   const {
     crewId,
     crew,
-    corpSlug,
     backgrounds,
     corePowersByBackground,
     powers,
@@ -100,25 +98,40 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
     });
   }
 
+  const [cancelling, startCancel] = useTransition();
+  const [cancelError, setCancelError] = useState<string | null>(null);
+
+  function handleCancel() {
+    if (!window.confirm("Team-Erstellung abbrechen? Alle bisherigen Angaben gehen verloren.")) return;
+    setCancelError(null);
+    startCancel(async () => {
+      const result = await deleteCrew(crewId);
+      if (result?.error) setCancelError(result.error);
+    });
+  }
+
   const inCampaign = !!crew.campaign_id;
 
   return (
     <div className="hud-grid min-h-screen">
-      <div className="mx-auto max-w-4xl px-6 py-12">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
-            <div>
-              <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
-              <EditCrewNameForm crewId={crewId} name={crew.name} />
-            </div>
-          </div>
-          <DeleteCrewButton crewId={crewId} crewName={crew.name} />
+      <div className="relative flex flex-col overflow-hidden px-6 pt-12 pb-8">
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-black" />
+          {/* eslint-disable-next-line @next/next/no-img-element -- decorative
+              absolutely-positioned background layer, same treatment as CrewCard */}
+          <img src="/teamcards/freelance.png" alt="" className="absolute size-full max-w-none object-cover opacity-40" />
         </div>
-        <p className="mt-3 font-mono text-sm text-text-secondary">
+
+        <div className="relative mx-auto flex w-full max-w-4xl items-start justify-between gap-4">
+          <EditCrewNameForm crewId={crewId} name={crew.name} />
+          <CrewOverflowMenu crewId={crewId} crewName={crew.name} />
+        </div>
+        <p className="relative mx-auto mt-2 w-full max-w-4xl font-display text-[16px] font-medium tracking-[3.2px] text-white/50 uppercase">
           {crew.credits.toLocaleString("de-DE")} CR · Team Invest
         </p>
+      </div>
 
+      <div className="mx-auto max-w-4xl px-6 pb-12">
         <div className="mt-8">
           <Stepper
             steps={STEPS.map((s) => ({
@@ -219,9 +232,18 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4 border-t border-corp-border pt-6">
-          <Button variant="outline" disabled={viewStep === 1} onClick={() => goTo(viewStep - 1)}>
-            ← Zurück
-          </Button>
+          <div className="flex flex-col items-start gap-1">
+            {viewStep === 1 ? (
+              <Button variant="destructive" disabled={cancelling} onClick={handleCancel}>
+                {cancelling ? "…" : "Abbrechen"}
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={() => goTo(viewStep - 1)}>
+                ← Zurück
+              </Button>
+            )}
+            {cancelError ? <p className="text-xs text-danger">{cancelError}</p> : null}
+          </div>
           <div className="flex items-center gap-3">
             {!stepReady[viewStep] ? (
               <span className="font-mono text-sm text-text-secondary">{blockedReason[viewStep]}</span>

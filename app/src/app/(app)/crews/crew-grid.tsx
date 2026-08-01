@@ -45,12 +45,11 @@ export function CrewGrid({ crews }: { crews: Crew[] }) {
           <button
             key={slug}
             type="button"
-            data-corp={slug}
             onClick={() => setFilter(slug)}
             className={
               filter === slug
-                ? "border border-corp-accent bg-corp-accent px-3 py-1.5 text-corp-on-accent"
-                : "border border-corp-accent/40 px-3 py-1.5 text-corp-accent hover:border-corp-accent"
+                ? "border border-white bg-white px-3 py-1.5 text-black"
+                : "border border-border px-3 py-1.5 text-text-secondary hover:text-text-default"
             }
           >
             {name}
