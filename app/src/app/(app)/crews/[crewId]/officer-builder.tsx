@@ -652,7 +652,7 @@ export function OfficerBuilder({
             id={`officer-name-${role}`}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-border bg-bg-surface px-3 py-2 text-sm text-text-default focus:border-accent focus:outline-none"
+            className="mt-1 block w-full max-w-sm border border-accent bg-black px-2 py-1 font-display text-[24px] tracking-[2.4px] text-white uppercase focus:outline-none"
           />
         </div>
 
