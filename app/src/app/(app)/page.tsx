@@ -3,21 +3,22 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Clock } from "@/components/clock";
 import { corpThemeSlug } from "@/lib/corp-theme";
-import { crewStatus } from "@/lib/crew-status";
 import { CampaignCard } from "@/components/campaign-card";
 import { MissionPreviewCard } from "@/components/mission-preview-card";
 import { PageHeader } from "@/components/page-header";
-import { CorpEmblem } from "@/components/corp-emblem";
 import { CorpCard, type CorpCardVariant } from "@/components/corp-card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { JoinCampaignForm } from "@/app/(app)/campaigns/join-campaign-form";
+import { TeamRegister } from "./team-register";
 
 type CrewRow = {
   id: string;
   name: string;
   credits: number;
+  campaign_id: string | null;
   corps: { key: string; name: string } | null;
-  captains: { name: string; level: number; current_health: number; health: number } | null;
+  captains: { name: string; level: number } | null;
+  campaigns: { id: string; name: string } | null;
 };
 
 export default async function HomePage() {
@@ -60,7 +61,7 @@ export default async function HomePage() {
         }),
     supabase
       .from("crews")
-      .select("id, name, credits, corps(key, name), captains(name, level, current_health, health)")
+      .select("id, name, credits, campaign_id, corps(key, name), captains(name, level), campaigns(id, name)")
       .eq("player_id", user!.id)
       .order("created_at", { ascending: false }),
     supabase.from("corps").select("id, key").order("sort_order"),
@@ -70,6 +71,23 @@ export default async function HomePage() {
   const crewList = (crews ?? []) as CrewRow[];
   const newestCrew = crewList[0] ?? null;
   const totalCredits = crewList.reduce((sum, c) => sum + c.credits, 0);
+
+  const crewCampaignIds = Array.from(new Set(crewList.map((c) => c.campaign_id).filter((id): id is string => id !== null)));
+  const { data: pendingMissions } =
+    crewCampaignIds.length > 0
+      ? await supabase.from("missions").select("campaign_id").in("campaign_id", crewCampaignIds).eq("status", "planned")
+      : { data: [] as { campaign_id: string }[] };
+  const pendingCampaignIds = new Set((pendingMissions ?? []).map((m) => m.campaign_id));
+
+  const teamRegisterCrews = crewList.map((crew) => ({
+    id: crew.id,
+    name: crew.name,
+    credits: crew.credits,
+    corps: crew.corps,
+    captains: crew.captains,
+    campaign: crew.campaigns,
+    hasPendingMission: crew.campaign_id !== null && pendingCampaignIds.has(crew.campaign_id),
+  }));
 
   if (!latestCampaign && !newestCrew) {
     return (
@@ -176,37 +194,7 @@ export default async function HomePage() {
           {crewList.length === 0 ? (
             <p className="px-4 py-6 font-mono text-xs text-text-secondary">Noch kein Team registriert.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <div className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] gap-2 border-b border-border px-4 py-2 font-mono text-[14px] tracking-[0.05em] text-text-subtle uppercase">
-                <span>Team</span>
-                <span>Corp</span>
-                <span>Captain</span>
-                <span>Lvl</span>
-                <span>Credits</span>
-                <span>Status</span>
-              </div>
-              {crewList.map((crew) => {
-                const slug = crew.corps ? corpThemeSlug(crew.corps.key) : undefined;
-                const status = crewStatus(crew.captains);
-                return (
-                  <Link
-                    key={crew.id}
-                    href={`/crews/${crew.id}`}
-                    className="grid min-w-[640px] grid-cols-[2fr_1.2fr_1.4fr_0.7fr_1fr_1fr] items-center gap-2 border-b border-border/60 px-4 py-2.5 text-sm text-text-default last:border-b-0 hover:bg-accent/[0.06]"
-                  >
-                    <span className="font-medium tracking-[0.02em]">{crew.name}</span>
-                    <span className="flex items-center gap-2 font-mono text-[15px] text-accent">
-                      {crew.corps ? <CorpEmblem name={crew.corps.name} slug={slug} size={20} /> : null}
-                      {crew.corps?.name.toUpperCase() ?? "—"}
-                    </span>
-                    <span className="font-mono text-[15px] text-text-mid">{crew.captains?.name ?? "—"}</span>
-                    <span>{crew.captains?.level ?? "—"}</span>
-                    <span className="font-mono text-[15px]">{crew.credits.toLocaleString("de-DE")}</span>
-                    <span className={`font-mono text-[14px] ${status.className}`}>● {status.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
+            <TeamRegister crews={teamRegisterCrews} />
           )}
         </section>
 

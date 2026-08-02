@@ -1,8 +1,11 @@
-// A fixed semantic palette (green/gold/grey), independent of corp identity —
-// see --status-active/--status-injured/--status-out in globals.css.
-export function crewStatus(captain: { current_health: number; health: number } | null | undefined) {
-  if (!captain) return { label: "AKTIV", className: "text-status-active" };
-  if (captain.current_health <= 0) return { label: "AUSSER GEFECHT", className: "text-status-out" };
-  if (captain.current_health < captain.health) return { label: "VERLETZT", className: "text-status-injured" };
-  return { label: "AKTIV", className: "text-status-active" };
+// Team-Register status — reflects campaign/mission state, not captain health.
+// See --status-none/--status-campaign/--status-briefing in globals.css.
+export function crewCampaignStatus(campaign: { id: string; name: string } | null, hasPendingMission: boolean) {
+  if (!campaign) {
+    return { label: "Keine Kampagne", className: "text-status-none", href: null as string | null };
+  }
+  if (hasPendingMission) {
+    return { label: "Einsatzvorbereitung", className: "text-status-briefing", href: `/campaigns/${campaign.id}/missions` };
+  }
+  return { label: `Aktiv in ${campaign.name}`, className: "text-status-campaign", href: `/campaigns/${campaign.id}` };
 }

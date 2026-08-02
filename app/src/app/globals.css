@@ -22,6 +22,11 @@
   --status-out: #777777;
   --danger: #ef4444;
 
+  /* team-register campaign status — separate scale from captain health above */
+  --status-none: #777777;
+  --status-campaign: #d4bb5f;
+  --status-briefing: #4d9fe8;
+
   /* neutral accent — generic chrome outside any Yūgure/BioNexx-scoped page.
      White/black, not a corp color: red/green must stay confined to
      [data-corp] contexts (a Yūgure crew or a campaign the viewer plays
@@ -130,6 +135,9 @@
   --color-status-active: var(--status-active);
   --color-status-injured: var(--status-injured);
   --color-status-out: var(--status-out);
+  --color-status-none: var(--status-none);
+  --color-status-campaign: var(--status-campaign);
+  --color-status-briefing: var(--status-briefing);
   --color-danger: var(--danger);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);

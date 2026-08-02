@@ -330,8 +330,12 @@ export function OfficerBuilder({
   // First Mate with 3 one-slot items showed 3 filled + 3 "empty" = 6 cells
   // instead of the 5 the grid actually has room for).
   const visualGearSlotTotal = gearCells.reduce((sum, cell) => sum + cell.size, 0);
-  const emptyGearSlotCount = Math.max(0, rules.gearSlots - visualGearSlotTotal);
-  const filledIndicatorCount = Math.min(visualGearSlotTotal, rules.gearSlots);
+  // The free knife can push visualGearSlotTotal one column past rules.gearSlots
+  // (it doesn't cost a budget slot, but it still occupies a cell) -- grow the
+  // grid to fit it rather than clipping/wrapping the last item.
+  const gearGridColumns = Math.max(rules.gearSlots, visualGearSlotTotal);
+  const emptyGearSlotCount = Math.max(0, gearGridColumns - visualGearSlotTotal);
+  const filledIndicatorCount = visualGearSlotTotal;
 
   const canSave = name.trim().length > 0 && !statError && !powerError && !reductionError && !gearError && !armourError;
 
@@ -812,7 +816,7 @@ export function OfficerBuilder({
 
         <div className="flex flex-col gap-2">
           <div>
-            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
+            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${gearGridColumns}, minmax(0, 1fr))` }}>
               {gearCells.map((cell) => (
                 <GearSlotItem
                   key={cell.cellKey}
@@ -825,8 +829,8 @@ export function OfficerBuilder({
                 <GearSlotItem key={`empty-${i}`} size={1} onClick={() => goToSection("gear")} />
               ))}
             </div>
-            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${rules.gearSlots}, minmax(0, 1fr))` }}>
-              {Array.from({ length: rules.gearSlots }, (_, i) => (
+            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${gearGridColumns}, minmax(0, 1fr))` }}>
+              {Array.from({ length: gearGridColumns }, (_, i) => (
                 <GearSlotIndicator key={i} filled={i < filledIndicatorCount} />
               ))}
             </div>
