@@ -676,16 +676,21 @@ export function OfficerBuilder({
       <section className="flex flex-col gap-4 pb-8">
         <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Dossier</h2>
 
-        <div>
-          <label htmlFor={`officer-name-${role}`} className="text-xs uppercase tracking-wide text-text-secondary">
-            Name
-          </label>
-          <input
-            id={`officer-name-${role}`}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full max-w-sm bg-black px-2 py-1 font-display text-[24px] tracking-[2.4px] text-white uppercase focus:outline-none"
-          />
+        <div className="flex items-start gap-4">
+          <div className="size-[112px] shrink-0 overflow-hidden border border-border bg-black/60">
+            <Image src="/dossiers/dossier_placeholder.png" alt="" width={112} height={112} className="size-full object-cover" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <label htmlFor={`officer-name-${role}`} className="text-xs uppercase tracking-wide text-text-secondary">
+              Name
+            </label>
+            <input
+              id={`officer-name-${role}`}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full bg-black px-2 py-1 font-display text-[24px] tracking-[2.4px] text-white uppercase focus:outline-none"
+            />
+          </div>
         </div>
 
         <div>

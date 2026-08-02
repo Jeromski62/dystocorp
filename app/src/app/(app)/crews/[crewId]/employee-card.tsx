@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { MoreVertical } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -79,8 +80,8 @@ export function EmployeeCard({
 
   return (
     <div className="group flex items-start gap-4 border-b border-white/42 py-6 pr-4 transition-colors hover:bg-white/[0.03]">
-      <div className="flex size-[112px] shrink-0 items-center justify-center border border-border bg-black/60 text-center">
-        <span className="px-2 font-mono text-[13px] text-text-subtle uppercase">Kein Bild</span>
+      <div className="size-[112px] shrink-0 overflow-hidden border border-border bg-black/60">
+        <Image src="/dossiers/dossier_placeholder.png" alt="" width={112} height={112} className="size-full object-cover" />
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-8">
