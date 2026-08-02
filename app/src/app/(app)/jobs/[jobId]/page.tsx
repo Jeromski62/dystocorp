@@ -9,7 +9,9 @@ export default async function JobDetailPage({ params }: { params: Promise<{ jobI
 
   const { data: job } = await supabase
     .from("job_board_missions")
-    .select("id, title, source, d20_range, setup_text, special_rules_text, loot_text")
+    .select(
+      "id, title, source, d20_range, setup_text, victory_condition_text, round_limit_text, special_rules_text, loot_text"
+    )
     .eq("id", jobId)
     .maybeSingle();
 
@@ -34,6 +36,22 @@ export default async function JobDetailPage({ params }: { params: Promise<{ jobI
           <section>
             <h2 className="font-display text-sm tracking-[2px] text-text-secondary uppercase">Setup</h2>
             <p className="mt-2 whitespace-pre-line text-sm text-text-default">{job.setup_text}</p>
+          </section>
+          <section>
+            <h2 className="font-display text-sm tracking-[2px] text-text-secondary uppercase">Siegbedingungen</h2>
+            {job.victory_condition_text ? (
+              <p className="mt-2 whitespace-pre-line text-sm text-text-default">{job.victory_condition_text}</p>
+            ) : (
+              <p className="mt-2 text-sm text-text-subtle">Keine besonderen Siegbedingungen für diesen Job.</p>
+            )}
+          </section>
+          <section>
+            <h2 className="font-display text-sm tracking-[2px] text-text-secondary uppercase">Maximale Rundenanzahl</h2>
+            {job.round_limit_text ? (
+              <p className="mt-2 whitespace-pre-line text-sm text-text-default">{job.round_limit_text}</p>
+            ) : (
+              <p className="mt-2 text-sm text-text-subtle">Kein Rundenlimit für diesen Job.</p>
+            )}
           </section>
           <section>
             <h2 className="font-display text-sm tracking-[2px] text-text-secondary uppercase">Sonderregeln</h2>

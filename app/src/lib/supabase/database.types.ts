@@ -739,11 +739,13 @@ export type Database = {
           id: string
           key: string
           loot_text: string
+          round_limit_text: string | null
           setup_text: string
           sort_order: number
           source: string
           special_rules_text: string
           title: string
+          victory_condition_text: string | null
         }
         Insert: {
           created_at?: string
@@ -752,11 +754,13 @@ export type Database = {
           id?: string
           key: string
           loot_text: string
+          round_limit_text?: string | null
           setup_text: string
           sort_order?: number
           source?: string
           special_rules_text: string
           title: string
+          victory_condition_text?: string | null
         }
         Update: {
           created_at?: string
@@ -765,11 +769,13 @@ export type Database = {
           id?: string
           key?: string
           loot_text?: string
+          round_limit_text?: string | null
           setup_text?: string
           sort_order?: number
           source?: string
           special_rules_text?: string
           title?: string
+          victory_condition_text?: string | null
         }
         Relationships: [
           {
