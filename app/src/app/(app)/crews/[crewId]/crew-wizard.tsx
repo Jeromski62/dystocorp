@@ -124,7 +124,11 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
           <div className="absolute inset-0 bg-black" />
           {/* eslint-disable-next-line @next/next/no-img-element -- decorative
               absolutely-positioned background layer, same treatment as CrewCard */}
-          <img src={corpBackground(corpSlug)} alt="" className="absolute size-full max-w-none object-cover" />
+          <img
+            src={corpBackground(corpSlug)}
+            alt=""
+            className="absolute inset-y-0 right-0 h-full w-auto max-w-none object-contain object-right"
+          />
         </div>
 
         <div className="relative mx-auto flex w-full max-w-4xl items-start justify-between gap-4">
