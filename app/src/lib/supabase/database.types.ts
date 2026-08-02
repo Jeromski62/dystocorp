@@ -731,6 +731,56 @@ export type Database = {
           },
         ]
       }
+      job_board_missions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          d20_range: string | null
+          id: string
+          key: string
+          loot_text: string
+          setup_text: string
+          sort_order: number
+          source: string
+          special_rules_text: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          d20_range?: string | null
+          id?: string
+          key: string
+          loot_text: string
+          setup_text: string
+          sort_order?: number
+          source?: string
+          special_rules_text: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          d20_range?: string | null
+          id?: string
+          key?: string
+          loot_text?: string
+          setup_text?: string
+          sort_order?: number
+          source?: string
+          special_rules_text?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_board_missions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       missions: {
         Row: {
           campaign_id: string
