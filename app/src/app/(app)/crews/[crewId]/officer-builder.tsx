@@ -144,6 +144,7 @@ export function OfficerBuilder({
   const rules = OFFICER_RULES[role];
 
   const [name, setName] = useState(() => existing?.name ?? randomCharacterName(firstNames, lastNames));
+  const [gearPickError, setGearPickError] = useState<string | null>(null);
   const [backgroundId, setBackgroundId] = useState<string | null>(existing?.backgroundId ?? null);
   const [chosenStatOptions, setChosenStatOptions] = useState<string[]>(existing?.chosenStatOptions ?? []);
   const [selectedPowerIds, setSelectedPowerIds] = useState<string[]>(existing?.powers.map((p) => p.powerId) ?? []);
@@ -259,6 +260,17 @@ export function OfficerBuilder({
   function addGear(id: string) {
     const item = equipment.find((e) => e.id === id);
     if (!item) return;
+
+    if (wouldExceedGearLimit(item)) {
+      setGearPickError(
+        item.category === "armour" && armourCountIn(gearQuantities) >= 1
+          ? "Es darf nur 1 Rüstungsitem gleichzeitig getragen werden."
+          : `${item.name} passt nicht mehr in die Gear-Slots (max. ${rules.gearSlots}).`
+      );
+      return;
+    }
+    setGearPickError(null);
+
     // Validate against `prev`, not the render-time gearFlatList/gearSlotTotal
     // closure -- two rapid clicks (e.g. a fast double-click) both fire
     // before React re-renders, so a render-time check lets both slip through
@@ -535,6 +547,7 @@ export function OfficerBuilder({
         </div>
         {gearError ? <p className="mt-1 text-sm text-danger">{gearError}</p> : null}
         {armourError ? <p className="mt-1 text-sm text-danger">{armourError}</p> : null}
+        {gearPickError ? <p className="mt-1 text-sm text-danger">{gearPickError}</p> : null}
         {!inCampaign ? (
           <p className="mt-1 text-xs text-text-secondary">
             Advanced Weapon/Technology und Alien Artefact sind Campaign Loot — erst verfügbar, sobald dieses Team in
@@ -590,9 +603,10 @@ export function OfficerBuilder({
                     <button
                       type="button"
                       onClick={() => addGear(id)}
-                      disabled={wouldExceedGearLimit(item)}
                       aria-label={`${item.name} hinzufügen`}
-                      className="flex size-7 items-center justify-center rounded-md border border-border bg-bg-surface text-text-default transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:text-text-default"
+                      className={`flex size-7 items-center justify-center rounded-md border border-border bg-bg-surface text-text-default transition-colors ${
+                        wouldExceedGearLimit(item) ? "cursor-not-allowed opacity-40" : "hover:border-accent hover:text-accent"
+                      }`}
                     >
                       +
                     </button>
@@ -609,8 +623,9 @@ export function OfficerBuilder({
               key={item.id}
               type="button"
               onClick={() => addGear(item.id)}
-              disabled={wouldExceedGearLimit(item)}
-              className="flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-left text-sm transition-colors hover:border-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border"
+              className={`flex items-center justify-between rounded-md border border-border bg-bg-surface px-3 py-1.5 text-left text-sm transition-colors ${
+                wouldExceedGearLimit(item) ? "cursor-not-allowed opacity-40" : "hover:border-accent"
+              }`}
               title={item.effect_text}
             >
               <span className="text-text-default">{item.name}</span>
