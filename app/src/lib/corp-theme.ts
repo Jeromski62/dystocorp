@@ -21,18 +21,3 @@ const CORP_BACKGROUNDS: Record<string, string> = {
 export function corpBackground(slug: string | undefined): string {
   return (slug && CORP_BACKGROUNDS[slug]) || "/teamcards/freelance.png";
 }
-
-// Full-bleed corp photo for wide banner headers (Hire Team Header etc).
-// teamcards/* (corpBackground above) intentionally leaves ~40% of the frame
-// transparent on the left for the CrewCard's icon+name overlay -- stretched
-// across a full-width banner that transparent band dominates and the photo
-// reads as missing. corpcards/* is pre-composed full-bleed (no transparent
-// panel), so it's the right source for anything wider than a card.
-const CORP_HEADER_BACKGROUNDS: Record<string, string> = {
-  yugure: "/corpcards/yugure.png",
-  bionexx: "/corpcards/bionexx.png",
-};
-
-export function corpHeaderBackground(slug: string | undefined): string {
-  return (slug && CORP_HEADER_BACKGROUNDS[slug]) || "/corpcards/subcontractor.png";
-}
