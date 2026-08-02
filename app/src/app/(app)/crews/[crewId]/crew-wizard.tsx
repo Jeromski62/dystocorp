@@ -125,9 +125,9 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
           <img
             src={corpHeaderBackground(corpSlug)}
             alt=""
-            className="absolute inset-y-0 right-0 h-full w-auto max-w-none object-contain object-right opacity-40"
+            className="absolute inset-y-0 right-0 h-full w-auto max-w-none object-contain object-right opacity-70"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black from-0% via-black/40 via-20% to-transparent to-50%" />
         </div>
 
         <div className="relative mx-auto flex w-full max-w-4xl items-start justify-between gap-4">
