@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { startMission, submitMissionReport, updateMission } from "./actions";
 import { CrewMissionResultForm } from "./crew-mission-result-form";
 import { Button } from "@/components/ui/button";
+import { JobSelect, type Job } from "./job-select";
 
 type MissionStatus = "planned" | "ongoing" | "report";
 
@@ -15,6 +17,8 @@ type Mission = {
   status: MissionStatus;
   report_text: string | null;
   session_date: string | null;
+  job_board_mission_id: string | null;
+  job_board_missions: { id: string; title: string } | null;
 };
 
 const MISSION_TITLE_MAX_LENGTH = 30;
@@ -43,17 +47,20 @@ export function MissionCard({
   crews,
   myCrew,
   results,
+  jobs,
 }: {
   campaignId: string;
   mission: Mission;
   crews: Crew[];
   myCrew: Crew | null;
   results: CrewResult[];
+  jobs: Job[];
 }) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(mission.title);
   const [subtitle, setSubtitle] = useState(mission.subtitle ?? "");
   const [description, setDescription] = useState(mission.description ?? "");
+  const [jobId, setJobId] = useState(mission.job_board_mission_id ?? "");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportText, setReportText] = useState(mission.report_text ?? "");
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +69,14 @@ export function MissionCard({
   function saveEdit() {
     setError(null);
     startTransition(async () => {
-      const result = await updateMission(mission.id, campaignId, title, subtitle.trim() || null, description.trim() || null);
+      const result = await updateMission(
+        mission.id,
+        campaignId,
+        title,
+        subtitle.trim() || null,
+        description.trim() || null,
+        jobId || null
+      );
       if (result.error) setError(result.error);
       else setEditing(false);
     });
@@ -142,6 +156,7 @@ export function MissionCard({
             rows={2}
             className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
           />
+          <JobSelect jobs={jobs} value={jobId} onChange={setJobId} />
           <div className="flex gap-2">
             <Button type="button" disabled={pending} onClick={saveEdit} className="self-start">
               {pending ? "Speichere…" : "Speichern"}
@@ -153,6 +168,7 @@ export function MissionCard({
                 setTitle(mission.title);
                 setSubtitle(mission.subtitle ?? "");
                 setDescription(mission.description ?? "");
+                setJobId(mission.job_board_mission_id ?? "");
               }}
               className="text-sm text-text-secondary hover:text-text-default"
             >
@@ -160,9 +176,16 @@ export function MissionCard({
             </button>
           </div>
         </div>
-      ) : mission.description ? (
-        <p className="mt-2 whitespace-pre-line text-sm text-text-secondary">{mission.description}</p>
-      ) : null}
+      ) : (
+        <>
+          {mission.description ? <p className="mt-2 whitespace-pre-line text-sm text-text-secondary">{mission.description}</p> : null}
+          {mission.job_board_missions ? (
+            <Link href={`/jobs/${mission.job_board_missions.id}`} className="mt-2 inline-block text-xs text-corp-accent hover:underline">
+              Job: {mission.job_board_missions.title} →
+            </Link>
+          ) : null}
+        </>
+      )}
 
       {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
 

@@ -788,6 +788,7 @@ export type Database = {
           created_by: string
           description: string | null
           id: string
+          job_board_mission_id: string | null
           report_text: string | null
           session_date: string | null
           status: string
@@ -800,6 +801,7 @@ export type Database = {
           created_by: string
           description?: string | null
           id?: string
+          job_board_mission_id?: string | null
           report_text?: string | null
           session_date?: string | null
           status?: string
@@ -812,6 +814,7 @@ export type Database = {
           created_by?: string
           description?: string | null
           id?: string
+          job_board_mission_id?: string | null
           report_text?: string | null
           session_date?: string | null
           status?: string
@@ -831,6 +834,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "missions_job_board_mission_id_fkey"
+            columns: ["job_board_mission_id"]
+            isOneToOne: false
+            referencedRelation: "job_board_missions"
             referencedColumns: ["id"]
           },
         ]

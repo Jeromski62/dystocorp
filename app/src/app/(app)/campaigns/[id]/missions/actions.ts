@@ -9,7 +9,8 @@ export async function createMission(
   campaignId: string,
   title: string,
   subtitle: string | null,
-  description: string | null
+  description: string | null,
+  jobBoardMissionId: string | null
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
   const {
@@ -29,6 +30,7 @@ export async function createMission(
     subtitle: subtitle?.trim() || null,
     description,
     created_by: user.id,
+    job_board_mission_id: jobBoardMissionId,
   });
   if (error) return { error: error.message };
 
@@ -41,7 +43,8 @@ export async function updateMission(
   campaignId: string,
   title: string,
   subtitle: string | null,
-  description: string | null
+  description: string | null,
+  jobBoardMissionId: string | null
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
   const {
@@ -57,7 +60,12 @@ export async function updateMission(
 
   const { error } = await supabase
     .from("missions")
-    .update({ title: trimmedTitle, subtitle: subtitle?.trim() || null, description })
+    .update({
+      title: trimmedTitle,
+      subtitle: subtitle?.trim() || null,
+      description,
+      job_board_mission_id: jobBoardMissionId,
+    })
     .eq("id", missionId);
   if (error) return { error: error.message };
 

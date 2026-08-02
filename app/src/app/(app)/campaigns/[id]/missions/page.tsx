@@ -25,13 +25,16 @@ export default async function MissionsPage({
     .maybeSingle();
   if (!campaign) notFound();
 
-  const [{ data: missions }, { data: crews }] = await Promise.all([
+  const [{ data: missions }, { data: crews }, { data: jobs }] = await Promise.all([
     supabase
       .from("missions")
-      .select("id, title, subtitle, description, status, report_text, session_date, created_at")
+      .select(
+        "id, title, subtitle, description, status, report_text, session_date, created_at, job_board_mission_id, job_board_missions(id, title)"
+      )
       .eq("campaign_id", campaignId)
       .order("created_at", { ascending: false }),
     supabase.from("crews").select("id, name, player_id").eq("campaign_id", campaignId),
+    supabase.from("job_board_missions").select("id, title, source").order("source").order("sort_order"),
   ]);
 
   const missionIds = (missions ?? []).map((m) => m.id);
@@ -65,6 +68,7 @@ export default async function MissionsPage({
         crews={crews ?? []}
         myCrew={myCrew}
         results={resultsByMission.get(mission.id) ?? []}
+        jobs={jobs ?? []}
       />
     );
   }
@@ -82,7 +86,7 @@ export default async function MissionsPage({
         />
 
         <div className="mt-6">
-          <NewMissionForm campaignId={campaignId} />
+          <NewMissionForm campaignId={campaignId} jobs={jobs ?? []} />
         </div>
 
         <div className="mt-8 flex flex-col gap-4">{current.map(renderCard)}</div>

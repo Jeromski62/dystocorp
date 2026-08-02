@@ -3,25 +3,28 @@
 import { useState, useTransition } from "react";
 import { createMission } from "./actions";
 import { Button } from "@/components/ui/button";
+import { JobSelect, type Job } from "./job-select";
 
 const MISSION_TITLE_MAX_LENGTH = 30;
 
-export function NewMissionForm({ campaignId }: { campaignId: string }) {
+export function NewMissionForm({ campaignId, jobs }: { campaignId: string; jobs: Job[] }) {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [description, setDescription] = useState("");
+  const [jobId, setJobId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function handleSubmit() {
     setError(null);
     startTransition(async () => {
-      const result = await createMission(campaignId, title, subtitle.trim() || null, description.trim() || null);
+      const result = await createMission(campaignId, title, subtitle.trim() || null, description.trim() || null, jobId || null);
       if (result.error) setError(result.error);
       else {
         setTitle("");
         setSubtitle("");
         setDescription("");
+        setJobId("");
       }
     });
   }
@@ -55,6 +58,7 @@ export function NewMissionForm({ campaignId }: { campaignId: string }) {
           rows={2}
           className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
         />
+        <JobSelect jobs={jobs} value={jobId} onChange={setJobId} />
         {error ? <p className="text-sm text-danger">{error}</p> : null}
         <Button type="button" disabled={pending || !title.trim()} onClick={handleSubmit} className="self-start">
           {pending ? "Speichere…" : "Mission anlegen"}
