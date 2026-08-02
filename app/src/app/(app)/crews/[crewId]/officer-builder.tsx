@@ -239,6 +239,23 @@ export function OfficerBuilder({
     });
   }
 
+  // First knife carried is free (see computeGearSlotTotal) -- surfaced here
+  // so the per-item "Slots" label in the gear list matches what the 6/6
+  // budget counter above actually charges, instead of just showing every
+  // knife's full listed cost and looking like the discount never applied.
+  function gearSlotLabel(item: EquipmentItem, qty: number): string {
+    if (item.key !== "knife") return `${item.gear_slots * qty} Slots`;
+    const paidSlots = Math.max(0, qty - 1) * item.gear_slots;
+    return paidSlots > 0 ? `kostenlos + ${paidSlots} Slot${paidSlots === 1 ? "" : "s"}` : "kostenlos";
+  }
+
+  // Same discount, phrased for the still-unpicked browse list: only true
+  // before any knife is carried yet -- a second one costs the normal 1 slot.
+  function nextGearSlotLabel(item: EquipmentItem): string {
+    if (item.key === "knife" && (gearQuantities[item.id] ?? 0) === 0) return "kostenlos";
+    return `${item.gear_slots} Slot${item.gear_slots === 1 ? "" : "s"}`;
+  }
+
   function armourCountIn(quantities: Record<string, number>): number {
     return Object.entries(quantities).reduce((sum, [id, qty]) => {
       const it = equipment.find((e) => e.id === id);
@@ -589,7 +606,7 @@ export function OfficerBuilder({
                 >
                   <span className="text-text-default">
                     {item.name} × {qty}{" "}
-                    <span className="text-text-secondary">({item.gear_slots * qty} Slots)</span>
+                    <span className="text-text-secondary">({gearSlotLabel(item, qty)})</span>
                   </span>
                   <div className="flex shrink-0 gap-1.5">
                     <button
@@ -630,7 +647,7 @@ export function OfficerBuilder({
             >
               <span className="text-text-default">{item.name}</span>
               <span className="text-xs text-text-secondary">
-                {item.gear_slots} Slot{item.gear_slots === 1 ? "" : "s"} · {EQUIPMENT_CATEGORY_LABELS[item.category]}
+                {nextGearSlotLabel(item)} · {EQUIPMENT_CATEGORY_LABELS[item.category]}
               </span>
             </button>
           ))}
