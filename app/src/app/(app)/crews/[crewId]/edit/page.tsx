@@ -44,6 +44,8 @@ export default async function CrewEditPage({
     shipUpgradeTypes,
     crewShipUpgrades,
     holdItems,
+    firstNames,
+    lastNames,
   } = data;
   const inCampaign = !!crew.campaign_id;
 
@@ -83,6 +85,8 @@ export default async function CrewEditPage({
                     corePowersByBackground={corePowersByBackground}
                     powers={powers}
                     equipment={equipment}
+                    firstNames={firstNames}
+                    lastNames={lastNames}
                     existing={
                       captain
                         ? {
@@ -109,6 +113,8 @@ export default async function CrewEditPage({
                     corePowersByBackground={corePowersByBackground}
                     powers={powers}
                     equipment={equipment}
+                    firstNames={firstNames}
+                    lastNames={lastNames}
                     existing={
                       firstMate
                         ? {
@@ -135,6 +141,8 @@ export default async function CrewEditPage({
                     maxSpecialists={maxSpecialists}
                     gearByType={gearByType}
                     weaponContextByType={weaponContextByType}
+                    firstNames={firstNames}
+                    lastNames={lastNames}
                     equipment={equipment.map((e) => ({
                       id: e.id,
                       name: e.name,

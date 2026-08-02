@@ -3,6 +3,7 @@
 import { useEffect, useImperativeHandle, useMemo, useState, useTransition, type Ref } from "react";
 import Image from "next/image";
 import { saveOfficer } from "./actions";
+import { randomCharacterName } from "@/lib/random-name";
 import {
   OFFICER_RULES,
   EQUIPMENT_CATEGORY_LABELS,
@@ -115,6 +116,8 @@ export function OfficerBuilder({
   powers,
   equipment,
   existing,
+  firstNames,
+  lastNames,
   onReadyChange,
   hideSaveButton,
   ref,
@@ -127,6 +130,8 @@ export function OfficerBuilder({
   powers: Power[];
   equipment: EquipmentItem[];
   existing: ExistingOfficer | null;
+  firstNames: string[];
+  lastNames: string[];
   // Wizard-mode-only: report client-side validity up so the wizard's own
   // "Weiter" button can gate on it, and hide this component's own
   // "Speichern" button/checklist since the wizard button now triggers
@@ -138,7 +143,7 @@ export function OfficerBuilder({
 }) {
   const rules = OFFICER_RULES[role];
 
-  const [name, setName] = useState(existing?.name ?? (role === "captain" ? "Captain" : "First Mate"));
+  const [name, setName] = useState(() => existing?.name ?? randomCharacterName(firstNames, lastNames));
   const [backgroundId, setBackgroundId] = useState<string | null>(existing?.backgroundId ?? null);
   const [chosenStatOptions, setChosenStatOptions] = useState<string[]>(existing?.chosenStatOptions ?? []);
   const [selectedPowerIds, setSelectedPowerIds] = useState<string[]>(existing?.powers.map((p) => p.powerId) ?? []);

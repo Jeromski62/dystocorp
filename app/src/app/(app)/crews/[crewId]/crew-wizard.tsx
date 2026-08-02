@@ -49,6 +49,8 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
     shipUpgradeTypes,
     crewShipUpgrades,
     holdItems,
+    firstNames,
+    lastNames,
   } = props;
 
   const [viewStep, setViewStep] = useState(Math.min(4, Math.max(1, crew.wizard_step)));
@@ -161,6 +163,8 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
               corePowersByBackground={corePowersByBackground}
               powers={powers}
               equipment={equipment}
+              firstNames={firstNames}
+              lastNames={lastNames}
               existing={
                 captain
                   ? {
@@ -188,6 +192,8 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
               corePowersByBackground={corePowersByBackground}
               powers={powers}
               equipment={equipment}
+              firstNames={firstNames}
+              lastNames={lastNames}
               existing={
                 firstMate
                   ? {
@@ -212,6 +218,8 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
               maxSpecialists={maxSpecialists}
               gearByType={gearByType}
               weaponContextByType={weaponContextByType}
+              firstNames={firstNames}
+              lastNames={lastNames}
               equipment={equipment.map((e) => ({
                 id: e.id,
                 name: e.name,

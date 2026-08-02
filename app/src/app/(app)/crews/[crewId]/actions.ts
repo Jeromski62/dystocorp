@@ -225,7 +225,8 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
 export async function addSoldier(
   crewId: string,
   soldierTypeId: string,
-  isRobot: boolean
+  isRobot: boolean,
+  name: string | null
 ): Promise<{ error?: string }> {
   const owned = await requireOwnedCrew(crewId);
   if ("error" in owned) return owned;
@@ -265,6 +266,7 @@ export async function addSoldier(
     soldier_type_id: soldierTypeId,
     is_robot: isRobot,
     current_health: soldierType.health,
+    name: name?.trim() || null,
   });
   if (insertError) return { error: insertError.message };
 

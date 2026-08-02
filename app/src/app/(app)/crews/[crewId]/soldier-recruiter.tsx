@@ -12,6 +12,7 @@ import { EmployeeCard } from "./employee-card";
 import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { randomCharacterName } from "@/lib/random-name";
 
 type SoldierType = {
   id: string;
@@ -56,6 +57,8 @@ export function SoldierRecruiter({
   gearByType,
   weaponContextByType,
   equipment,
+  firstNames,
+  lastNames,
 }: {
   crewId: string;
   inCampaign: boolean;
@@ -66,6 +69,8 @@ export function SoldierRecruiter({
   gearByType: Record<string, { name: string; quantity: number }[]>;
   weaponContextByType: Record<string, SoldierGearContext>;
   equipment: EquipmentItem[];
+  firstNames: string[];
+  lastNames: string[];
 }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -95,7 +100,7 @@ export function SoldierRecruiter({
   function handleAdd(soldierTypeId: string) {
     setError(null);
     startTransition(async () => {
-      const result = await addSoldier(crewId, soldierTypeId, false);
+      const result = await addSoldier(crewId, soldierTypeId, false, randomCharacterName(firstNames, lastNames));
       if (result.error) setError(result.error);
       else setDrawerOpen(false);
     });

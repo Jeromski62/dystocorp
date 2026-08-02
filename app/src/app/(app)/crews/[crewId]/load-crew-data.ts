@@ -28,6 +28,8 @@ export async function loadCrewDetail(crewId: string) {
     { data: shipUpgradeTypes },
     { data: crewShipUpgrades },
     { data: holdItems },
+    { data: firstNames },
+    { data: lastNames },
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase
@@ -80,6 +82,8 @@ export async function loadCrewDetail(crewId: string) {
       .from("ship_hold_items")
       .select("id, equipment_item_id, custom_name, quantity, notes, equipment_items(id, name)")
       .eq("crew_id", crewId),
+    supabase.from("character_first_names").select("name"),
+    supabase.from("character_last_names").select("name"),
   ]);
 
   if (!crew) return null;
@@ -158,6 +162,8 @@ export async function loadCrewDetail(crewId: string) {
     gearByType,
     weaponContextByType,
     maxSpecialists,
+    firstNames: (firstNames ?? []).map((n) => n.name),
+    lastNames: (lastNames ?? []).map((n) => n.name),
   };
 }
 
