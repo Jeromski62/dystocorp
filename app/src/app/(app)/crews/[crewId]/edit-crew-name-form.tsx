@@ -2,60 +2,55 @@
 
 import { useState, useTransition } from "react";
 import { updateCrewName } from "./actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
+// Same inline-edit pattern as a character's name field (see employee-card.tsx):
+// click the name to reveal an input, blur/Enter saves, Escape reverts.
 export function EditCrewNameForm({ crewId, name }: { crewId: string; name: string }) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(name);
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
-  function handleSave() {
+  function saveName() {
+    setEditing(false);
     setError(null);
     startTransition(async () => {
       const result = await updateCrewName(crewId, nameValue);
-      if (result.error) setError(result.error);
-      else setEditing(false);
+      if (result.error) {
+        setError(result.error);
+        setNameValue(name);
+      }
     });
   }
 
-  if (!editing) {
-    return (
-      <div className="flex items-center gap-2">
-        <h1 className="font-display text-2xl tracking-[2.5px] text-text-default">{name}</h1>
-        <button type="button" onClick={() => setEditing(true)} className="text-xs text-text-secondary hover:text-corp-accent">
-          Bearbeiten
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-2">
-      <Input
-        value={nameValue}
-        onChange={(e) => setNameValue(e.target.value)}
-        autoFocus
-        className="h-auto border-corp-border bg-corp-surface px-3 py-2 text-lg font-semibold text-text-default focus-visible:border-corp-accent focus-visible:ring-corp-accent/50"
-      />
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
-      <div className="flex items-center gap-3">
-        <Button type="button" disabled={pending} onClick={handleSave} className="self-start">
-          {pending ? "Speichere…" : "Speichern"}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setEditing(false);
-            setNameValue(name);
+    <div>
+      {editing ? (
+        <input
+          autoFocus
+          value={nameValue}
+          onChange={(e) => setNameValue(e.target.value)}
+          onBlur={saveName}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.currentTarget.blur();
+            if (e.key === "Escape") {
+              setNameValue(name);
+              setEditing(false);
+            }
           }}
+          className="block w-full max-w-sm bg-black px-2 py-1 font-display text-[24px] tracking-[2.4px] text-white uppercase focus:outline-none"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="block max-w-full truncate text-left font-display text-[24px] tracking-[2.4px] text-white uppercase hover:text-accent"
+          title="Namen bearbeiten"
         >
-          Abbrechen
-        </Button>
-      </div>
+          {name}
+        </button>
+      )}
+      {error ? <p className="mt-1 text-sm text-danger">{error}</p> : null}
     </div>
   );
 }
