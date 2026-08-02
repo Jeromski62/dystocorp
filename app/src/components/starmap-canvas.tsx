@@ -142,7 +142,11 @@ export function StarmapCanvas({
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 
-    const n = Math.max(200, Math.min(4000, starCount));
+    // Fewer points on phones -- this renders behind every authenticated page,
+    // so a lower-end mobile GPU shouldn't pay full desktop vertex/fill cost
+    // for a background decoration.
+    const isNarrowViewport = window.matchMedia("(max-width: 640px)").matches;
+    const n = Math.max(200, Math.min(4000, isNarrowViewport ? Math.round(starCount * 0.4) : starCount));
     // Seeded LCG so the field is deterministic across reloads instead of
     // reshuffling every mount.
     let seed = 20260725;

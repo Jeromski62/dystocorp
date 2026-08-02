@@ -71,7 +71,7 @@ export function BackgroundCard({
           ))}
         </button>
 
-        <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between gap-2">
+        <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between gap-2 py-1.5">
           <p className="text-[16px] leading-none text-white/60">
             Wähle: <span className="font-bold text-white/80">{chooseCount}</span> von:{" "}
             {chooseOptionLabels.map((label, i) => (

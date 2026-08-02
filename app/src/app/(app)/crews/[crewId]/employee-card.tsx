@@ -85,7 +85,7 @@ export function EmployeeCard({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-8">
-        <div className="flex w-full items-start justify-between gap-4">
+        <div className="flex w-full flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             {editingName ? (
               <input
@@ -128,7 +128,7 @@ export function EmployeeCard({
                     type="button"
                     disabled={pending}
                     aria-label="Mitarbeiter-Menü"
-                    className="flex size-8 items-center justify-center text-white hover:text-accent disabled:opacity-40"
+                    className="flex size-10 items-center justify-center text-white hover:text-accent disabled:opacity-40"
                   />
                 }
               >

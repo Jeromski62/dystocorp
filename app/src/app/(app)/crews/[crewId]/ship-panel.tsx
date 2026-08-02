@@ -151,7 +151,7 @@ export function ShipPanel({
                     }
                   }}
                   disabled={pending}
-                  className="text-xs text-text-secondary hover:text-danger"
+                  className="-mx-2 -my-1.5 px-2 py-1.5 text-xs text-text-secondary hover:text-danger"
                 >
                   Entfernen
                 </button>
@@ -202,7 +202,7 @@ export function ShipPanel({
                     }
                   }}
                   disabled={pending}
-                  className="text-xs text-text-secondary hover:text-danger"
+                  className="-mx-2 -my-1.5 px-2 py-1.5 text-xs text-text-secondary hover:text-danger"
                 >
                   Entfernen
                 </button>

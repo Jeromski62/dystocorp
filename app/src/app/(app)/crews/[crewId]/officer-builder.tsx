@@ -613,7 +613,7 @@ export function OfficerBuilder({
                       type="button"
                       onClick={() => removeGear(id)}
                       aria-label={`${item.name} entfernen`}
-                      className="flex size-7 items-center justify-center rounded-md border border-border bg-bg-surface text-text-default transition-colors hover:border-danger hover:text-danger"
+                      className="flex size-9 items-center justify-center rounded-md border border-border bg-bg-surface text-text-default transition-colors hover:border-danger hover:text-danger"
                     >
                       −
                     </button>
@@ -621,7 +621,7 @@ export function OfficerBuilder({
                       type="button"
                       onClick={() => addGear(id)}
                       aria-label={`${item.name} hinzufügen`}
-                      className={`flex size-7 items-center justify-center rounded-md border border-border bg-bg-surface text-text-default transition-colors ${
+                      className={`flex size-9 items-center justify-center rounded-md border border-border bg-bg-surface text-text-default transition-colors ${
                         wouldExceedGearLimit(item) ? "cursor-not-allowed opacity-40" : "hover:border-accent hover:text-accent"
                       }`}
                     >
@@ -857,8 +857,11 @@ export function OfficerBuilder({
         ) : null}
 
         <div className="flex flex-col gap-2">
-          <div>
-            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${gearGridColumns}, minmax(0, 1fr))` }}>
+          <div className="overflow-x-auto pb-1">
+            <div
+              className="grid gap-1"
+              style={{ gridTemplateColumns: `repeat(${gearGridColumns}, minmax(44px, 1fr))`, minWidth: gearGridColumns * 44 }}
+            >
               {gearCells.map((cell) => (
                 <GearSlotItem
                   key={cell.cellKey}
@@ -871,7 +874,10 @@ export function OfficerBuilder({
                 <GearSlotItem key={`empty-${i}`} size={1} onClick={() => goToSection("gear")} />
               ))}
             </div>
-            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${gearGridColumns}, minmax(0, 1fr))` }}>
+            <div
+              className="grid gap-1"
+              style={{ gridTemplateColumns: `repeat(${gearGridColumns}, minmax(44px, 1fr))`, minWidth: gearGridColumns * 44 }}
+            >
               {Array.from({ length: gearGridColumns }, (_, i) => (
                 <GearSlotIndicator key={i} filled={i < filledIndicatorCount} />
               ))}

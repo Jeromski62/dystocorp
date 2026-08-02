@@ -18,12 +18,13 @@ export function GearSlotItem({ size, label, onClick }: { size: 1 | 2 | 3; label?
     <button
       type="button"
       onClick={onClick}
-      className={`flex h-11 items-center justify-center overflow-hidden border-t border-r border-l px-4 transition-colors ${SPAN_CLASS[size]} ${
+      title={label}
+      className={`flex h-11 min-w-0 items-center justify-center overflow-hidden border-t border-r border-l px-2 transition-colors sm:px-4 ${SPAN_CLASS[size]} ${
         isEmpty ? "border-border hover:border-accent" : "border-white/52 hover:border-accent"
       }`}
     >
       <span
-        className={`font-display text-sm font-semibold tracking-[1.6px] uppercase whitespace-nowrap ${
+        className={`min-w-0 truncate font-display text-sm font-semibold tracking-[1.6px] uppercase ${
           isEmpty ? "text-white/32" : "text-white"
         }`}
       >

@@ -24,7 +24,7 @@ export function EditCrewNameForm({ crewId, name }: { crewId: string; name: strin
   }
 
   return (
-    <div>
+    <div className="min-w-0 flex-1">
       {editing ? (
         <input
           autoFocus

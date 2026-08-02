@@ -56,15 +56,17 @@ export default async function CrewEditPage({
           ← Zurück zur Übersicht
         </Link>
 
-        <div className="mt-4 flex items-start justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+          <div className="flex min-w-0 flex-1 items-center gap-4">
             <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
-            <div>
+            <div className="min-w-0 flex-1">
               <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
               <EditCrewNameForm crewId={crewId} name={crew.name} />
             </div>
           </div>
-          <DeleteCrewButton crewId={crewId} crewName={crew.name} />
+          <div className="shrink-0">
+            <DeleteCrewButton crewId={crewId} crewName={crew.name} />
+          </div>
         </div>
         <p className="mt-3 font-mono text-sm text-text-secondary">
           {crew.credits.toLocaleString("de-DE")} CR · {crew.experience} XP

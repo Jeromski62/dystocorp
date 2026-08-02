@@ -52,8 +52,8 @@ export default async function CampaignDetailPage({
   return (
     <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <div className="flex items-start justify-between gap-4">
-          <div>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
             <p className="font-mono text-[14px] tracking-[0.08em] text-text-subtle uppercase">Kampagnen /</p>
             <div className="mt-1">
               <EditCampaignForm campaignId={campaign.id} name={campaign.name} description={campaign.description} />
@@ -64,7 +64,9 @@ export default async function CampaignDetailPage({
               </span>
             ) : null}
           </div>
-          <CampaignDangerZone campaignId={campaign.id} campaignName={campaign.name} archived={!!campaign.archived_at} />
+          <div className="shrink-0">
+            <CampaignDangerZone campaignId={campaign.id} campaignName={campaign.name} archived={!!campaign.archived_at} />
+          </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-4 font-mono text-xs text-text-secondary">

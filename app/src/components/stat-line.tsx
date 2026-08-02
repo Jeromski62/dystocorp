@@ -12,10 +12,10 @@ export function StatLine({ columns }: { columns: StatColumn[] }) {
         {columns.map((col) => (
           <div
             key={col.label}
-            className={`flex flex-1 items-center py-2 ${col.header ? "justify-start" : "justify-center bg-white/[0.24]"}`}
+            className={`flex min-w-0 flex-1 items-center py-2 ${col.header ? "justify-start" : "justify-center bg-white/[0.24]"}`}
           >
             <span
-              className={`font-display text-sm tracking-[1.6px] text-white uppercase ${col.header ? "font-bold" : "font-semibold"}`}
+              className={`truncate font-display text-sm tracking-[1.6px] text-white uppercase ${col.header ? "font-bold" : "font-semibold"}`}
             >
               {col.label}
             </span>
@@ -24,8 +24,8 @@ export function StatLine({ columns }: { columns: StatColumn[] }) {
       </div>
       <div className="flex gap-[5px]">
         {columns.map((col) => (
-          <div key={col.label} className="flex flex-1 items-center justify-center">
-            <span className="font-display text-sm font-medium tracking-[1.6px] text-white">{col.value}</span>
+          <div key={col.label} className="flex min-w-0 flex-1 items-center justify-center">
+            <span className="truncate font-display text-sm font-medium tracking-[1.6px] text-white">{col.value}</span>
           </div>
         ))}
       </div>

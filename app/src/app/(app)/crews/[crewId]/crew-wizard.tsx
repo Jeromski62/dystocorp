@@ -129,7 +129,9 @@ export function CrewWizard(props: CrewDetail & { crewId: string }) {
 
         <div className="relative mx-auto flex w-full max-w-4xl items-start justify-between gap-4">
           <EditCrewNameForm crewId={crewId} name={crew.name} />
-          <CrewOverflowMenu crewId={crewId} crewName={crew.name} />
+          <div className="shrink-0">
+            <CrewOverflowMenu crewId={crewId} crewName={crew.name} />
+          </div>
         </div>
         <p className="relative mx-auto mt-2 flex w-full max-w-4xl items-center gap-2 font-display text-[16px] font-medium tracking-[3.2px] text-white/50 uppercase">
           <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} size={20} />

@@ -104,18 +104,20 @@ export function CrewReadonlyView({
   return (
     <div className="hud-grid min-h-screen">
       <div className="mx-auto max-w-4xl px-6 py-12">
-        <div className="flex items-center gap-4">
-          <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
-          <div>
-            <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
-            <h1 className="font-display text-2xl tracking-[2.5px] text-text-default">{crew.name}</h1>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex min-w-0 flex-1 items-center gap-4">
+            <CorpEmblem name={crew.corps?.name ?? "?"} slug={corpSlug} />
+            <div className="min-w-0 flex-1">
+              <p className="font-mono text-xs tracking-widest text-corp-accent uppercase">{crew.corps?.name}</p>
+              <h1 className="truncate font-display text-2xl tracking-[2.5px] text-text-default">{crew.name}</h1>
+            </div>
           </div>
           {isOwner ? (
-            <Link href={`/crews/${crewId}/edit`} className="ml-auto">
+            <Link href={`/crews/${crewId}/edit`} className="ml-auto shrink-0">
               <Button variant="outline">Bearbeiten</Button>
             </Link>
           ) : (
-            <span className="ml-auto border border-border px-2 py-0.5 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
+            <span className="ml-auto shrink-0 border border-border px-2 py-0.5 font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">
               Nur-Lese-Ansicht
             </span>
           )}
