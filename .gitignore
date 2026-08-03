@@ -1,0 +1,4 @@
+# Local Claude Code tooling (settings, skills, worktrees) -- not part of the app
+.claude/
+.agents/
+skills-lock.json
