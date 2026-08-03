@@ -90,6 +90,52 @@ export async function startMission(missionId: string, campaignId: string): Promi
   return {};
 }
 
+export async function toggleMissionParticipant(
+  missionId: string,
+  campaignId: string,
+  crewId: string,
+  add: boolean
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Nicht eingeloggt." };
+
+  const { error } = add
+    ? await supabase.from("mission_participants").insert({ mission_id: missionId, crew_id: crewId })
+    : await supabase.from("mission_participants").delete().eq("mission_id", missionId).eq("crew_id", crewId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/campaigns/${campaignId}/missions`);
+  return {};
+}
+
+// Play Mode's entry point (PRD Phase 1, step 6): starts the mission exactly
+// like `startMission` and additionally seeds its round-tracking row so the
+// Play Mode screen has somewhere to store phase/round/turn state.
+export async function startPlayMode(missionId: string, campaignId: string): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Nicht eingeloggt." };
+
+  const { error: missionError } = await supabase
+    .from("missions")
+    .update({ status: "ongoing", session_date: new Date().toISOString().slice(0, 10) })
+    .eq("id", missionId);
+  if (missionError) return { error: missionError.message };
+
+  const { error: roundStateError } = await supabase
+    .from("mission_round_state")
+    .upsert({ mission_id: missionId }, { onConflict: "mission_id", ignoreDuplicates: true });
+  if (roundStateError) return { error: roundStateError.message };
+
+  revalidatePath(`/campaigns/${campaignId}/missions`);
+  return {};
+}
+
 export async function submitMissionReport(
   missionId: string,
   campaignId: string,

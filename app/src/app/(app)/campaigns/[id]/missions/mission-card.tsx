@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { startMission, submitMissionReport, updateMission } from "./actions";
+import { startPlayMode, submitMissionReport, updateMission } from "./actions";
 import { CrewMissionResultForm } from "./crew-mission-result-form";
+import { ParticipantsPanel } from "./participants-panel";
 import { Button } from "@/components/ui/button";
 import { JobSelect, type Job } from "./job-select";
 
@@ -47,6 +48,7 @@ export function MissionCard({
   crews,
   myCrew,
   results,
+  participantCrewIds,
   jobs,
 }: {
   campaignId: string;
@@ -54,6 +56,7 @@ export function MissionCard({
   crews: Crew[];
   myCrew: Crew | null;
   results: CrewResult[];
+  participantCrewIds: string[];
   jobs: Job[];
 }) {
   const [editing, setEditing] = useState(false);
@@ -84,7 +87,7 @@ export function MissionCard({
 
   function handleStartMission() {
     startTransition(async () => {
-      await startMission(mission.id, campaignId);
+      await startPlayMode(mission.id, campaignId);
     });
   }
 
@@ -190,35 +193,23 @@ export function MissionCard({
       {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
 
       {mission.status === "planned" && !editing ? (
-        <Button type="button" disabled={pending} onClick={handleStartMission} className="mt-3">
-          Spiel beginnt
-        </Button>
+        <>
+          <ParticipantsPanel
+            campaignId={campaignId}
+            missionId={mission.id}
+            crews={crews}
+            participantCrewIds={participantCrewIds}
+          />
+          <Button type="button" disabled={pending} onClick={handleStartMission} className="mt-3">
+            Spiel beginnt
+          </Button>
+        </>
       ) : null}
 
       {mission.status === "ongoing" && !editing ? (
-        reportOpen ? (
-          <div className="mt-3 flex flex-col gap-2">
-            <textarea
-              value={reportText}
-              onChange={(e) => setReportText(e.target.value)}
-              placeholder="Wie ist es gelaufen?"
-              rows={4}
-              className="rounded-md border border-border bg-bg-body px-3 py-2 text-sm text-text-default placeholder:text-text-secondary focus:border-corp-accent focus:outline-none"
-            />
-            <div className="flex gap-2">
-              <Button type="button" disabled={pending || !reportText.trim()} onClick={saveReport} className="self-start">
-                {pending ? "Speichere…" : "Bericht speichern"}
-              </Button>
-              <button type="button" onClick={() => setReportOpen(false)} className="text-sm text-text-secondary hover:text-text-default">
-                Abbrechen
-              </button>
-            </div>
-          </div>
-        ) : (
-          <Button type="button" onClick={() => setReportOpen(true)} className="mt-3">
-            Bericht schreiben
-          </Button>
-        )
+        <Button type="button" render={<Link href={`/campaigns/${campaignId}/missions/${mission.id}/play`} />} className="mt-3">
+          Play Mode öffnen
+        </Button>
       ) : null}
 
       {mission.status === "report" && !editing ? (

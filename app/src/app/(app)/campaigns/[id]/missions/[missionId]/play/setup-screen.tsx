@@ -1,0 +1,29 @@
+"use client";
+
+import { useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { startRoundSequence } from "./actions";
+
+export function SetupScreen({ missionId, setupText }: { missionId: string; setupText: string | null }) {
+  const [pending, startTransition] = useTransition();
+
+  function handleStart() {
+    startTransition(async () => {
+      await startRoundSequence(missionId);
+    });
+  }
+
+  return (
+    <div className="mx-auto max-w-2xl px-6 py-12">
+      <h2 className="font-display text-sm tracking-[2px] text-text-secondary uppercase">Tisch & Umgebung aufbauen</h2>
+      {setupText ? (
+        <p className="mt-3 whitespace-pre-line text-sm text-text-default">{setupText}</p>
+      ) : (
+        <p className="mt-3 text-sm text-text-subtle">Diese Mission hat keinen Job aus dem Job Board zugewiesen -- baut den Tisch nach eigenem Ermessen auf.</p>
+      )}
+      <Button type="button" disabled={pending} onClick={handleStart} className="mt-6">
+        {pending ? "Startet…" : "Erste Runde starten"}
+      </Button>
+    </div>
+  );
+}

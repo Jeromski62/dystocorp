@@ -38,13 +38,16 @@ export default async function MissionsPage({
   ]);
 
   const missionIds = (missions ?? []).map((m) => m.id);
-  const { data: allResults } =
+  const [{ data: allResults }, { data: allParticipants }] =
     missionIds.length > 0
-      ? await supabase
-          .from("crew_session_results")
-          .select("id, mission_id, crew_id, xp_delta, credits_delta, loot_notes, injury_notes, members_lost")
-          .in("mission_id", missionIds)
-      : { data: [] };
+      ? await Promise.all([
+          supabase
+            .from("crew_session_results")
+            .select("id, mission_id, crew_id, xp_delta, credits_delta, loot_notes, injury_notes, members_lost")
+            .in("mission_id", missionIds),
+          supabase.from("mission_participants").select("mission_id, crew_id").in("mission_id", missionIds),
+        ])
+      : [{ data: [] }, { data: [] }];
 
   const myCrew = (crews ?? []).find((c) => c.player_id === user!.id) ?? null;
 
@@ -53,6 +56,13 @@ export default async function MissionsPage({
     const list = resultsByMission.get(r.mission_id) ?? [];
     list.push(r);
     resultsByMission.set(r.mission_id, list);
+  }
+
+  const participantsByMission = new Map<string, string[]>();
+  for (const p of allParticipants ?? []) {
+    const list = participantsByMission.get(p.mission_id) ?? [];
+    list.push(p.crew_id);
+    participantsByMission.set(p.mission_id, list);
   }
 
   const sorted = [...(missions ?? [])].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
@@ -68,6 +78,7 @@ export default async function MissionsPage({
         crews={crews ?? []}
         myCrew={myCrew}
         results={resultsByMission.get(mission.id) ?? []}
+        participantCrewIds={participantsByMission.get(mission.id) ?? []}
         jobs={jobs ?? []}
       />
     );

@@ -262,12 +262,14 @@ export type Database = {
           fight: number
           health: number
           id: string
+          is_stunned: boolean
           level: number
           move: number
           name: string
           permanent_injuries: Json
           shoot: number
           updated_at: string
+          weapon_jammed: boolean
           will: number
         }
         Insert: {
@@ -280,12 +282,14 @@ export type Database = {
           fight: number
           health: number
           id?: string
+          is_stunned?: boolean
           level?: number
           move: number
           name?: string
           permanent_injuries?: Json
           shoot: number
           updated_at?: string
+          weapon_jammed?: boolean
           will: number
         }
         Update: {
@@ -298,12 +302,14 @@ export type Database = {
           fight?: number
           health?: number
           id?: string
+          is_stunned?: boolean
           level?: number
           move?: number
           name?: string
           permanent_injuries?: Json
           shoot?: number
           updated_at?: string
+          weapon_jammed?: boolean
           will?: number
         }
         Relationships: [
@@ -700,12 +706,14 @@ export type Database = {
           fight: number
           health: number
           id: string
+          is_stunned: boolean
           level: number
           move: number
           name: string
           permanent_injuries: Json
           shoot: number
           updated_at: string
+          weapon_jammed: boolean
           will: number
         }
         Insert: {
@@ -718,12 +726,14 @@ export type Database = {
           fight: number
           health: number
           id?: string
+          is_stunned?: boolean
           level?: number
           move: number
           name?: string
           permanent_injuries?: Json
           shoot: number
           updated_at?: string
+          weapon_jammed?: boolean
           will: number
         }
         Update: {
@@ -736,12 +746,14 @@ export type Database = {
           fight?: number
           health?: number
           id?: string
+          is_stunned?: boolean
           level?: number
           move?: number
           name?: string
           permanent_injuries?: Json
           shoot?: number
           updated_at?: string
+          weapon_jammed?: boolean
           will?: number
         }
         Relationships: [
@@ -813,6 +825,243 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_combat_log: {
+        Row: {
+          attack_type: string
+          created_at: string
+          damage: number | null
+          id: string
+          logged_by: string
+          mission_id: string
+          result: string
+          roll_details: Json
+          round_number: number
+          shooter_captain_id: string | null
+          shooter_crew_id: string
+          shooter_first_mate_id: string | null
+          shooter_kind: string
+          shooter_soldier_id: string | null
+          target_became_stunned: boolean
+          target_became_wounded: boolean
+          target_captain_id: string | null
+          target_crew_id: string | null
+          target_died: boolean
+          target_first_mate_id: string | null
+          target_kind: string | null
+          target_soldier_id: string | null
+          weapon_equipment_item_id: string | null
+        }
+        Insert: {
+          attack_type: string
+          created_at?: string
+          damage?: number | null
+          id?: string
+          logged_by: string
+          mission_id: string
+          result: string
+          roll_details?: Json
+          round_number: number
+          shooter_captain_id?: string | null
+          shooter_crew_id: string
+          shooter_first_mate_id?: string | null
+          shooter_kind: string
+          shooter_soldier_id?: string | null
+          target_became_stunned?: boolean
+          target_became_wounded?: boolean
+          target_captain_id?: string | null
+          target_crew_id?: string | null
+          target_died?: boolean
+          target_first_mate_id?: string | null
+          target_kind?: string | null
+          target_soldier_id?: string | null
+          weapon_equipment_item_id?: string | null
+        }
+        Update: {
+          attack_type?: string
+          created_at?: string
+          damage?: number | null
+          id?: string
+          logged_by?: string
+          mission_id?: string
+          result?: string
+          roll_details?: Json
+          round_number?: number
+          shooter_captain_id?: string | null
+          shooter_crew_id?: string
+          shooter_first_mate_id?: string | null
+          shooter_kind?: string
+          shooter_soldier_id?: string | null
+          target_became_stunned?: boolean
+          target_became_wounded?: boolean
+          target_captain_id?: string | null
+          target_crew_id?: string | null
+          target_died?: boolean
+          target_first_mate_id?: string | null
+          target_kind?: string | null
+          target_soldier_id?: string | null
+          weapon_equipment_item_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_combat_log_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_shooter_captain_id_fkey"
+            columns: ["shooter_captain_id"]
+            isOneToOne: false
+            referencedRelation: "captains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_shooter_crew_id_fkey"
+            columns: ["shooter_crew_id"]
+            isOneToOne: false
+            referencedRelation: "crews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_shooter_first_mate_id_fkey"
+            columns: ["shooter_first_mate_id"]
+            isOneToOne: false
+            referencedRelation: "first_mates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_shooter_soldier_id_fkey"
+            columns: ["shooter_soldier_id"]
+            isOneToOne: false
+            referencedRelation: "soldiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_target_captain_id_fkey"
+            columns: ["target_captain_id"]
+            isOneToOne: false
+            referencedRelation: "captains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_target_crew_id_fkey"
+            columns: ["target_crew_id"]
+            isOneToOne: false
+            referencedRelation: "crews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_target_first_mate_id_fkey"
+            columns: ["target_first_mate_id"]
+            isOneToOne: false
+            referencedRelation: "first_mates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_target_soldier_id_fkey"
+            columns: ["target_soldier_id"]
+            isOneToOne: false
+            referencedRelation: "soldiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_combat_log_weapon_equipment_item_id_fkey"
+            columns: ["weapon_equipment_item_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_participants: {
+        Row: {
+          added_at: string
+          crew_id: string
+          id: string
+          mission_id: string
+        }
+        Insert: {
+          added_at?: string
+          crew_id: string
+          id?: string
+          mission_id: string
+        }
+        Update: {
+          added_at?: string
+          crew_id?: string
+          id?: string
+          mission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_participants_crew_id_fkey"
+            columns: ["crew_id"]
+            isOneToOne: false
+            referencedRelation: "crews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_participants_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_round_state: {
+        Row: {
+          active_crew_id: string | null
+          end_round_requested_at: string | null
+          end_round_requested_by: string | null
+          mission_id: string
+          phase: string
+          round_number: number
+          updated_at: string
+        }
+        Insert: {
+          active_crew_id?: string | null
+          end_round_requested_at?: string | null
+          end_round_requested_by?: string | null
+          mission_id: string
+          phase?: string
+          round_number?: number
+          updated_at?: string
+        }
+        Update: {
+          active_crew_id?: string | null
+          end_round_requested_at?: string | null
+          end_round_requested_by?: string | null
+          mission_id?: string
+          phase?: string
+          round_number?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_round_state_active_crew_id_fkey"
+            columns: ["active_crew_id"]
+            isOneToOne: false
+            referencedRelation: "crews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_round_state_end_round_requested_by_fkey"
+            columns: ["end_round_requested_by"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_round_state_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: true
+            referencedRelation: "missions"
             referencedColumns: ["id"]
           },
         ]
@@ -1132,11 +1381,13 @@ export type Database = {
           current_health: number
           id: string
           is_robot: boolean
+          is_stunned: boolean
           name: string | null
           permanent_injuries: Json
           soldier_type_id: string
           sort_order: number
           updated_at: string
+          weapon_jammed: boolean
         }
         Insert: {
           bonus_gear_item_id?: string | null
@@ -1145,11 +1396,13 @@ export type Database = {
           current_health: number
           id?: string
           is_robot?: boolean
+          is_stunned?: boolean
           name?: string | null
           permanent_injuries?: Json
           soldier_type_id: string
           sort_order?: number
           updated_at?: string
+          weapon_jammed?: boolean
         }
         Update: {
           bonus_gear_item_id?: string | null
@@ -1158,11 +1411,13 @@ export type Database = {
           current_health?: number
           id?: string
           is_robot?: boolean
+          is_stunned?: boolean
           name?: string | null
           permanent_injuries?: Json
           soldier_type_id?: string
           sort_order?: number
           updated_at?: string
+          weapon_jammed?: boolean
         }
         Relationships: [
           {
@@ -1193,9 +1448,42 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_shooting_resolution: {
+        Args: {
+          p_attack_type: string
+          p_damage: number | null
+          p_mission_id: string
+          p_result: string
+          p_roll_details: Json
+          p_round_number: number
+          p_shooter_crew_id: string
+          p_shooter_id: string
+          p_shooter_kind: string
+          p_shooter_weapon_jammed: boolean
+          p_target_becomes_stunned: boolean
+          p_target_becomes_wounded: boolean
+          p_target_crew_id: string | null
+          p_target_died: boolean
+          p_target_id: string | null
+          p_target_kind: string | null
+          p_weapon_equipment_item_id: string | null
+        }
+        Returns: string
+      }
       can_read_crew: { Args: { p_crew_id: string }; Returns: boolean }
       is_campaign_member: { Args: { p_campaign_id: string }; Returns: boolean }
       owns_crew: { Args: { p_crew_id: string }; Returns: boolean }
+      set_combatant_status: {
+        Args: {
+          p_crew_id: string
+          p_id: string
+          p_is_stunned: boolean
+          p_kind: string
+          p_mission_id: string
+          p_weapon_jammed: boolean
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
