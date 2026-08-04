@@ -19,7 +19,7 @@
   /* status (corp-independent — a fixed semantic palette, not tied to corp identity) */
   --status-active: #53d37d;
   --status-injured: #d4bb5f;
-  --status-out: #777777;
+  --status-out: #ef4444;
   --danger: #ef4444;
 
   /* team-register campaign status — separate scale from captain health above */
@@ -101,6 +101,16 @@
   --corp-surface: #2a181c;
   --corp-border: #4a242b;
   --corp-on-accent: #47000a;
+}
+
+/* Accent taken directly from logo_soma.svg's mark (#C40862); bg/surface/border
+   follow the same dark-tinted-toward-accent pattern as bionexx/yugure above. */
+[data-corp="soma"] {
+  --corp-accent: #c40862;
+  --corp-bg: #170a12;
+  --corp-surface: #22101a;
+  --corp-border: #3d1b2c;
+  --corp-on-accent: #3a0220;
 }
 
 @theme inline {

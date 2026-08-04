@@ -381,6 +381,7 @@ export default function ComponentPlaygroundPage() {
         <div className="flex flex-col gap-4">
           <CorpCard corp="bionexx" />
           <CorpCard corp="yugure" />
+          <CorpCard corp="soma" />
           <CorpCard corp="subcontractor" />
         </div>
       </Section>
@@ -474,6 +475,9 @@ export default function ComponentPlaygroundPage() {
               <StatusBadge currentHealth={8} health={8} />
               <StatusBadge currentHealth={4} health={8} />
               <StatusBadge currentHealth={0} health={8} />
+              <StatusBadge currentHealth={8} health={8} isStunned />
+              <StatusBadge currentHealth={8} health={8} weaponJammed />
+              <StatusBadge currentHealth={4} health={8} isStunned weaponJammed />
             </div>
           )}
         </CorpColumns>

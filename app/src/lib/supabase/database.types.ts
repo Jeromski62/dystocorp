@@ -1448,6 +1448,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      adjust_combatant_health: {
+        Args: {
+          p_crew_id: string
+          p_delta: number
+          p_id: string
+          p_kind: string
+          p_mission_id: string
+        }
+        Returns: undefined
+      }
       apply_shooting_resolution: {
         Args: {
           p_attack_type: string

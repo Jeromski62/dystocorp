@@ -123,6 +123,28 @@ export async function setCombatantStatus(input: {
   return {};
 }
 
+export async function adjustCombatantHealth(input: {
+  missionId: string;
+  crewId: string;
+  kind: CombatantKind;
+  id: string;
+  delta: number;
+  campaignId: string;
+}): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("adjust_combatant_health", {
+    p_mission_id: input.missionId,
+    p_crew_id: input.crewId,
+    p_kind: input.kind,
+    p_id: input.id,
+    p_delta: input.delta,
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath(`/campaigns/${input.campaignId}/missions/${input.missionId}/play`);
+  return {};
+}
+
 // -- Aim Assist resolution --------------------------------------------------
 
 export type ResolveShootingActionInput = {

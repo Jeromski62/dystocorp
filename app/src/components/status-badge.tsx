@@ -55,25 +55,87 @@ function OutIcon({ className }: { className?: string }) {
   );
 }
 
-const STATUS_CONFIG = {
-  fit: { label: "Fit", Icon: HealthIcon },
-  injured: { label: "Verletzt", Icon: InjuredIcon },
-  out: { label: "Beurlaubt", Icon: OutIcon },
-} as const;
-
-// Per Figma redesign (node 2046:441): icon + label chip, corp-accent wash
-// background (24% alpha, preserved from the mockup's rgba(...,0.24)) with a
-// corp-accent icon and white label text -- replaces the old
-// border+English-label version. Health-vs-current-health classification is
-// unchanged (0 -> out, below max -> injured, else fit).
-export function StatusBadge({ currentHealth, health }: { currentHealth: number; health: number }) {
-  const status = currentHealth <= 0 ? "out" : currentHealth < health ? "injured" : "fit";
-  const { label, Icon } = STATUS_CONFIG[status];
-
+// Stunned/Jammed have no Figma node yet (Aim Assist combat flags predate the
+// icon set) -- simple placeholder glyphs, not ported from a mockup.
+function StunnedIcon({ className }: { className?: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 bg-corp-accent/24 py-1.5 pr-2.5 pl-1.5 text-corp-accent">
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
+      <g stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+        <line x1="10" y1="2" x2="10" y2="18" />
+        <line x1="2" y1="10" x2="18" y2="10" />
+        <line x1="4.2" y1="4.2" x2="15.8" y2="15.8" />
+        <line x1="15.8" y1="4.2" x2="4.2" y2="15.8" />
+      </g>
+    </svg>
+  );
+}
+
+function JammedIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
+      <circle cx="10" cy="10" r="7.4" stroke="currentColor" strokeWidth="1.6" />
+      <line x1="4.8" y1="15.2" x2="15.2" y2="4.8" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
+type StatusKey = "fit" | "injured" | "out" | "stunned" | "weaponJammed";
+
+// Icon + wash color is status-semantic (green/yellow/red via the
+// --status-active/--status-injured/--status-out tokens), label text stays
+// white -- only the icon/background follow the status per corp-independent
+// design intent. Stunned/weaponJammed share the "injured" yellow since both
+// are transient combat-round penalties, not a health state.
+const STATUS_CONFIG: Record<StatusKey, { label: string; Icon: (props: { className?: string }) => React.JSX.Element; wash: string }> = {
+  fit: { label: "Fit", Icon: HealthIcon, wash: "bg-status-active/24 text-status-active" },
+  injured: { label: "Verletzt", Icon: InjuredIcon, wash: "bg-status-injured/24 text-status-injured" },
+  out: { label: "Freigestellt", Icon: OutIcon, wash: "bg-status-out/24 text-status-out" },
+  stunned: { label: "Überfordert", Icon: StunnedIcon, wash: "bg-status-injured/24 text-status-injured" },
+  weaponJammed: { label: "Waffe Klemmt", Icon: JammedIcon, wash: "bg-status-injured/24 text-status-injured" },
+};
+
+function Badge({ statusKey }: { statusKey: StatusKey }) {
+  const { label, Icon, wash } = STATUS_CONFIG[statusKey];
+  return (
+    <span className={`inline-flex items-center gap-1.5 py-1.5 pr-2.5 pl-1.5 ${wash}`}>
       <Icon className="size-4 shrink-0" />
       <span className="font-semibold text-[14px] tracking-[1.4px] text-white">{label}</span>
+    </span>
+  );
+}
+
+// Per Figma redesign (node 2046:441): icon + label chip, status-color wash
+// background (24% alpha, preserved from the mockup's rgba(...,0.24)) --
+// replaces the old border+English-label version. Health-vs-current-health
+// classification is unchanged (0 -> out, below max -> injured, else fit).
+// Stunned/weaponJammed are independent combat flags (Aim Assist) and render
+// as additional badges alongside the health status, not instead of it.
+export function StatusBadge({
+  currentHealth,
+  health,
+  isStunned = false,
+  weaponJammed = false,
+  includeHealthStatus = true,
+}: {
+  currentHealth: number;
+  health: number;
+  isStunned?: boolean;
+  weaponJammed?: boolean;
+  // Play Mode's RosterTile already shows HP as a number + bar right above --
+  // set false there so the badge row only adds the combat flags, not a
+  // redundant Fit/Verletzt/Freigestellt chip.
+  includeHealthStatus?: boolean;
+}) {
+  const healthStatus: StatusKey = currentHealth <= 0 ? "out" : currentHealth < health ? "injured" : "fit";
+  const active: StatusKey[] = includeHealthStatus ? [healthStatus] : [];
+  if (isStunned) active.push("stunned");
+  if (weaponJammed) active.push("weaponJammed");
+
+  return (
+    <span className="inline-flex flex-wrap items-center gap-1.5">
+      {active.map((key) => (
+        <Badge key={key} statusKey={key} />
+      ))}
     </span>
   );
 }

@@ -4,6 +4,7 @@
 const CORP_THEME_SLUGS: Record<string, string> = {
   yugure: "yugure",
   bionex_connect: "bionexx",
+  soma: "soma",
 };
 
 export function corpThemeSlug(corpKey: string): string {
@@ -16,6 +17,7 @@ export function corpThemeSlug(corpKey: string): string {
 const CORP_BACKGROUNDS: Record<string, string> = {
   yugure: "/teamcards/yugure.png",
   bionexx: "/teamcards/bionexx.png",
+  soma: "/teamcards/soma.png",
 };
 
 export function corpBackground(slug: string | undefined): string {

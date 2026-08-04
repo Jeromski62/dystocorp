@@ -7,6 +7,7 @@ import {
   SheetContent,
 } from "@/components/ui/sheet";
 import {
+  adjustCombatantHealth,
   cancelEndRoundRequest,
   confirmEndRound,
   markLastRound,
@@ -16,6 +17,7 @@ import {
 } from "./actions";
 import type { PlayCombatant } from "./load-play-data";
 import { AimAssistCalculator } from "./aim-assist/calculator";
+import { StatusBadge } from "@/components/status-badge";
 
 type Crew = { id: string; name: string; player_id: string };
 
@@ -88,6 +90,19 @@ export function RoundHud({
         id: combatant.id,
         isStunned: false,
         weaponJammed: false,
+      });
+    });
+  }
+
+  function handleAdjustHealth(combatant: PlayCombatant, delta: number) {
+    startTransition(async () => {
+      await adjustCombatantHealth({
+        campaignId,
+        missionId,
+        crewId: combatant.crewId,
+        kind: combatant.kind,
+        id: combatant.id,
+        delta,
       });
     });
   }
@@ -170,7 +185,13 @@ export function RoundHud({
             <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{crew.name}</h3>
             <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {(combatantsByCrew.get(crew.id) ?? []).map((c) => (
-                <RosterTile key={`${c.kind}-${c.id}`} combatant={c} onClearStatus={() => handleClearStatus(c)} disabled={pending} />
+                <RosterTile
+                  key={`${c.kind}-${c.id}`}
+                  combatant={c}
+                  onClearStatus={() => handleClearStatus(c)}
+                  onAdjustHealth={(delta) => handleAdjustHealth(c, delta)}
+                  disabled={pending}
+                />
               ))}
             </div>
           </div>
@@ -195,10 +216,12 @@ export function RoundHud({
 function RosterTile({
   combatant,
   onClearStatus,
+  onAdjustHealth,
   disabled,
 }: {
   combatant: PlayCombatant;
   onClearStatus: () => void;
+  onAdjustHealth: (delta: number) => void;
   disabled: boolean;
 }) {
   const healthPct = Math.max(0, Math.min(100, (combatant.currentHealth / combatant.health) * 100));
@@ -211,11 +234,31 @@ function RosterTile({
         {combatant.isRobot ? <span className="font-mono text-[12px] text-text-subtle">Robot</span> : null}
       </div>
       <p className="font-display text-base font-semibold text-text-default">{combatant.name}</p>
-      <div className="mt-1.5 flex items-baseline justify-between font-mono text-[12px] text-text-secondary">
-        <span>HP</span>
-        <span>
-          {combatant.currentHealth} / {combatant.health}
-        </span>
+      <div className="mt-1.5 flex items-center justify-between gap-2">
+        <span className="font-mono text-[12px] text-text-secondary">HP</span>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            disabled={disabled || combatant.currentHealth <= 0}
+            onClick={() => onAdjustHealth(-1)}
+            aria-label="HP verringern"
+            className="flex size-5 items-center justify-center border border-border text-text-secondary hover:border-corp-accent hover:text-corp-accent disabled:opacity-30"
+          >
+            −
+          </button>
+          <span className="font-mono text-[12px] text-text-secondary">
+            {combatant.currentHealth} / {combatant.health}
+          </span>
+          <button
+            type="button"
+            disabled={disabled || combatant.currentHealth >= combatant.health}
+            onClick={() => onAdjustHealth(1)}
+            aria-label="HP erhöhen"
+            className="flex size-5 items-center justify-center border border-border text-text-secondary hover:border-corp-accent hover:text-corp-accent disabled:opacity-30"
+          >
+            +
+          </button>
+        </div>
       </div>
       <div className="mt-1 h-[5px] border border-corp-accent/22 bg-black/40">
         <div className="h-full bg-corp-accent" style={{ width: `${healthPct}%` }} />
@@ -223,12 +266,13 @@ function RosterTile({
 
       {(combatant.isStunned || combatant.weaponJammed) && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          {combatant.isStunned ? (
-            <span className="border border-danger/40 px-1.5 py-0.5 font-mono text-[11px] text-danger uppercase">Stunned</span>
-          ) : null}
-          {combatant.weaponJammed ? (
-            <span className="border border-danger/40 px-1.5 py-0.5 font-mono text-[11px] text-danger uppercase">Jam</span>
-          ) : null}
+          <StatusBadge
+            currentHealth={combatant.currentHealth}
+            health={combatant.health}
+            isStunned={combatant.isStunned}
+            weaponJammed={combatant.weaponJammed}
+            includeHealthStatus={false}
+          />
           <button type="button" disabled={disabled} onClick={onClearStatus} className="text-[11px] text-text-secondary hover:text-corp-accent">
             zurücksetzen
           </button>

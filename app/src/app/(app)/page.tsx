@@ -207,6 +207,9 @@ export default async function HomePage() {
                   <CorpCard corp={corpThemeSlug(corp.key) as CorpCardVariant} />
                 </Link>
               ))}
+              <Link href="/intel/corporations/subcontractor">
+                <CorpCard corp="subcontractor" />
+              </Link>
             </div>
           </section>
         ) : null}

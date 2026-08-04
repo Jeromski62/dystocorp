@@ -6,6 +6,7 @@ import Image from "next/image";
 const CORP_ICONS: Record<string, string> = {
   yugure: "/corps/yugure.svg",
   bionexx: "/corps/bionexx.svg",
+  soma: "/corps/soma.svg",
 };
 
 // Solid corp-accent tile with the corp's glyph when we know the slug; falls

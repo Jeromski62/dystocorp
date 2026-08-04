@@ -10,12 +10,14 @@ import Image from "next/image";
 const CORP_CARD_BACKGROUNDS = {
   bionexx: "/corpcards/bionexx.png",
   yugure: "/corpcards/yugure.png",
+  soma: "/corpcards/soma.png",
   subcontractor: "/corpcards/subcontractor.png",
 } as const;
 
 const CORP_CARD_LOGOS: Partial<Record<CorpCardVariant, { src: string; width: number; height: number }>> = {
   bionexx: { src: "/corpcards/logo-bionexx.svg", width: 134, height: 142 },
   yugure: { src: "/corpcards/logo-yugure.svg", width: 160, height: 118 },
+  soma: { src: "/corpcards/logo-soma.svg", width: 132, height: 138 },
 };
 
 export type CorpCardVariant = keyof typeof CORP_CARD_BACKGROUNDS;
