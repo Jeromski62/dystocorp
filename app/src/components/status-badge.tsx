@@ -115,19 +115,14 @@ export function StatusBadge({
   health,
   isStunned = false,
   weaponJammed = false,
-  includeHealthStatus = true,
 }: {
   currentHealth: number;
   health: number;
   isStunned?: boolean;
   weaponJammed?: boolean;
-  // Play Mode's RosterTile already shows HP as a number + bar right above --
-  // set false there so the badge row only adds the combat flags, not a
-  // redundant Fit/Verletzt/Freigestellt chip.
-  includeHealthStatus?: boolean;
 }) {
   const healthStatus: StatusKey = currentHealth <= 0 ? "out" : currentHealth < health ? "injured" : "fit";
-  const active: StatusKey[] = includeHealthStatus ? [healthStatus] : [];
+  const active: StatusKey[] = [healthStatus];
   if (isStunned) active.push("stunned");
   if (weaponJammed) active.push("weaponJammed");
 

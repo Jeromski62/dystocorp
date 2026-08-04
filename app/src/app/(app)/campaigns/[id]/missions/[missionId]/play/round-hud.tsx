@@ -264,18 +264,19 @@ function RosterTile({
         <div className="h-full bg-corp-accent" style={{ width: `${healthPct}%` }} />
       </div>
 
-      {(combatant.isStunned || combatant.weaponJammed) && (
+      {(combatant.currentHealth < combatant.health || combatant.isStunned || combatant.weaponJammed) && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <StatusBadge
             currentHealth={combatant.currentHealth}
             health={combatant.health}
             isStunned={combatant.isStunned}
             weaponJammed={combatant.weaponJammed}
-            includeHealthStatus={false}
           />
-          <button type="button" disabled={disabled} onClick={onClearStatus} className="text-[11px] text-text-secondary hover:text-corp-accent">
-            zurücksetzen
-          </button>
+          {combatant.isStunned || combatant.weaponJammed ? (
+            <button type="button" disabled={disabled} onClick={onClearStatus} className="text-[11px] text-text-secondary hover:text-corp-accent">
+              zurücksetzen
+            </button>
+          ) : null}
         </div>
       )}
     </div>
