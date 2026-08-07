@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Default is 1mb, well under MAX_PORTRAIT_BYTES (5mb) in
+  // lib/supabase/dossier-portraits.ts -- without raising this, a portrait
+  // upload over 1mb gets rejected by Next.js itself before the server action
+  // even runs, which surfaces to the user as a broken page load instead of
+  // our own size-limit error message.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "8mb",
+    },
+  },
 };
 
 export default nextConfig;
