@@ -140,7 +140,7 @@ export function EmployeeCard({
               <button
                 type="button"
                 onClick={() => setEditingName(true)}
-                className="block max-w-full truncate text-left font-display text-[24px] tracking-[2.4px] text-white uppercase hover:text-accent"
+                className="-mx-2 -my-1 block max-w-full cursor-text truncate px-2 py-1 text-left font-display text-[24px] tracking-[2.4px] text-white uppercase hover:bg-white/10"
                 title="Namen bearbeiten"
               >
                 {soldier.name || DEFAULT_NAME}

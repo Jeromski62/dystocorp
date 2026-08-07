@@ -753,7 +753,7 @@ export function OfficerBuilder({
               id={`officer-name-${role}`}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full bg-black px-2 py-1 font-display text-[24px] tracking-[2.4px] text-white uppercase focus:outline-none"
+              className="mt-1 block w-full cursor-text bg-black px-2 py-1 font-display text-[24px] tracking-[2.4px] text-white uppercase hover:bg-white/10 focus:outline-none"
             />
             {officerId && portraitPath ? (
               <button
