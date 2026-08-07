@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDossierPortraitUrl } from "@/lib/supabase/dossier-portraits";
+import { corpThemeSlug } from "@/lib/corp-theme";
 
 export type CombatantGearItem = { id: string; name: string; category: string; damageModifier: string | null };
 
@@ -79,10 +80,19 @@ export async function loadPlayModeData(missionId: string) {
 
   const { data: participants } = await supabase
     .from("mission_participants")
-    .select("crew_id, crews(id, name, player_id)")
+    .select("crew_id, crews(id, name, player_id, corps(key, name))")
     .eq("mission_id", missionId);
 
-  const crews = (participants ?? []).map((p) => p.crews).filter((c): c is NonNullable<typeof c> => c !== null);
+  const crews = (participants ?? [])
+    .map((p) => p.crews)
+    .filter((c): c is NonNullable<typeof c> => c !== null)
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      player_id: c.player_id,
+      corpName: c.corps?.name ?? null,
+      corpSlug: c.corps ? corpThemeSlug(c.corps.key) : undefined,
+    }));
 
   const perCrew = await Promise.all(
     crews.map(async (crew): Promise<PlayCombatant[]> => {

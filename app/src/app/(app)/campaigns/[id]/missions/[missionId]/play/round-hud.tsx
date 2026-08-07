@@ -21,8 +21,9 @@ import { AimAssistCalculator } from "./aim-assist/calculator";
 import { StatusBadge } from "@/components/status-badge";
 import { HealthTracker } from "@/components/health-tracker";
 import { StatLine, type StatColumn } from "@/components/stat-line";
+import { CorpEmblem } from "@/components/corp-emblem";
 
-type Crew = { id: string; name: string; player_id: string };
+type Crew = { id: string; name: string; player_id: string; corpName: string | null; corpSlug?: string };
 
 type RoundState = {
   round_number: number;
@@ -190,7 +191,10 @@ export function RoundHud({
       <div className="mt-8 flex flex-col gap-6">
         {ownCrews.map((crew) => (
           <div key={crew.id}>
-            <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{crew.name}</h3>
+            <div className="flex items-center gap-2">
+              <CorpEmblem name={crew.corpName ?? crew.name} slug={crew.corpSlug} size={28} />
+              <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{crew.name}</h3>
+            </div>
             <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {(combatantsByCrew.get(crew.id) ?? []).map((c) => (
                 <RosterTile
@@ -215,7 +219,10 @@ export function RoundHud({
 
         {opponentCrews.map((crew) => (
           <div key={crew.id}>
-            <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{crew.name}</h3>
+            <div className="flex items-center gap-2">
+              <CorpEmblem name={crew.corpName ?? crew.name} slug={crew.corpSlug} size={28} />
+              <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{crew.name}</h3>
+            </div>
             <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {(combatantsByCrew.get(crew.id) ?? []).map((c) => (
                 <RosterTile
