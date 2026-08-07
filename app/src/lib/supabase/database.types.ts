@@ -267,6 +267,7 @@ export type Database = {
           move: number
           name: string
           permanent_injuries: Json
+          portrait_path: string | null
           shoot: number
           updated_at: string
           weapon_jammed: boolean
@@ -287,6 +288,7 @@ export type Database = {
           move: number
           name?: string
           permanent_injuries?: Json
+          portrait_path?: string | null
           shoot: number
           updated_at?: string
           weapon_jammed?: boolean
@@ -307,6 +309,7 @@ export type Database = {
           move?: number
           name?: string
           permanent_injuries?: Json
+          portrait_path?: string | null
           shoot?: number
           updated_at?: string
           weapon_jammed?: boolean
@@ -711,6 +714,7 @@ export type Database = {
           move: number
           name: string
           permanent_injuries: Json
+          portrait_path: string | null
           shoot: number
           updated_at: string
           weapon_jammed: boolean
@@ -731,6 +735,7 @@ export type Database = {
           move: number
           name?: string
           permanent_injuries?: Json
+          portrait_path?: string | null
           shoot: number
           updated_at?: string
           weapon_jammed?: boolean
@@ -751,6 +756,7 @@ export type Database = {
           move?: number
           name?: string
           permanent_injuries?: Json
+          portrait_path?: string | null
           shoot?: number
           updated_at?: string
           weapon_jammed?: boolean
@@ -1391,6 +1397,7 @@ export type Database = {
           is_stunned: boolean
           name: string | null
           permanent_injuries: Json
+          portrait_path: string | null
           soldier_type_id: string
           sort_order: number
           updated_at: string
@@ -1406,6 +1413,7 @@ export type Database = {
           is_stunned?: boolean
           name?: string | null
           permanent_injuries?: Json
+          portrait_path?: string | null
           soldier_type_id: string
           sort_order?: number
           updated_at?: string
@@ -1421,6 +1429,7 @@ export type Database = {
           is_stunned?: boolean
           name?: string | null
           permanent_injuries?: Json
+          portrait_path?: string | null
           soldier_type_id?: string
           sort_order?: number
           updated_at?: string
@@ -1468,7 +1477,7 @@ export type Database = {
       apply_shooting_resolution: {
         Args: {
           p_attack_type: string
-          p_damage: number
+          p_damage: number | null
           p_mission_id: string
           p_result: string
           p_roll_details: Json
@@ -1479,11 +1488,11 @@ export type Database = {
           p_shooter_weapon_jammed: boolean
           p_target_becomes_stunned: boolean
           p_target_becomes_wounded: boolean
-          p_target_crew_id: string
+          p_target_crew_id: string | null
           p_target_died: boolean
-          p_target_id: string
-          p_target_kind: string
-          p_weapon_equipment_item_id: string
+          p_target_id: string | null
+          p_target_kind: string | null
+          p_weapon_equipment_item_id: string | null
         }
         Returns: string
       }

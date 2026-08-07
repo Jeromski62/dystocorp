@@ -1,7 +1,16 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addSoldier, removeSoldier, setSoldierBonusGear, setSoldierName, setSoldierRobot } from "./actions";
+import {
+  addSoldier,
+  removeDossierPortrait,
+  removeSoldier,
+  setSoldierBonusGear,
+  setSoldierName,
+  setSoldierRobot,
+  uploadDossierPortrait,
+} from "./actions";
+import { getDossierPortraitUrl } from "@/lib/supabase/dossier-portraits";
 import {
   EQUIPMENT_CATEGORY_LABELS,
   SOLDIER_RULES,
@@ -37,6 +46,7 @@ type Soldier = {
   bonus_gear_item_id: string | null;
   bonus_gear: { id: string; name: string } | null;
   soldier_types: SoldierType;
+  portrait_path: string | null;
 };
 
 type TableType = "specialist" | "standard";
@@ -132,6 +142,24 @@ export function SoldierRecruiter({
     });
   }
 
+  function handlePortraitChange(soldierId: string, file: File) {
+    setError(null);
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.set("file", file);
+      const result = await uploadDossierPortrait(crewId, "soldier", soldierId, formData);
+      if (result.error) setError(result.error);
+    });
+  }
+
+  function handlePortraitRemove(soldierId: string) {
+    setError(null);
+    startTransition(async () => {
+      const result = await removeDossierPortrait(crewId, "soldier", soldierId);
+      if (result.error) setError(result.error);
+    });
+  }
+
   return (
     <div className="flex flex-col gap-8">
       {error ? <p className="font-mono text-sm text-danger">{error}</p> : null}
@@ -171,10 +199,13 @@ export function SoldierRecruiter({
                 pending={pending}
                 inCampaign={inCampaign}
                 bonusGearOptions={bonusGearOptionsFor(s.soldier_types.id)}
+                portraitUrl={getDossierPortraitUrl(s.portrait_path)}
                 onNameChange={(name) => handleNameChange(s.id, name)}
                 onRobotToggle={(isRobot) => handleRobotToggle(s.id, isRobot)}
                 onBonusGearChange={(equipmentItemId) => handleBonusGearChange(s.id, equipmentItemId)}
                 onRemove={() => handleRemove(s.id)}
+                onPortraitChange={(file) => handlePortraitChange(s.id, file)}
+                onPortraitRemove={() => handlePortraitRemove(s.id)}
               />
             ))}
           </div>

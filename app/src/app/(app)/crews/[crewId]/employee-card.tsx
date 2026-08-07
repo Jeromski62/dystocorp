@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { MoreVertical } from "lucide-react";
+import { Camera, MoreVertical } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { StatLine, type StatColumn } from "@/components/stat-line";
@@ -42,23 +42,30 @@ export function EmployeeCard({
   pending,
   inCampaign,
   bonusGearOptions,
+  portraitUrl,
   onNameChange,
   onRobotToggle,
   onBonusGearChange,
   onRemove,
+  onPortraitChange,
+  onPortraitRemove,
 }: {
   soldier: Soldier;
   gearItems: { name: string; quantity: number }[];
   pending: boolean;
   inCampaign: boolean;
   bonusGearOptions: { category: string; label: string; items: { id: string; name: string }[] }[];
+  portraitUrl: string | null;
   onNameChange: (name: string) => void;
   onRobotToggle: (isRobot: boolean) => void;
   onBonusGearChange: (equipmentItemId: string) => void;
   onRemove: () => void;
+  onPortraitChange: (file: File) => void;
+  onPortraitRemove: () => void;
 }) {
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(soldier.name ?? "");
+  const portraitInputRef = useRef<HTMLInputElement>(null);
 
   function saveName() {
     setEditingName(false);
@@ -80,8 +87,34 @@ export function EmployeeCard({
 
   return (
     <div className="group flex items-start gap-4 border-b border-white/42 py-6 pr-4 transition-colors hover:bg-white/[0.03]">
-      <div className="size-[112px] shrink-0 overflow-hidden border border-border bg-black/60">
-        <Image src="/dossiers/dossier_placeholder.png" alt="" width={112} height={112} className="size-full object-cover" />
+      <div className="group/portrait relative size-[112px] shrink-0 overflow-hidden border border-border bg-black/60">
+        <Image
+          src={portraitUrl ?? "/dossiers/dossier_placeholder.png"}
+          alt=""
+          width={112}
+          height={112}
+          className="size-full object-cover"
+        />
+        <button
+          type="button"
+          onClick={() => portraitInputRef.current?.click()}
+          disabled={pending}
+          aria-label="Bild hochladen"
+          className="absolute inset-0 flex items-center justify-center bg-black/60 text-white opacity-0 transition-opacity group-hover/portrait:opacity-100 focus-visible:opacity-100 disabled:pointer-events-none"
+        >
+          <Camera className="size-6" />
+        </button>
+        <input
+          ref={portraitInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = "";
+            if (file) onPortraitChange(file);
+          }}
+        />
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-8">
@@ -135,6 +168,7 @@ export function EmployeeCard({
                 <MoreVertical />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
+                {portraitUrl ? <DropdownMenuItem onClick={onPortraitRemove}>Bild entfernen</DropdownMenuItem> : null}
                 <DropdownMenuItem
                   variant="destructive"
                   onClick={() => {

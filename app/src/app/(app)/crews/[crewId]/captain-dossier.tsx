@@ -1,5 +1,6 @@
 import { CrewMemberCard } from "./crew-member-card";
 import { SoldierStatGrid } from "./soldier-stat-grid";
+import { getDossierPortraitUrl } from "@/lib/supabase/dossier-portraits";
 
 type Captain = {
   name: string;
@@ -11,6 +12,7 @@ type Captain = {
   will: number;
   health: number;
   current_health: number;
+  portrait_path: string | null;
 };
 
 // Read-only summary of an officer's current combat stats, shown above the
@@ -34,6 +36,7 @@ export function CaptainDossier({
       subLabel={backgroundName}
       health={captain.health}
       currentHealth={captain.current_health}
+      portraitUrl={getDossierPortraitUrl(captain.portrait_path)}
     >
       <SoldierStatGrid stats={captain} />
     </CrewMemberCard>

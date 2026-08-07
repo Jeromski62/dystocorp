@@ -92,11 +92,13 @@ export default async function CrewEditPage({
                     existing={
                       captain
                         ? {
+                            id: captain.id,
                             name: captain.name,
                             backgroundId: captain.background_id,
                             chosenStatOptions: captain.chosen_stat_options,
                             powers: captainPowers.map((p) => ({ powerId: p.power_id, reduced: p.reduced })),
                             gearItemIds: captainGear.map((g) => g.equipment_item_id),
+                            portraitPath: captain.portrait_path,
                           }
                         : null
                     }
@@ -120,11 +122,13 @@ export default async function CrewEditPage({
                     existing={
                       firstMate
                         ? {
+                            id: firstMate.id,
                             name: firstMate.name,
                             backgroundId: firstMate.background_id,
                             chosenStatOptions: firstMate.chosen_stat_options,
                             powers: firstMatePowers.map((p) => ({ powerId: p.power_id, reduced: p.reduced })),
                             gearItemIds: firstMateGear.map((g) => g.equipment_item_id),
+                            portraitPath: firstMate.portrait_path,
                           }
                         : null
                     }

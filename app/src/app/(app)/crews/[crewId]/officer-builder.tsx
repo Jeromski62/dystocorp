@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useImperativeHandle, useMemo, useState, useTransition, type Ref } from "react";
+import { useEffect, useImperativeHandle, useMemo, useRef, useState, useTransition, type Ref } from "react";
 import Image from "next/image";
-import { saveOfficer } from "./actions";
+import { Camera } from "lucide-react";
+import { removeDossierPortrait, saveOfficer, uploadDossierPortrait } from "./actions";
+import { getDossierPortraitUrl } from "@/lib/supabase/dossier-portraits";
 import { randomCharacterName } from "@/lib/random-name";
 import {
   OFFICER_RULES,
@@ -58,11 +60,13 @@ type EquipmentItem = {
 };
 
 type ExistingOfficer = {
+  id: string;
   name: string;
   backgroundId: string;
   chosenStatOptions: string[];
   powers: { powerId: string; reduced: boolean }[];
   gearItemIds: string[];
+  portraitPath: string | null;
 };
 
 type Section = "background" | "powers" | "gear";
@@ -163,6 +167,37 @@ export function OfficerBuilder({
   const [saved, setSaved] = useState(false);
   const [pending, startTransition] = useTransition();
   const [activeSection, setActiveSection] = useState<Section | null>(null);
+  const [portraitPath, setPortraitPath] = useState<string | null>(existing?.portraitPath ?? null);
+  const [portraitPending, setPortraitPending] = useState(false);
+  const [portraitError, setPortraitError] = useState<string | null>(null);
+  const portraitInputRef = useRef<HTMLInputElement>(null);
+  const officerId = existing?.id ?? null;
+
+  function handlePortraitChange(file: File) {
+    if (!officerId) return;
+    setPortraitError(null);
+    setPortraitPending(true);
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.set("file", file);
+      const result = await uploadDossierPortrait(crewId, role, officerId, formData);
+      setPortraitPending(false);
+      if (result.error) setPortraitError(result.error);
+      else setPortraitPath(result.portraitPath ?? null);
+    });
+  }
+
+  function handlePortraitRemove() {
+    if (!officerId) return;
+    setPortraitError(null);
+    setPortraitPending(true);
+    startTransition(async () => {
+      const result = await removeDossierPortrait(crewId, role, officerId);
+      setPortraitPending(false);
+      if (result.error) setPortraitError(result.error);
+      else setPortraitPath(null);
+    });
+  }
 
   const background = backgrounds.find((b) => b.id === backgroundId) ?? null;
   const backgroundBadges = background
@@ -677,8 +712,38 @@ export function OfficerBuilder({
         <h2 className="font-display text-[24px] font-medium tracking-[2.4px] text-white uppercase leading-none">Dossier</h2>
 
         <div className="flex items-start gap-4">
-          <div className="size-[112px] shrink-0 overflow-hidden border border-border bg-black/60">
-            <Image src="/dossiers/dossier_placeholder.png" alt="" width={112} height={112} className="size-full object-cover" />
+          <div className="group/portrait relative size-[112px] shrink-0 overflow-hidden border border-border bg-black/60">
+            <Image
+              src={getDossierPortraitUrl(portraitPath) ?? "/dossiers/dossier_placeholder.png"}
+              alt=""
+              width={112}
+              height={112}
+              className="size-full object-cover"
+            />
+            {officerId ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => portraitInputRef.current?.click()}
+                  disabled={portraitPending}
+                  aria-label="Bild hochladen"
+                  className="absolute inset-0 flex items-center justify-center bg-black/60 text-white opacity-0 transition-opacity group-hover/portrait:opacity-100 focus-visible:opacity-100 disabled:pointer-events-none"
+                >
+                  <Camera className="size-6" />
+                </button>
+                <input
+                  ref={portraitInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = "";
+                    if (file) handlePortraitChange(file);
+                  }}
+                />
+              </>
+            ) : null}
           </div>
           <div className="min-w-0 flex-1">
             <label htmlFor={`officer-name-${role}`} className="text-xs uppercase tracking-wide text-text-secondary">
@@ -690,6 +755,18 @@ export function OfficerBuilder({
               onChange={(e) => setName(e.target.value)}
               className="mt-1 block w-full bg-black px-2 py-1 font-display text-[24px] tracking-[2.4px] text-white uppercase focus:outline-none"
             />
+            {officerId && portraitPath ? (
+              <button
+                type="button"
+                onClick={handlePortraitRemove}
+                disabled={portraitPending}
+                className="mt-1 font-mono text-xs text-text-secondary hover:text-danger disabled:opacity-40"
+              >
+                Bild entfernen
+              </button>
+            ) : null}
+            {!officerId ? <p className="mt-1 font-mono text-xs text-text-subtle">Erst speichern, dann Bild hochladen.</p> : null}
+            {portraitError ? <p className="mt-1 font-mono text-xs text-danger">{portraitError}</p> : null}
           </div>
         </div>
 

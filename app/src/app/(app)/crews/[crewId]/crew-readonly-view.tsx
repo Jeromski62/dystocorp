@@ -4,6 +4,7 @@ import { CaptainDossier } from "./captain-dossier";
 import { CrewMemberCard } from "./crew-member-card";
 import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
 import { Button } from "@/components/ui/button";
+import { getDossierPortraitUrl } from "@/lib/supabase/dossier-portraits";
 
 type Officer = {
   name: string;
@@ -15,6 +16,7 @@ type Officer = {
   will: number;
   health: number;
   current_health: number;
+  portrait_path: string | null;
 };
 
 type SoldierType = {
@@ -36,6 +38,7 @@ type Soldier = {
   current_health: number;
   bonus_gear: { id: string; name: string } | null;
   soldier_types: SoldierType | null;
+  portrait_path: string | null;
 };
 
 type ShipUpgrade = { id: string; ship_upgrade_types: { name: string } | null };
@@ -63,6 +66,7 @@ function SoldierCard({
       subLabel={soldier.name ? type.name : soldier.is_robot ? "Robot" : null}
       health={type.health}
       currentHealth={soldier.current_health}
+      portraitUrl={getDossierPortraitUrl(soldier.portrait_path)}
     >
       <SoldierStatGrid stats={type} />
       <GearTags items={items} />

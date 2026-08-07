@@ -4,6 +4,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
+  ACCEPTED_PORTRAIT_MIME_TYPES,
+  DOSSIER_PORTRAIT_BUCKET,
+  MAX_PORTRAIT_BYTES,
+  dossierPortraitPath,
+  type DossierKind,
+} from "@/lib/supabase/dossier-portraits";
+import {
   isCampaignLootCategory,
   isSoldierEligibleGear,
   OFFICER_RULES,
@@ -393,6 +400,86 @@ export async function setSoldierBonusGear(
     .update({ bonus_gear_item_id: equipmentItemId })
     .eq("id", soldierId)
     .eq("crew_id", crewId);
+  if (error) return { error: error.message };
+
+  revalidatePath(`/crews/${crewId}`);
+  return {};
+}
+
+const DOSSIER_TABLES: Record<DossierKind, "captains" | "first_mates" | "soldiers"> = {
+  captain: "captains",
+  first_mate: "first_mates",
+  soldier: "soldiers",
+};
+
+export async function uploadDossierPortrait(
+  crewId: string,
+  kind: DossierKind,
+  dossierId: string,
+  formData: FormData
+): Promise<{ error?: string; portraitPath?: string }> {
+  const owned = await requireOwnedCrew(crewId);
+  if ("error" in owned) return owned;
+  const { supabase } = owned;
+
+  const file = formData.get("file");
+  if (!(file instanceof File)) return { error: "Keine Datei erhalten." };
+  if (!ACCEPTED_PORTRAIT_MIME_TYPES.includes(file.type as (typeof ACCEPTED_PORTRAIT_MIME_TYPES)[number])) {
+    return { error: "Nur PNG, JPEG oder WebP erlaubt." };
+  }
+  if (file.size > MAX_PORTRAIT_BYTES) {
+    return { error: "Bild ist größer als 5 MB." };
+  }
+
+  const table = DOSSIER_TABLES[kind];
+  const { data: dossier } = await supabase
+    .from(table)
+    .select("id, portrait_path")
+    .eq("id", dossierId)
+    .eq("crew_id", crewId)
+    .maybeSingle();
+  if (!dossier) return { error: "Dossier nicht gefunden." };
+
+  // Best-effort cleanup of the previous portrait -- a leftover orphaned
+  // object isn't worth failing the upload over.
+  if (dossier.portrait_path) {
+    await supabase.storage.from(DOSSIER_PORTRAIT_BUCKET).remove([dossier.portrait_path]);
+  }
+
+  const extension =
+    file.name.split(".").pop()?.toLowerCase() || (file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg");
+  const path = dossierPortraitPath(crewId, kind, dossierId, extension);
+
+  const { error: uploadError } = await supabase.storage
+    .from(DOSSIER_PORTRAIT_BUCKET)
+    .upload(path, file, { upsert: true, contentType: file.type });
+  if (uploadError) return { error: uploadError.message };
+
+  const { error: updateError } = await supabase.from(table).update({ portrait_path: path }).eq("id", dossierId).eq("crew_id", crewId);
+  if (updateError) return { error: updateError.message };
+
+  revalidatePath(`/crews/${crewId}`);
+  return { portraitPath: path };
+}
+
+export async function removeDossierPortrait(crewId: string, kind: DossierKind, dossierId: string): Promise<{ error?: string }> {
+  const owned = await requireOwnedCrew(crewId);
+  if ("error" in owned) return owned;
+  const { supabase } = owned;
+
+  const table = DOSSIER_TABLES[kind];
+  const { data: dossier } = await supabase
+    .from(table)
+    .select("id, portrait_path")
+    .eq("id", dossierId)
+    .eq("crew_id", crewId)
+    .maybeSingle();
+  if (!dossier) return { error: "Dossier nicht gefunden." };
+  if (!dossier.portrait_path) return {};
+
+  await supabase.storage.from(DOSSIER_PORTRAIT_BUCKET).remove([dossier.portrait_path]);
+
+  const { error } = await supabase.from(table).update({ portrait_path: null }).eq("id", dossierId).eq("crew_id", crewId);
   if (error) return { error: error.message };
 
   revalidatePath(`/crews/${crewId}`);
