@@ -117,6 +117,11 @@ export function RoundHud({
     combatantsByCrew.set(c.crewId, list);
   }
 
+  // Own crew(s) first, opponent(s) below -- each player only ever sees
+  // themself on top, not a fixed left-to-right order shared across viewers.
+  const ownCrews = crews.filter((c) => c.player_id === currentUserId);
+  const opponentCrews = crews.filter((c) => c.player_id !== currentUserId);
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
       <div className="flex flex-wrap items-center justify-between gap-3 border border-border bg-bg-surface p-4">
@@ -183,7 +188,7 @@ export function RoundHud({
       </div>
 
       <div className="mt-8 flex flex-col gap-6">
-        {crews.map((crew) => (
+        {ownCrews.map((crew) => (
           <div key={crew.id}>
             <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{crew.name}</h3>
             <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -193,6 +198,33 @@ export function RoundHud({
                   combatant={c}
                   onClearStatus={() => handleClearStatus(c)}
                   onAdjustHealth={(delta) => handleAdjustHealth(c, delta)}
+                  disabled={pending}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {ownCrews.length > 0 && opponentCrews.length > 0 ? (
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="font-display text-sm font-bold tracking-[0.3em] text-corp-accent">VS</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+        ) : null}
+
+        {opponentCrews.map((crew) => (
+          <div key={crew.id}>
+            <h3 className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">{crew.name}</h3>
+            <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {(combatantsByCrew.get(crew.id) ?? []).map((c) => (
+                <RosterTile
+                  key={`${c.kind}-${c.id}`}
+                  combatant={c}
+                  onClearStatus={() => handleClearStatus(c)}
+                  // Read-only for the opponent's units -- HP write access is
+                  // owner-only (mirrors the adjust_combatant_health RPC's
+                  // owns_crew() check), so no handler is passed here.
                   disabled={pending}
                 />
               ))}
@@ -229,7 +261,7 @@ function RosterTile({
 }: {
   combatant: PlayCombatant;
   onClearStatus: () => void;
-  onAdjustHealth: (delta: number) => void;
+  onAdjustHealth?: (delta: number) => void;
   disabled: boolean;
 }) {
   const roleLabel = combatant.kind === "captain" ? "Captain" : combatant.kind === "first_mate" ? "First Mate" : "Soldier";
