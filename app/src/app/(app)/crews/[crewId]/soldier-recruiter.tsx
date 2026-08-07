@@ -51,9 +51,9 @@ type Soldier = {
 
 type TableType = "specialist" | "standard";
 
-const TAB_LABEL: Record<TableType, string> = { specialist: "Senior Rollen", standard: "Bewerber" };
-const ADD_LABEL: Record<TableType, string> = { specialist: "Senior Hinzufügen", standard: "Bewerber Hinzufügen" };
-const EMPTY_LABEL: Record<TableType, string> = { specialist: "Wähle aus Senior-Liste", standard: "Wähle aus Bewerberliste" };
+const TAB_LABEL: Record<TableType, string> = { specialist: "Senior Rollen", standard: "Juniors" };
+const ADD_LABEL: Record<TableType, string> = { specialist: "Senior Hinzufügen", standard: "Juniors Hinzufügen" };
+const EMPTY_LABEL: Record<TableType, string> = { specialist: "Wähle aus Senior-Liste", standard: "Wähle aus Junior-Liste" };
 
 const EMPTY_CONTEXT: SoldierGearContext = { weaponKeys: [], hasDeck: false, hasPicks: false };
 
