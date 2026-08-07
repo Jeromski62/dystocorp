@@ -15,6 +15,7 @@ import {
   requestEndRound,
   setActiveCrew,
   setCombatantStatus,
+  type RoundStateRow,
 } from "./actions";
 import type { PlayCombatant } from "./load-play-data";
 import { AimAssistCalculator } from "./aim-assist/calculator";
@@ -39,6 +40,7 @@ export function RoundHud({
   crews,
   combatants,
   currentUserId,
+  onRoundStateChange,
 }: {
   campaignId: string;
   missionId: string;
@@ -46,47 +48,65 @@ export function RoundHud({
   crews: Crew[];
   combatants: PlayCombatant[];
   currentUserId: string;
+  onRoundStateChange: (row: RoundStateRow) => void;
 }) {
   const [pending, startTransition] = useTransition();
   const [calculatorOpen, setCalculatorOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const requestedByMe = roundState.end_round_requested_by === currentUserId;
   const requested = roundState.end_round_requested_by !== null;
 
   function handleSetActiveCrew(crewId: string | null) {
+    setError(null);
     startTransition(async () => {
-      await setActiveCrew(missionId, crewId);
+      const result = await setActiveCrew(missionId, crewId);
+      if (result.error) setError(result.error);
+      else if (result.data) onRoundStateChange(result.data);
     });
   }
 
   function handleRequestEndRound() {
+    setError(null);
     startTransition(async () => {
-      await requestEndRound(missionId);
+      const result = await requestEndRound(missionId);
+      if (result.error) setError(result.error);
+      else if (result.data) onRoundStateChange(result.data);
     });
   }
 
   function handleCancelRequest() {
+    setError(null);
     startTransition(async () => {
-      await cancelEndRoundRequest(missionId);
+      const result = await cancelEndRoundRequest(missionId);
+      if (result.error) setError(result.error);
+      else if (result.data) onRoundStateChange(result.data);
     });
   }
 
   function handleConfirmEndRound() {
+    setError(null);
     startTransition(async () => {
-      await confirmEndRound(missionId);
+      const result = await confirmEndRound(missionId);
+      if (result.error) setError(result.error);
+      else if (result.data) onRoundStateChange(result.data);
     });
   }
 
   function handleMarkLastRound() {
     if (!confirm("Debrief-Phase starten? Das gilt für beide Spieler.")) return;
+    setError(null);
     startTransition(async () => {
-      await markLastRound(missionId);
+      const result = await markLastRound(missionId);
+      if (result.error) setError(result.error);
+      else if (result.data) onRoundStateChange(result.data);
     });
   }
 
   function handleClearStatus(combatant: PlayCombatant) {
+    setError(null);
     startTransition(async () => {
-      await setCombatantStatus({
+      const result = await setCombatantStatus({
         campaignId,
         missionId,
         crewId: combatant.crewId,
@@ -95,12 +115,14 @@ export function RoundHud({
         isStunned: false,
         weaponJammed: false,
       });
+      if (result.error) setError(result.error);
     });
   }
 
   function handleAdjustHealth(combatant: PlayCombatant, delta: number) {
+    setError(null);
     startTransition(async () => {
-      await adjustCombatantHealth({
+      const result = await adjustCombatantHealth({
         campaignId,
         missionId,
         crewId: combatant.crewId,
@@ -108,6 +130,7 @@ export function RoundHud({
         id: combatant.id,
         delta,
       });
+      if (result.error) setError(result.error);
     });
   }
 
@@ -125,6 +148,8 @@ export function RoundHud({
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
+      {error ? <p className="mb-4 font-mono text-sm text-danger">{error}</p> : null}
+
       <div className="flex flex-wrap items-center justify-between gap-3 border border-border bg-bg-surface p-4">
         <div>
           <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Runde</span>
@@ -133,6 +158,9 @@ export function RoundHud({
 
         <div className="flex flex-col gap-1">
           <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Aktiv</span>
+          <p className="max-w-[220px] font-mono text-[11px] text-text-subtle">
+            Nur eine geteilte Markierung, wer gerade dran ist -- ohne eigene Spielmechanik, blockiert oder erlaubt nichts.
+          </p>
           <div className="flex flex-wrap gap-1.5">
             {crews.map((crew) => (
               <button

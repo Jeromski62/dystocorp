@@ -10,11 +10,19 @@ import { createClient } from "./client";
 // and applies the raw postgres_changes payload straight into local state,
 // no round-trip through the server -- fine for a small, self-contained row
 // like mission_round_state.
+//
+// Also returns a setter so the acting client can apply its own mutation's
+// result immediately instead of waiting on the broadcast to round-trip back
+// -- Realtime delivery isn't instant (and, if misconfigured, might not
+// arrive at all), so without this the *initiating* player's own click could
+// sit there looking like nothing happened even though the write succeeded.
+// The eventual postgres_changes event for the same row is harmless/idempotent
+// on top of this, and is still what delivers the update to the other player.
 export function useRealtimeRow<T extends Record<string, unknown>>(
   table: string,
   filter: { column: string; value: string },
   initial: T
-): T {
+): [T, (next: T) => void] {
   const [row, setRow] = useState<T>(initial);
 
   useEffect(() => {
@@ -42,5 +50,5 @@ export function useRealtimeRow<T extends Record<string, unknown>>(
     };
   }, [table, filter.column, filter.value]);
 
-  return row;
+  return [row, setRow];
 }

@@ -24,7 +24,7 @@ export function PlayModeShell({
   currentUserId: string;
 }) {
   const { mission, roundState: initialRoundState, crews, combatants, combatLog, crewSessionResults } = data;
-  const roundState = useRealtimeRow<RoundStateRow>(
+  const [roundState, setRoundState] = useRealtimeRow<RoundStateRow>(
     "mission_round_state",
     { column: "mission_id", value: mission.id },
     initialRoundState as RoundStateRow
@@ -41,7 +41,11 @@ export function PlayModeShell({
       </div>
 
       {roundState.phase === "setup" ? (
-        <SetupScreen missionId={mission.id} setupText={mission.job_board_missions?.setup_text ?? null} />
+        <SetupScreen
+          missionId={mission.id}
+          setupText={mission.job_board_missions?.setup_text ?? null}
+          onRoundStateChange={setRoundState}
+        />
       ) : null}
 
       {roundState.phase === "round" ? (
@@ -52,6 +56,7 @@ export function PlayModeShell({
           crews={crews}
           combatants={combatants}
           currentUserId={currentUserId}
+          onRoundStateChange={setRoundState}
         />
       ) : null}
 

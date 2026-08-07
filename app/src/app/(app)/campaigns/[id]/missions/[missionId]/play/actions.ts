@@ -8,59 +8,85 @@ export type CombatantKind = "captain" | "first_mate" | "soldier";
 
 // -- Round Sequence container (PRD Phase 2, steps 8-11) --------------------
 // Deliberately minimal: no activation-order/action-economy enforcement
-// (that's the separate, still-unwritten Round Sequence detail PRD). All of
-// these only touch `mission_round_state`, which is Realtime-subscribed on
-// the client (use-realtime-row.ts) -- no revalidatePath needed, every
-// subscriber (including the caller) picks up the change from the broadcast.
+// (that's the separate, still-unwritten Round Sequence detail PRD).
+//
+// Each of these returns the updated row so the *acting* client can apply it
+// to its own local state immediately (see useRealtimeRow) instead of
+// depending entirely on the Realtime broadcast round-tripping back to
+// itself -- that broadcast is still what delivers the update to the other
+// player, but waiting on it for your own click made a successful write look
+// like a no-op if the broadcast was slow (or, if Realtime were ever
+// misconfigured, made it look completely broken).
+export type RoundStateRow = {
+  mission_id: string;
+  phase: string;
+  round_number: number;
+  active_crew_id: string | null;
+  end_round_requested_by: string | null;
+  end_round_requested_at: string | null;
+};
 
-export async function startRoundSequence(missionId: string): Promise<{ error?: string }> {
+const ROUND_STATE_COLUMNS = "mission_id, phase, round_number, active_crew_id, end_round_requested_by, end_round_requested_at";
+
+export async function startRoundSequence(missionId: string): Promise<{ error?: string; data?: RoundStateRow }> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Nicht eingeloggt." };
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("mission_round_state")
     .update({ phase: "round", round_number: 1 })
-    .eq("mission_id", missionId);
+    .eq("mission_id", missionId)
+    .select(ROUND_STATE_COLUMNS)
+    .single();
   if (error) return { error: error.message };
-  return {};
+  return { data };
 }
 
-export async function setActiveCrew(missionId: string, crewId: string | null): Promise<{ error?: string }> {
+export async function setActiveCrew(missionId: string, crewId: string | null): Promise<{ error?: string; data?: RoundStateRow }> {
   const supabase = await createClient();
-  const { error } = await supabase.from("mission_round_state").update({ active_crew_id: crewId }).eq("mission_id", missionId);
+  const { data, error } = await supabase
+    .from("mission_round_state")
+    .update({ active_crew_id: crewId })
+    .eq("mission_id", missionId)
+    .select(ROUND_STATE_COLUMNS)
+    .single();
   if (error) return { error: error.message };
-  return {};
+  return { data };
 }
 
-export async function requestEndRound(missionId: string): Promise<{ error?: string }> {
+export async function requestEndRound(missionId: string): Promise<{ error?: string; data?: RoundStateRow }> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Nicht eingeloggt." };
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("mission_round_state")
     .update({ end_round_requested_by: user.id, end_round_requested_at: new Date().toISOString() })
-    .eq("mission_id", missionId);
+    .eq("mission_id", missionId)
+    .select(ROUND_STATE_COLUMNS)
+    .single();
   if (error) return { error: error.message };
-  return {};
+  return { data };
 }
 
-export async function cancelEndRoundRequest(missionId: string): Promise<{ error?: string }> {
+export async function cancelEndRoundRequest(missionId: string): Promise<{ error?: string; data?: RoundStateRow }> {
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("mission_round_state")
     .update({ end_round_requested_by: null, end_round_requested_at: null })
-    .eq("mission_id", missionId);
+    .eq("mission_id", missionId)
+    .select(ROUND_STATE_COLUMNS)
+    .single();
   if (error) return { error: error.message };
-  return {};
+  return { data };
 }
 
-export async function confirmEndRound(missionId: string): Promise<{ error?: string }> {
+export async function confirmEndRound(missionId: string): Promise<{ error?: string; data?: RoundStateRow }> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -77,23 +103,30 @@ export async function confirmEndRound(missionId: string): Promise<{ error?: stri
     return { error: "Das Rundenende muss von der anderen Person bestätigt werden." };
   }
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("mission_round_state")
     .update({
       round_number: state.round_number + 1,
       end_round_requested_by: null,
       end_round_requested_at: null,
     })
-    .eq("mission_id", missionId);
+    .eq("mission_id", missionId)
+    .select(ROUND_STATE_COLUMNS)
+    .single();
   if (error) return { error: error.message };
-  return {};
+  return { data };
 }
 
-export async function markLastRound(missionId: string): Promise<{ error?: string }> {
+export async function markLastRound(missionId: string): Promise<{ error?: string; data?: RoundStateRow }> {
   const supabase = await createClient();
-  const { error } = await supabase.from("mission_round_state").update({ phase: "debrief" }).eq("mission_id", missionId);
+  const { data, error } = await supabase
+    .from("mission_round_state")
+    .update({ phase: "debrief" })
+    .eq("mission_id", missionId)
+    .select(ROUND_STATE_COLUMNS)
+    .single();
   if (error) return { error: error.message };
-  return {};
+  return { data };
 }
 
 // -- Combatant status (manual clear, since full activation bookkeeping is
