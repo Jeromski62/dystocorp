@@ -7,6 +7,7 @@ import { CampaignDangerZone } from "./campaign-danger-zone";
 import { ImportCrewCard } from "./import-crew-card";
 import { corpThemeSlug } from "@/lib/corp-theme";
 import { CrewCard } from "@/components/crew-card";
+import { Button } from "@/components/ui/button";
 
 export default async function CampaignDetailPage({
   params,
@@ -64,8 +65,11 @@ export default async function CampaignDetailPage({
               </span>
             ) : null}
           </div>
-          <div className="shrink-0">
+          <div className="flex shrink-0 items-start gap-3">
             <CampaignDangerZone campaignId={campaign.id} campaignName={campaign.name} archived={!!campaign.archived_at} />
+            <Link href={`/campaigns/${campaign.id}/missions`}>
+              <Button type="button">Zu den Missionen</Button>
+            </Link>
           </div>
         </div>
 
@@ -74,9 +78,6 @@ export default async function CampaignDetailPage({
             Kampagnen-ID zum Einladen:
             <CopyId id={campaign.id} />
           </span>
-          <Link href={`/campaigns/${campaign.id}/missions`} className="text-corp-accent hover:underline">
-            Missionen →
-          </Link>
         </div>
 
         <div className="mt-6 grid grid-cols-3 gap-3">
