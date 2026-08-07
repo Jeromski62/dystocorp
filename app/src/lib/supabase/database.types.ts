@@ -907,6 +907,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "mission_combat_log_logged_by_fkey"
+            columns: ["logged_by"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "mission_combat_log_mission_id_fkey"
             columns: ["mission_id"]
             isOneToOne: false
@@ -1461,7 +1468,7 @@ export type Database = {
       apply_shooting_resolution: {
         Args: {
           p_attack_type: string
-          p_damage: number | null
+          p_damage: number
           p_mission_id: string
           p_result: string
           p_roll_details: Json
@@ -1472,11 +1479,11 @@ export type Database = {
           p_shooter_weapon_jammed: boolean
           p_target_becomes_stunned: boolean
           p_target_becomes_wounded: boolean
-          p_target_crew_id: string | null
+          p_target_crew_id: string
           p_target_died: boolean
-          p_target_id: string | null
-          p_target_kind: string | null
-          p_weapon_equipment_item_id: string | null
+          p_target_id: string
+          p_target_kind: string
+          p_weapon_equipment_item_id: string
         }
         Returns: string
       }
