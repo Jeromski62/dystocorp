@@ -1,8 +1,27 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import { createClient } from "@/lib/supabase/server";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { corpThemeSlug } from "@/lib/corp-theme";
+
+// lore_markdown may contain #-headings, **bold**, and single-newline-separated
+// lines the author expects to render as line breaks (not collapsed into one
+// paragraph, CommonMark's default) -- remark-breaks turns those into <br>.
+// Headings/bold/paragraphs are restyled to match the design system instead
+// of react-markdown's unstyled defaults.
+const LORE_MARKDOWN_COMPONENTS = {
+  h1: ({ children }: { children?: ReactNode }) => (
+    <h2 className="mt-6 font-display text-lg tracking-[0.1em] text-text-default uppercase first:mt-0">{children}</h2>
+  ),
+  h2: ({ children }: { children?: ReactNode }) => (
+    <h3 className="mt-5 font-display text-base tracking-[0.08em] text-text-default uppercase">{children}</h3>
+  ),
+  p: ({ children }: { children?: ReactNode }) => <p className="mt-4 text-sm text-text-secondary first:mt-0">{children}</p>,
+  strong: ({ children }: { children?: ReactNode }) => <strong className="font-semibold text-text-default">{children}</strong>,
+};
 
 export default async function CorpDetailPage({
   params,
@@ -36,7 +55,11 @@ export default async function CorpDetailPage({
           </div>
         </div>
 
-        <p className="mt-6 whitespace-pre-line text-sm text-text-secondary">{corp.lore_markdown}</p>
+        <div className="mt-6">
+          <ReactMarkdown remarkPlugins={[remarkBreaks]} components={LORE_MARKDOWN_COMPONENTS}>
+            {corp.lore_markdown}
+          </ReactMarkdown>
+        </div>
 
         <Link
           href={`/intel/corporations/${corp.id}/dossiers`}
