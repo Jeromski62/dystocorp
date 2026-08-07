@@ -106,10 +106,9 @@ function Badge({ statusKey }: { statusKey: StatusKey }) {
 
 // Per Figma redesign (node 2046:441): icon + label chip, status-color wash
 // background (24% alpha, preserved from the mockup's rgba(...,0.24)) --
-// replaces the old border+English-label version. Health-vs-current-health
-// classification is unchanged (0 -> out, below max -> injured, else fit).
-// Stunned/weaponJammed are independent combat flags (Aim Assist) and render
-// as additional badges alongside the health status, not instead of it.
+// replaces the old border+English-label version. Stunned/weaponJammed are
+// independent combat flags (Aim Assist) and render as additional badges
+// alongside the health status, not instead of it.
 export function StatusBadge({
   currentHealth,
   health,
@@ -121,7 +120,14 @@ export function StatusBadge({
   isStunned?: boolean;
   weaponJammed?: boolean;
 }) {
-  const healthStatus: StatusKey = currentHealth <= 0 ? "out" : currentHealth < health ? "injured" : "fit";
+  // "Injured" tracks the rulebook's Badly Wounded threshold (p.68: a figure
+  // that would start its next game at half Health), not merely any HP lost
+  // -- so a figure that's taken one point of damage still reads as Fit.
+  // Half is rounded up (17 Health -> injured at 9 or below) since the rules
+  // don't spell out a rounding direction and this project has no other
+  // "half stat" precedent to match.
+  const badlyWoundedThreshold = Math.ceil(health / 2);
+  const healthStatus: StatusKey = currentHealth <= 0 ? "out" : currentHealth <= badlyWoundedThreshold ? "injured" : "fit";
   const active: StatusKey[] = [healthStatus];
   if (isStunned) active.push("stunned");
   if (weaponJammed) active.push("weaponJammed");
