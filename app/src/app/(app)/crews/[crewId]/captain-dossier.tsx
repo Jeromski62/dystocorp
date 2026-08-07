@@ -1,5 +1,5 @@
 import { CrewMemberCard } from "./crew-member-card";
-import { SoldierStatGrid } from "./soldier-stat-grid";
+import { StatLine, type StatColumn } from "@/components/stat-line";
 import { getDossierPortraitUrl } from "@/lib/supabase/dossier-portraits";
 
 type Captain = {
@@ -13,6 +13,8 @@ type Captain = {
   health: number;
   current_health: number;
   portrait_path: string | null;
+  is_stunned: boolean;
+  weapon_jammed: boolean;
 };
 
 // Read-only summary of an officer's current combat stats, shown above the
@@ -28,6 +30,14 @@ export function CaptainDossier({
   backgroundName: string | null;
   roleLabel?: string;
 }) {
+  const statColumns: StatColumn[] = [
+    { label: "M", value: `${captain.move}"` },
+    { label: "F", value: `+${captain.fight}` },
+    { label: "S", value: `+${captain.shoot}` },
+    { label: "A", value: String(captain.armour) },
+    { label: "W", value: `+${captain.will}` },
+  ];
+
   return (
     <CrewMemberCard
       roleLabel={roleLabel}
@@ -37,8 +47,10 @@ export function CaptainDossier({
       health={captain.health}
       currentHealth={captain.current_health}
       portraitUrl={getDossierPortraitUrl(captain.portrait_path)}
+      isStunned={captain.is_stunned}
+      weaponJammed={captain.weapon_jammed}
     >
-      <SoldierStatGrid stats={captain} />
+      <StatLine columns={statColumns} />
     </CrewMemberCard>
   );
 }

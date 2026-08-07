@@ -55,21 +55,21 @@ export async function loadCrewDetail(crewId: string) {
     supabase
       .from("captains")
       .select(
-        "id, name, background_id, chosen_stat_options, level, move, fight, shoot, armour, will, health, current_health, portrait_path, captain_powers(power_id, is_core, reduced), captain_gear(equipment_item_id)"
+        "id, name, background_id, chosen_stat_options, level, move, fight, shoot, armour, will, health, current_health, portrait_path, is_stunned, weapon_jammed, captain_powers(power_id, is_core, reduced), captain_gear(equipment_item_id)"
       )
       .eq("crew_id", crewId)
       .maybeSingle(),
     supabase
       .from("first_mates")
       .select(
-        "id, name, background_id, chosen_stat_options, move, fight, shoot, armour, will, health, current_health, portrait_path, first_mate_powers(power_id, is_core, reduced), first_mate_gear(equipment_item_id)"
+        "id, name, background_id, chosen_stat_options, move, fight, shoot, armour, will, health, current_health, portrait_path, is_stunned, weapon_jammed, first_mate_powers(power_id, is_core, reduced), first_mate_gear(equipment_item_id)"
       )
       .eq("crew_id", crewId)
       .maybeSingle(),
     supabase
       .from("soldiers")
       .select(
-        "id, name, is_robot, current_health, bonus_gear_item_id, portrait_path, soldier_types(id, name, table_type, move, fight, shoot, armour, will, health, cost_cr), bonus_gear:equipment_items(id, name)"
+        "id, name, is_robot, current_health, bonus_gear_item_id, portrait_path, is_stunned, weapon_jammed, soldier_types(id, name, table_type, move, fight, shoot, armour, will, health, cost_cr), bonus_gear:equipment_items(id, name)"
       )
       .eq("crew_id", crewId)
       .order("sort_order"),

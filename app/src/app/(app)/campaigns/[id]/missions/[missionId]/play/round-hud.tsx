@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -18,6 +19,8 @@ import {
 import type { PlayCombatant } from "./load-play-data";
 import { AimAssistCalculator } from "./aim-assist/calculator";
 import { StatusBadge } from "@/components/status-badge";
+import { HealthTracker } from "@/components/health-tracker";
+import { StatLine, type StatColumn } from "@/components/stat-line";
 
 type Crew = { id: string; name: string; player_id: string };
 
@@ -213,6 +216,11 @@ export function RoundHud({
   );
 }
 
+// Per Figma "Dysto-Corp-Rough-Concept" Dossier redesign (node 2150:807),
+// same layout language as the read-only crew view's CrewMemberCard --
+// portrait, name/subtitle header, status badge, segmented health tracker --
+// but with the -/+ buttons wired to live since this is the interactive
+// mission HUD, not a read-only summary.
 function RosterTile({
   combatant,
   onClearStatus,
@@ -224,61 +232,65 @@ function RosterTile({
   onAdjustHealth: (delta: number) => void;
   disabled: boolean;
 }) {
-  const healthPct = Math.max(0, Math.min(100, (combatant.currentHealth / combatant.health) * 100));
   const roleLabel = combatant.kind === "captain" ? "Captain" : combatant.kind === "first_mate" ? "First Mate" : "Soldier";
+  const statColumns: StatColumn[] = [
+    { label: "M", value: `${combatant.move}"` },
+    { label: "F", value: `+${combatant.fight}` },
+    { label: "S", value: `+${combatant.shoot}` },
+    { label: "A", value: String(combatant.armour) },
+    { label: "W", value: `+${combatant.will}` },
+  ];
 
   return (
-    <div className="border border-border bg-bg-raised p-3">
-      <div className="flex items-baseline justify-between">
-        <span className="font-mono text-[12px] tracking-[0.08em] text-text-secondary uppercase">{roleLabel}</span>
-        {combatant.isRobot ? <span className="font-mono text-[12px] text-text-subtle">Robot</span> : null}
-      </div>
-      <p className="font-display text-base font-semibold text-text-default">{combatant.name}</p>
-      <div className="mt-1.5 flex items-center justify-between gap-2">
-        <span className="font-mono text-[12px] text-text-secondary">HP</span>
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            disabled={disabled || combatant.currentHealth <= 0}
-            onClick={() => onAdjustHealth(-1)}
-            aria-label="HP verringern"
-            className="flex size-5 items-center justify-center border border-border text-text-secondary hover:border-corp-accent hover:text-corp-accent disabled:opacity-30"
-          >
-            −
-          </button>
-          <span className="font-mono text-[12px] text-text-secondary">
-            {combatant.currentHealth} / {combatant.health}
-          </span>
-          <button
-            type="button"
-            disabled={disabled || combatant.currentHealth >= combatant.health}
-            onClick={() => onAdjustHealth(1)}
-            aria-label="HP erhöhen"
-            className="flex size-5 items-center justify-center border border-border text-text-secondary hover:border-corp-accent hover:text-corp-accent disabled:opacity-30"
-          >
-            +
-          </button>
+    <div className="overflow-hidden border border-border bg-bg-raised">
+      <div className="flex items-stretch justify-between gap-3 border-b border-border p-3">
+        <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
+          <div className="min-w-0">
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="font-mono text-[12px] tracking-[0.08em] text-text-secondary uppercase">{roleLabel}</span>
+              {combatant.isRobot ? <span className="font-mono text-[12px] text-text-subtle">Robot</span> : null}
+            </div>
+            <p className="mt-1 truncate font-display text-lg font-semibold text-text-default uppercase">{combatant.name}</p>
+            {combatant.subLabel && combatant.subLabel !== roleLabel ? (
+              <p className="mt-0.5 truncate font-mono text-[12px] text-text-subtle">{combatant.subLabel}</p>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <StatusBadge
+              currentHealth={combatant.currentHealth}
+              health={combatant.health}
+              isStunned={combatant.isStunned}
+              weaponJammed={combatant.weaponJammed}
+            />
+            {combatant.isStunned || combatant.weaponJammed ? (
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={onClearStatus}
+                className="text-[11px] text-text-secondary hover:text-corp-accent"
+              >
+                zurücksetzen
+              </button>
+            ) : null}
+          </div>
         </div>
-      </div>
-      <div className="mt-1 h-[5px] border border-corp-accent/22 bg-black/40">
-        <div className="h-full bg-corp-accent" style={{ width: `${healthPct}%` }} />
+        <div className="size-[88px] shrink-0 overflow-hidden border border-border bg-black/60">
+          <Image
+            src={combatant.portraitUrl ?? "/dossiers/dossier_placeholder.png"}
+            alt=""
+            width={88}
+            height={88}
+            className="size-full object-cover"
+          />
+        </div>
       </div>
 
-      {(combatant.currentHealth < combatant.health || combatant.isStunned || combatant.weaponJammed) && (
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          <StatusBadge
-            currentHealth={combatant.currentHealth}
-            health={combatant.health}
-            isStunned={combatant.isStunned}
-            weaponJammed={combatant.weaponJammed}
-          />
-          {combatant.isStunned || combatant.weaponJammed ? (
-            <button type="button" disabled={disabled} onClick={onClearStatus} className="text-[11px] text-text-secondary hover:text-corp-accent">
-              zurücksetzen
-            </button>
-          ) : null}
+      <div className="p-3">
+        <HealthTracker health={combatant.health} currentHealth={combatant.currentHealth} onAdjust={onAdjustHealth} disabled={disabled} />
+        <div className="mt-3">
+          <StatLine columns={statColumns} />
         </div>
-      )}
+      </div>
     </div>
   );
 }

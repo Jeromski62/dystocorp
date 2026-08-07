@@ -2,7 +2,8 @@ import Link from "next/link";
 import { CorpEmblem } from "@/components/corp-emblem";
 import { CaptainDossier } from "./captain-dossier";
 import { CrewMemberCard } from "./crew-member-card";
-import { SoldierStatGrid, GearTags } from "./soldier-stat-grid";
+import { StatLine, type StatColumn } from "@/components/stat-line";
+import { GearTags } from "./soldier-stat-grid";
 import { Button } from "@/components/ui/button";
 import { getDossierPortraitUrl } from "@/lib/supabase/dossier-portraits";
 
@@ -17,6 +18,8 @@ type Officer = {
   health: number;
   current_health: number;
   portrait_path: string | null;
+  is_stunned: boolean;
+  weapon_jammed: boolean;
 };
 
 type SoldierType = {
@@ -39,6 +42,8 @@ type Soldier = {
   bonus_gear: { id: string; name: string } | null;
   soldier_types: SoldierType | null;
   portrait_path: string | null;
+  is_stunned: boolean;
+  weapon_jammed: boolean;
 };
 
 type ShipUpgrade = { id: string; ship_upgrade_types: { name: string } | null };
@@ -59,6 +64,14 @@ function SoldierCard({
     ...(soldier.bonus_gear ? [{ name: `${soldier.bonus_gear.name} (Bonus)`, quantity: 1 }] : []),
   ];
 
+  const statColumns: StatColumn[] = [
+    { label: "M", value: `${type.move}"` },
+    { label: "F", value: `+${type.fight}` },
+    { label: "S", value: `+${type.shoot}` },
+    { label: "A", value: String(type.armour) },
+    { label: "W", value: `+${type.will}` },
+  ];
+
   return (
     <CrewMemberCard
       roleLabel={type.table_type === "specialist" ? "Specialist" : "Standard"}
@@ -67,8 +80,10 @@ function SoldierCard({
       health={type.health}
       currentHealth={soldier.current_health}
       portraitUrl={getDossierPortraitUrl(soldier.portrait_path)}
+      isStunned={soldier.is_stunned}
+      weaponJammed={soldier.weapon_jammed}
     >
-      <SoldierStatGrid stats={type} />
+      <StatLine columns={statColumns} />
       <GearTags items={items} />
     </CrewMemberCard>
   );

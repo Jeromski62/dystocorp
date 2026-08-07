@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getDossierPortraitUrl } from "@/lib/supabase/dossier-portraits";
 
 export type CombatantGearItem = { id: string; name: string; category: string; damageModifier: string | null };
 
@@ -10,15 +11,19 @@ export type PlayCombatant = {
   crewId: string;
   crewName: string;
   name: string;
+  subLabel: string | null;
+  move: number;
   shoot: number;
   fight: number;
   armour: number;
+  will: number;
   health: number;
   currentHealth: number;
   isRobot: boolean;
   isStunned: boolean;
   weaponJammed: boolean;
   lostEyeStacks: number;
+  portraitUrl: string | null;
   gear: CombatantGearItem[];
 };
 
@@ -85,21 +90,21 @@ export async function loadPlayModeData(missionId: string) {
         supabase
           .from("captains")
           .select(
-            "id, name, shoot, fight, armour, health, current_health, is_stunned, weapon_jammed, permanent_injuries, captain_gear(equipment_items(id, name, category, damage_modifier))"
+            "id, name, move, shoot, fight, armour, will, health, current_health, is_stunned, weapon_jammed, permanent_injuries, portrait_path, captain_gear(equipment_items(id, name, category, damage_modifier))"
           )
           .eq("crew_id", crew.id)
           .maybeSingle(),
         supabase
           .from("first_mates")
           .select(
-            "id, name, shoot, fight, armour, health, current_health, is_stunned, weapon_jammed, permanent_injuries, first_mate_gear(equipment_items(id, name, category, damage_modifier))"
+            "id, name, move, shoot, fight, armour, will, health, current_health, is_stunned, weapon_jammed, permanent_injuries, portrait_path, first_mate_gear(equipment_items(id, name, category, damage_modifier))"
           )
           .eq("crew_id", crew.id)
           .maybeSingle(),
         supabase
           .from("soldiers")
           .select(
-            "id, name, is_robot, current_health, is_stunned, weapon_jammed, permanent_injuries, soldier_types(name, shoot, fight, armour, health, soldier_type_gear(equipment_items(id, name, category, damage_modifier))), bonus_gear:equipment_items(id, name, category, damage_modifier)"
+            "id, name, is_robot, current_health, is_stunned, weapon_jammed, permanent_injuries, portrait_path, soldier_types(name, move, shoot, fight, armour, will, health, soldier_type_gear(equipment_items(id, name, category, damage_modifier))), bonus_gear:equipment_items(id, name, category, damage_modifier)"
           )
           .eq("crew_id", crew.id)
           .order("sort_order"),
@@ -114,15 +119,19 @@ export async function loadPlayModeData(missionId: string) {
           crewId: crew.id,
           crewName: crew.name,
           name: captain.name,
+          subLabel: "Captain",
+          move: captain.move,
           shoot: captain.shoot,
           fight: captain.fight,
           armour: captain.armour,
+          will: captain.will,
           health: captain.health,
           currentHealth: captain.current_health,
           isRobot: false,
           isStunned: captain.is_stunned,
           weaponJammed: captain.weapon_jammed,
           lostEyeStacks: lostEyeStacksFrom(captain.permanent_injuries),
+          portraitUrl: getDossierPortraitUrl(captain.portrait_path),
           gear: (captain.captain_gear ?? []).map((g) => toGearItem(g.equipment_items)).filter((g): g is CombatantGearItem => g !== null),
         });
       }
@@ -134,15 +143,19 @@ export async function loadPlayModeData(missionId: string) {
           crewId: crew.id,
           crewName: crew.name,
           name: firstMate.name,
+          subLabel: "First Mate",
+          move: firstMate.move,
           shoot: firstMate.shoot,
           fight: firstMate.fight,
           armour: firstMate.armour,
+          will: firstMate.will,
           health: firstMate.health,
           currentHealth: firstMate.current_health,
           isRobot: false,
           isStunned: firstMate.is_stunned,
           weaponJammed: firstMate.weapon_jammed,
           lostEyeStacks: lostEyeStacksFrom(firstMate.permanent_injuries),
+          portraitUrl: getDossierPortraitUrl(firstMate.portrait_path),
           gear: (firstMate.first_mate_gear ?? [])
             .map((g) => toGearItem(g.equipment_items))
             .filter((g): g is CombatantGearItem => g !== null),
@@ -165,15 +178,19 @@ export async function loadPlayModeData(missionId: string) {
           crewId: crew.id,
           crewName: crew.name,
           name: soldier.name ?? soldier.soldier_types.name,
+          subLabel: soldier.name ? soldier.soldier_types.name : soldier.is_robot ? "Robot" : null,
+          move: soldier.soldier_types.move,
           shoot: soldier.soldier_types.shoot,
           fight: soldier.soldier_types.fight,
           armour: soldier.soldier_types.armour,
+          will: soldier.soldier_types.will,
           health: soldier.soldier_types.health,
           currentHealth: soldier.current_health,
           isRobot: soldier.is_robot,
           isStunned: soldier.is_stunned,
           weaponJammed: soldier.weapon_jammed,
           lostEyeStacks: lostEyeStacksFrom(soldier.permanent_injuries),
+          portraitUrl: getDossierPortraitUrl(soldier.portrait_path),
           gear,
         });
       }
