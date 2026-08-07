@@ -147,6 +147,16 @@ export function EmployeeCard({
               </button>
             )}
             <p className="font-display text-[24px] tracking-[2.4px] text-white/50 uppercase">{soldier.soldier_types.name}</p>
+            {portraitUrl ? (
+              <button
+                type="button"
+                onClick={onPortraitRemove}
+                disabled={pending}
+                className="mt-1 font-mono text-xs text-text-secondary hover:text-danger disabled:opacity-40"
+              >
+                Bild entfernen
+              </button>
+            ) : null}
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
@@ -168,7 +178,6 @@ export function EmployeeCard({
                 <MoreVertical />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                {portraitUrl ? <DropdownMenuItem onClick={onPortraitRemove}>Bild entfernen</DropdownMenuItem> : null}
                 <DropdownMenuItem
                   variant="destructive"
                   onClick={() => {

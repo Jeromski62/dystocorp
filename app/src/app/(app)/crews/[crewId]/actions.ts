@@ -477,7 +477,8 @@ export async function removeDossierPortrait(crewId: string, kind: DossierKind, d
   if (!dossier) return { error: "Dossier nicht gefunden." };
   if (!dossier.portrait_path) return {};
 
-  await supabase.storage.from(DOSSIER_PORTRAIT_BUCKET).remove([dossier.portrait_path]);
+  const { error: removeError } = await supabase.storage.from(DOSSIER_PORTRAIT_BUCKET).remove([dossier.portrait_path]);
+  if (removeError) return { error: removeError.message };
 
   const { error } = await supabase.from(table).update({ portrait_path: null }).eq("id", dossierId).eq("crew_id", crewId);
   if (error) return { error: error.message };
