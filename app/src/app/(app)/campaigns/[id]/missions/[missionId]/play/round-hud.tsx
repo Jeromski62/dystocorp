@@ -13,7 +13,6 @@ import {
   confirmEndRound,
   markLastRound,
   requestEndRound,
-  setActiveCrew,
   setCombatantStatus,
   type RoundStateRow,
 } from "./actions";
@@ -28,7 +27,6 @@ type Crew = { id: string; name: string; player_id: string; corpName: string | nu
 
 type RoundState = {
   round_number: number;
-  active_crew_id: string | null;
   end_round_requested_by: string | null;
   end_round_requested_at: string | null;
 };
@@ -56,15 +54,6 @@ export function RoundHud({
 
   const requestedByMe = roundState.end_round_requested_by === currentUserId;
   const requested = roundState.end_round_requested_by !== null;
-
-  function handleSetActiveCrew(crewId: string | null) {
-    setError(null);
-    startTransition(async () => {
-      const result = await setActiveCrew(missionId, crewId);
-      if (result.error) setError(result.error);
-      else if (result.data) onRoundStateChange(result.data);
-    });
-  }
 
   function handleRequestEndRound() {
     setError(null);
@@ -154,30 +143,6 @@ export function RoundHud({
         <div>
           <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Runde</span>
           <p className="font-display text-3xl font-semibold text-text-default">{roundState.round_number}</p>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <span className="font-mono text-[14px] tracking-[0.08em] text-text-secondary uppercase">Aktiv</span>
-          <p className="max-w-[220px] font-mono text-[11px] text-text-subtle">
-            Nur eine geteilte Markierung, wer gerade dran ist -- ohne eigene Spielmechanik, blockiert oder erlaubt nichts.
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {crews.map((crew) => (
-              <button
-                key={crew.id}
-                type="button"
-                disabled={pending}
-                onClick={() => handleSetActiveCrew(roundState.active_crew_id === crew.id ? null : crew.id)}
-                className={`px-2.5 py-1 font-mono text-[13px] uppercase ${
-                  roundState.active_crew_id === crew.id
-                    ? "border border-corp-accent bg-corp-accent/20 text-corp-accent"
-                    : "border border-border text-text-secondary hover:border-corp-accent"
-                }`}
-              >
-                {crew.name}
-              </button>
-            ))}
-          </div>
         </div>
 
         <Button type="button" onClick={() => setCalculatorOpen(true)}>

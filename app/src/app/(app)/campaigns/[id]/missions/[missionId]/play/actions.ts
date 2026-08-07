@@ -21,12 +21,11 @@ export type RoundStateRow = {
   mission_id: string;
   phase: string;
   round_number: number;
-  active_crew_id: string | null;
   end_round_requested_by: string | null;
   end_round_requested_at: string | null;
 };
 
-const ROUND_STATE_COLUMNS = "mission_id, phase, round_number, active_crew_id, end_round_requested_by, end_round_requested_at";
+const ROUND_STATE_COLUMNS = "mission_id, phase, round_number, end_round_requested_by, end_round_requested_at";
 
 export async function startRoundSequence(missionId: string): Promise<{ error?: string; data?: RoundStateRow }> {
   const supabase = await createClient();
@@ -38,18 +37,6 @@ export async function startRoundSequence(missionId: string): Promise<{ error?: s
   const { data, error } = await supabase
     .from("mission_round_state")
     .update({ phase: "round", round_number: 1 })
-    .eq("mission_id", missionId)
-    .select(ROUND_STATE_COLUMNS)
-    .single();
-  if (error) return { error: error.message };
-  return { data };
-}
-
-export async function setActiveCrew(missionId: string, crewId: string | null): Promise<{ error?: string; data?: RoundStateRow }> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("mission_round_state")
-    .update({ active_crew_id: crewId })
     .eq("mission_id", missionId)
     .select(ROUND_STATE_COLUMNS)
     .single();

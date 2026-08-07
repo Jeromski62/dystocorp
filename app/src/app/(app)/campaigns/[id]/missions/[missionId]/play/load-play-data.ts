@@ -51,7 +51,7 @@ export async function loadPlayModeData(missionId: string) {
     .maybeSingle();
   if (!mission) return null;
 
-  const roundStateColumns = "mission_id, phase, round_number, active_crew_id, end_round_requested_by, end_round_requested_at";
+  const roundStateColumns = "mission_id, phase, round_number, end_round_requested_by, end_round_requested_at";
   const { data: existingRoundState } = await supabase
     .from("mission_round_state")
     .select(roundStateColumns)

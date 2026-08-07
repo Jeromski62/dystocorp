@@ -11,7 +11,6 @@ type RoundStateRow = {
   mission_id: string;
   phase: string;
   round_number: number;
-  active_crew_id: string | null;
   end_round_requested_by: string | null;
   end_round_requested_at: string | null;
 };

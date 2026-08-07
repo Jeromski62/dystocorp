@@ -1029,7 +1029,6 @@ export type Database = {
       }
       mission_round_state: {
         Row: {
-          active_crew_id: string | null
           end_round_requested_at: string | null
           end_round_requested_by: string | null
           mission_id: string
@@ -1038,7 +1037,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          active_crew_id?: string | null
           end_round_requested_at?: string | null
           end_round_requested_by?: string | null
           mission_id: string
@@ -1047,7 +1045,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          active_crew_id?: string | null
           end_round_requested_at?: string | null
           end_round_requested_by?: string | null
           mission_id?: string
@@ -1056,13 +1053,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "mission_round_state_active_crew_id_fkey"
-            columns: ["active_crew_id"]
-            isOneToOne: false
-            referencedRelation: "crews"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "mission_round_state_end_round_requested_by_fkey"
             columns: ["end_round_requested_by"]
