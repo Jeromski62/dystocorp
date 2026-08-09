@@ -107,15 +107,7 @@ export function RoundHud({
         weaponJammed: false,
       });
       if (result.error) setError(result.error);
-      else if (result.row) {
-        onCombatantChange({
-          kind: combatant.kind,
-          id: combatant.id,
-          currentHealth: result.row.current_health,
-          isStunned: result.row.is_stunned,
-          weaponJammed: result.row.weapon_jammed,
-        });
-      }
+      else if (result.patch) onCombatantChange(result.patch);
     });
   }
 
@@ -130,15 +122,7 @@ export function RoundHud({
         delta,
       });
       if (result.error) setError(result.error);
-      else if (result.row) {
-        onCombatantChange({
-          kind: combatant.kind,
-          id: combatant.id,
-          currentHealth: result.row.current_health,
-          isStunned: result.row.is_stunned,
-          weaponJammed: result.row.weapon_jammed,
-        });
-      }
+      else if (result.patch) onCombatantChange(result.patch);
     });
   }
 

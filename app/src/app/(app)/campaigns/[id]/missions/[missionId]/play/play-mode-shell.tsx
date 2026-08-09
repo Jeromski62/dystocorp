@@ -29,10 +29,7 @@ export function PlayModeShell({
     { column: "mission_id", value: mission.id },
     initialRoundState as RoundStateRow
   );
-  const [combatants, mergeCombatant] = useRealtimeCombatants(
-    crews.map((c) => c.id),
-    initialCombatants
-  );
+  const [combatants, mergeCombatant] = useRealtimeCombatants(mission.id, initialCombatants);
 
   return (
     <div className="hud-grid min-h-screen">

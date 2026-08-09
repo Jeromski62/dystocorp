@@ -178,24 +178,8 @@ export function AimAssistCalculator({
         setError(result.error);
         return;
       }
-      if (result.shooter) {
-        onCombatantsUpdated({
-          kind: result.shooter.kind,
-          id: result.shooter.row.id,
-          currentHealth: result.shooter.row.current_health,
-          isStunned: result.shooter.row.is_stunned,
-          weaponJammed: result.shooter.row.weapon_jammed,
-        });
-      }
-      if (result.target) {
-        onCombatantsUpdated({
-          kind: result.target.kind,
-          id: result.target.row.id,
-          currentHealth: result.target.row.current_health,
-          isStunned: result.target.row.is_stunned,
-          weaponJammed: result.target.row.weapon_jammed,
-        });
-      }
+      if (result.shooter) onCombatantsUpdated(result.shooter);
+      if (result.target) onCombatantsUpdated(result.target);
       if (attack === "standard") {
         onResolved();
       } else {

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/database.types";
+import { combatantsChannelName, type CombatantPatch } from "./combatant-patch";
 
 export type CombatantKind = "captain" | "first_mate" | "soldier";
 
@@ -12,7 +13,40 @@ const TABLE_FOR_KIND: Record<CombatantKind, "captains" | "first_mates" | "soldie
   soldier: "soldiers",
 };
 
-export type CombatantStateRow = { id: string; current_health: number; is_stunned: boolean; weapon_jammed: boolean };
+// Re-reads the just-written row and pushes it out as an explicit Broadcast
+// message -- not postgres_changes. This project already hit "Realtime
+// broadcast doesn't reliably reach the *other* player" once for
+// mission_round_state (97e19a4; that fix only guaranteed the *acting*
+// client's own click applies immediately, never actually confirmed delivery
+// to the other player). Rather than debug postgres_changes' RLS-at-delivery
+// behavior a second time for captains/first_mates/soldiers, the server
+// pushes the patch itself right after its own write succeeds -- no Realtime
+// RLS evaluation involved on the way out. Callers still apply the return
+// value to their own local state directly (same "don't wait on your own
+// broadcast" rationale as useRealtimeRow).
+async function fetchAndBroadcastCombatant(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  missionId: string,
+  kind: CombatantKind,
+  id: string
+): Promise<{ error?: string; patch?: CombatantPatch }> {
+  const { data: row, error } = await supabase
+    .from(TABLE_FOR_KIND[kind])
+    .select("id, current_health, is_stunned, weapon_jammed")
+    .eq("id", id)
+    .single();
+  if (error) return { error: error.message };
+
+  const patch: CombatantPatch = {
+    kind,
+    id: row.id,
+    currentHealth: row.current_health,
+    isStunned: row.is_stunned,
+    weaponJammed: row.weapon_jammed,
+  };
+  await supabase.channel(combatantsChannelName(missionId)).send({ type: "broadcast", event: "combatant", payload: patch });
+  return { patch };
+}
 
 // -- Round Sequence container (PRD Phase 2, steps 8-11) --------------------
 // Deliberately minimal: no activation-order/action-economy enforcement
@@ -140,7 +174,7 @@ export async function setCombatantStatus(input: {
   id: string;
   isStunned: boolean;
   weaponJammed: boolean;
-}): Promise<{ error?: string; row?: CombatantStateRow }> {
+}): Promise<{ error?: string; patch?: CombatantPatch }> {
   const supabase = await createClient();
   const { error } = await supabase.rpc("set_combatant_status", {
     p_mission_id: input.missionId,
@@ -151,14 +185,7 @@ export async function setCombatantStatus(input: {
     p_weapon_jammed: input.weaponJammed,
   });
   if (error) return { error: error.message };
-
-  const { data: row, error: selectError } = await supabase
-    .from(TABLE_FOR_KIND[input.kind])
-    .select("id, current_health, is_stunned, weapon_jammed")
-    .eq("id", input.id)
-    .single();
-  if (selectError) return { error: selectError.message };
-  return { row };
+  return fetchAndBroadcastCombatant(supabase, input.missionId, input.kind, input.id);
 }
 
 export async function adjustCombatantHealth(input: {
@@ -167,7 +194,7 @@ export async function adjustCombatantHealth(input: {
   kind: CombatantKind;
   id: string;
   delta: number;
-}): Promise<{ error?: string; row?: CombatantStateRow }> {
+}): Promise<{ error?: string; patch?: CombatantPatch }> {
   const supabase = await createClient();
   const { error } = await supabase.rpc("adjust_combatant_health", {
     p_mission_id: input.missionId,
@@ -177,14 +204,7 @@ export async function adjustCombatantHealth(input: {
     p_delta: input.delta,
   });
   if (error) return { error: error.message };
-
-  const { data: row, error: selectError } = await supabase
-    .from(TABLE_FOR_KIND[input.kind])
-    .select("id, current_health, is_stunned, weapon_jammed")
-    .eq("id", input.id)
-    .single();
-  if (selectError) return { error: selectError.message };
-  return { row };
+  return fetchAndBroadcastCombatant(supabase, input.missionId, input.kind, input.id);
 }
 
 // -- Aim Assist resolution --------------------------------------------------
@@ -212,8 +232,8 @@ export type ResolveShootingActionInput = {
 
 export type ResolveShootingActionResult = {
   error?: string;
-  shooter?: { kind: CombatantKind; row: CombatantStateRow };
-  target?: { kind: CombatantKind; row: CombatantStateRow } | null;
+  shooter?: CombatantPatch;
+  target?: CombatantPatch | null;
 };
 
 export async function resolveShootingAction(input: ResolveShootingActionInput): Promise<ResolveShootingActionResult> {
@@ -244,23 +264,15 @@ export async function resolveShootingAction(input: ResolveShootingActionInput): 
   });
   if (error) return { error: error.message };
 
-  const { data: shooterRow, error: shooterSelectError } = await supabase
-    .from(TABLE_FOR_KIND[input.shooterKind])
-    .select("id, current_health, is_stunned, weapon_jammed")
-    .eq("id", input.shooterId)
-    .single();
-  if (shooterSelectError) return { error: shooterSelectError.message };
+  const shooterResult = await fetchAndBroadcastCombatant(supabase, input.missionId, input.shooterKind, input.shooterId);
+  if (shooterResult.error) return { error: shooterResult.error };
 
   let target: ResolveShootingActionResult["target"] = null;
   if (input.targetId && input.targetKind) {
-    const { data: targetRow, error: targetSelectError } = await supabase
-      .from(TABLE_FOR_KIND[input.targetKind])
-      .select("id, current_health, is_stunned, weapon_jammed")
-      .eq("id", input.targetId)
-      .single();
-    if (targetSelectError) return { error: targetSelectError.message };
-    target = { kind: input.targetKind, row: targetRow };
+    const targetResult = await fetchAndBroadcastCombatant(supabase, input.missionId, input.targetKind, input.targetId);
+    if (targetResult.error) return { error: targetResult.error };
+    target = targetResult.patch ?? null;
   }
 
-  return { shooter: { kind: input.shooterKind, row: shooterRow }, target };
+  return { shooter: shooterResult.patch, target };
 }
