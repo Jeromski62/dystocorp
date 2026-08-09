@@ -8,6 +8,8 @@
 // only computes the deterministic parts (modifiers, comparison, damage,
 // stun/wound/death). Nothing here generates randomness.
 
+import { parseItemNumericModifier } from "@/lib/stargrave/compute";
+
 export const STUN_DAMAGE_THRESHOLD = 4;
 export const WOUNDED_HEALTH_THRESHOLD = 4;
 export const COVER_BONUS = { none: 0, light: 2, heavy: 4 } as const;
@@ -251,13 +253,7 @@ export function computeScatter(marginOfFailure: number): ScatterResult {
   return { scattered: true, completeMiss: false, scatterInches: margin };
 }
 
-// equipment_items.damage_modifier is free text ("+2", "-1", or qualitative
-// values like "Grenade") -- not accounted for in the Aim Assist Flow doc's
-// damage formula at all, so this parses the numeric case and lets the
-// calculator fall back to a manual override for the qualitative one.
-export function parseWeaponDamageModifier(raw: string | null): number | null {
-  if (!raw) return null;
-  const match = raw.trim().match(/^[+-]?\d+$/);
-  if (!match) return null;
-  return Number.parseInt(raw, 10);
-}
+// Not accounted for in the Aim Assist Flow doc's damage formula at all, so
+// this parses the numeric case and lets the calculator fall back to a
+// manual override for the qualitative one (e.g. Grenade Launcher's "Grenade").
+export const parseWeaponDamageModifier = parseItemNumericModifier;
