@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { resolveShootingAction } from "../actions";
 import type { CombatantKind, PlayCombatant } from "../load-play-data";
+import type { CombatantPatch } from "../use-realtime-combatants";
 import {
   type Cover,
   type GrenadeShootRollResult,
@@ -37,12 +38,14 @@ export function AimAssistCalculator({
   missionId,
   roundNumber,
   combatants,
+  onCombatantsUpdated,
   onResolved,
 }: {
   campaignId: string;
   missionId: string;
   roundNumber: number;
   combatants: PlayCombatant[];
+  onCombatantsUpdated: (patch: CombatantPatch) => void;
   onResolved: () => void;
 }) {
   const [attackType, setAttackType] = useState<AttackType>("standard");
@@ -174,6 +177,24 @@ export function AimAssistCalculator({
       if (result.error) {
         setError(result.error);
         return;
+      }
+      if (result.shooter) {
+        onCombatantsUpdated({
+          kind: result.shooter.kind,
+          id: result.shooter.row.id,
+          currentHealth: result.shooter.row.current_health,
+          isStunned: result.shooter.row.is_stunned,
+          weaponJammed: result.shooter.row.weapon_jammed,
+        });
+      }
+      if (result.target) {
+        onCombatantsUpdated({
+          kind: result.target.kind,
+          id: result.target.row.id,
+          currentHealth: result.target.row.current_health,
+          isStunned: result.target.row.is_stunned,
+          weaponJammed: result.target.row.weapon_jammed,
+        });
       }
       if (attack === "standard") {
         onResolved();

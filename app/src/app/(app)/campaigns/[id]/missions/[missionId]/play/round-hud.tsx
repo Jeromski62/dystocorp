@@ -17,6 +17,7 @@ import {
   type RoundStateRow,
 } from "./actions";
 import type { PlayCombatant } from "./load-play-data";
+import type { CombatantPatch } from "./use-realtime-combatants";
 import { AimAssistCalculator } from "./aim-assist/calculator";
 import { StatusBadge } from "@/components/status-badge";
 import { HealthTracker } from "@/components/health-tracker";
@@ -37,6 +38,7 @@ export function RoundHud({
   roundState,
   crews,
   combatants,
+  onCombatantChange,
   currentUserId,
   onRoundStateChange,
 }: {
@@ -45,6 +47,7 @@ export function RoundHud({
   roundState: RoundState;
   crews: Crew[];
   combatants: PlayCombatant[];
+  onCombatantChange: (patch: CombatantPatch) => void;
   currentUserId: string;
   onRoundStateChange: (row: RoundStateRow) => void;
 }) {
@@ -86,7 +89,7 @@ export function RoundHud({
     if (!confirm("Debrief-Phase starten? Das gilt für beide Spieler.")) return;
     setError(null);
     startTransition(async () => {
-      const result = await markLastRound(missionId);
+      const result = await markLastRound(campaignId, missionId);
       if (result.error) setError(result.error);
       else if (result.data) onRoundStateChange(result.data);
     });
@@ -96,7 +99,6 @@ export function RoundHud({
     setError(null);
     startTransition(async () => {
       const result = await setCombatantStatus({
-        campaignId,
         missionId,
         crewId: combatant.crewId,
         kind: combatant.kind,
@@ -105,6 +107,15 @@ export function RoundHud({
         weaponJammed: false,
       });
       if (result.error) setError(result.error);
+      else if (result.row) {
+        onCombatantChange({
+          kind: combatant.kind,
+          id: combatant.id,
+          currentHealth: result.row.current_health,
+          isStunned: result.row.is_stunned,
+          weaponJammed: result.row.weapon_jammed,
+        });
+      }
     });
   }
 
@@ -112,7 +123,6 @@ export function RoundHud({
     setError(null);
     startTransition(async () => {
       const result = await adjustCombatantHealth({
-        campaignId,
         missionId,
         crewId: combatant.crewId,
         kind: combatant.kind,
@@ -120,6 +130,15 @@ export function RoundHud({
         delta,
       });
       if (result.error) setError(result.error);
+      else if (result.row) {
+        onCombatantChange({
+          kind: combatant.kind,
+          id: combatant.id,
+          currentHealth: result.row.current_health,
+          isStunned: result.row.is_stunned,
+          weaponJammed: result.row.weapon_jammed,
+        });
+      }
     });
   }
 
@@ -240,6 +259,7 @@ export function RoundHud({
             missionId={missionId}
             roundNumber={roundState.round_number}
             combatants={combatants}
+            onCombatantsUpdated={onCombatantChange}
             onResolved={() => setCalculatorOpen(false)}
           />
         </SheetContent>

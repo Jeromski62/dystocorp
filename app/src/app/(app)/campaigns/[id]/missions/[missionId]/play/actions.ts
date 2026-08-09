@@ -6,6 +6,14 @@ import type { Json } from "@/lib/supabase/database.types";
 
 export type CombatantKind = "captain" | "first_mate" | "soldier";
 
+const TABLE_FOR_KIND: Record<CombatantKind, "captains" | "first_mates" | "soldiers"> = {
+  captain: "captains",
+  first_mate: "first_mates",
+  soldier: "soldiers",
+};
+
+export type CombatantStateRow = { id: string; current_health: number; is_stunned: boolean; weapon_jammed: boolean };
+
 // -- Round Sequence container (PRD Phase 2, steps 8-11) --------------------
 // Deliberately minimal: no activation-order/action-economy enforcement
 // (that's the separate, still-unwritten Round Sequence detail PRD).
@@ -104,7 +112,12 @@ export async function confirmEndRound(missionId: string): Promise<{ error?: stri
   return { data };
 }
 
-export async function markLastRound(missionId: string): Promise<{ error?: string; data?: RoundStateRow }> {
+// Combat log/session results (Debrief) come from the initial page load and
+// are no longer kept fresh incidentally by a revalidatePath on every health/
+// status/shooting action during the round (see adjustCombatantHealth et al.
+// above) -- so this transition, which fires once per mission rather than
+// once per click, has to revalidate explicitly instead.
+export async function markLastRound(campaignId: string, missionId: string): Promise<{ error?: string; data?: RoundStateRow }> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("mission_round_state")
@@ -113,6 +126,7 @@ export async function markLastRound(missionId: string): Promise<{ error?: string
     .select(ROUND_STATE_COLUMNS)
     .single();
   if (error) return { error: error.message };
+  revalidatePath(`/campaigns/${campaignId}/missions/${missionId}/play`);
   return { data };
 }
 
@@ -126,8 +140,7 @@ export async function setCombatantStatus(input: {
   id: string;
   isStunned: boolean;
   weaponJammed: boolean;
-  campaignId: string;
-}): Promise<{ error?: string }> {
+}): Promise<{ error?: string; row?: CombatantStateRow }> {
   const supabase = await createClient();
   const { error } = await supabase.rpc("set_combatant_status", {
     p_mission_id: input.missionId,
@@ -139,8 +152,13 @@ export async function setCombatantStatus(input: {
   });
   if (error) return { error: error.message };
 
-  revalidatePath(`/campaigns/${input.campaignId}/missions/${input.missionId}/play`);
-  return {};
+  const { data: row, error: selectError } = await supabase
+    .from(TABLE_FOR_KIND[input.kind])
+    .select("id, current_health, is_stunned, weapon_jammed")
+    .eq("id", input.id)
+    .single();
+  if (selectError) return { error: selectError.message };
+  return { row };
 }
 
 export async function adjustCombatantHealth(input: {
@@ -149,8 +167,7 @@ export async function adjustCombatantHealth(input: {
   kind: CombatantKind;
   id: string;
   delta: number;
-  campaignId: string;
-}): Promise<{ error?: string }> {
+}): Promise<{ error?: string; row?: CombatantStateRow }> {
   const supabase = await createClient();
   const { error } = await supabase.rpc("adjust_combatant_health", {
     p_mission_id: input.missionId,
@@ -161,8 +178,13 @@ export async function adjustCombatantHealth(input: {
   });
   if (error) return { error: error.message };
 
-  revalidatePath(`/campaigns/${input.campaignId}/missions/${input.missionId}/play`);
-  return {};
+  const { data: row, error: selectError } = await supabase
+    .from(TABLE_FOR_KIND[input.kind])
+    .select("id, current_health, is_stunned, weapon_jammed")
+    .eq("id", input.id)
+    .single();
+  if (selectError) return { error: selectError.message };
+  return { row };
 }
 
 // -- Aim Assist resolution --------------------------------------------------
@@ -188,7 +210,13 @@ export type ResolveShootingActionInput = {
   shooterWeaponJammed: boolean;
 };
 
-export async function resolveShootingAction(input: ResolveShootingActionInput): Promise<{ error?: string }> {
+export type ResolveShootingActionResult = {
+  error?: string;
+  shooter?: { kind: CombatantKind; row: CombatantStateRow };
+  target?: { kind: CombatantKind; row: CombatantStateRow } | null;
+};
+
+export async function resolveShootingAction(input: ResolveShootingActionInput): Promise<ResolveShootingActionResult> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -216,6 +244,23 @@ export async function resolveShootingAction(input: ResolveShootingActionInput): 
   });
   if (error) return { error: error.message };
 
-  revalidatePath(`/campaigns/${input.campaignId}/missions/${input.missionId}/play`);
-  return {};
+  const { data: shooterRow, error: shooterSelectError } = await supabase
+    .from(TABLE_FOR_KIND[input.shooterKind])
+    .select("id, current_health, is_stunned, weapon_jammed")
+    .eq("id", input.shooterId)
+    .single();
+  if (shooterSelectError) return { error: shooterSelectError.message };
+
+  let target: ResolveShootingActionResult["target"] = null;
+  if (input.targetId && input.targetKind) {
+    const { data: targetRow, error: targetSelectError } = await supabase
+      .from(TABLE_FOR_KIND[input.targetKind])
+      .select("id, current_health, is_stunned, weapon_jammed")
+      .eq("id", input.targetId)
+      .single();
+    if (targetSelectError) return { error: targetSelectError.message };
+    target = { kind: input.targetKind, row: targetRow };
+  }
+
+  return { shooter: { kind: input.shooterKind, row: shooterRow }, target };
 }

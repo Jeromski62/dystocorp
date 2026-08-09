@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRealtimeRow } from "@/lib/supabase/use-realtime-row";
+import { useRealtimeCombatants } from "./use-realtime-combatants";
 import { SetupScreen } from "./setup-screen";
 import { RoundHud } from "./round-hud";
 import { DebriefWizard } from "./debrief-wizard";
@@ -22,11 +23,15 @@ export function PlayModeShell({
   data: PlayModeData;
   currentUserId: string;
 }) {
-  const { mission, roundState: initialRoundState, crews, combatants, combatLog, crewSessionResults } = data;
+  const { mission, roundState: initialRoundState, crews, combatants: initialCombatants, combatLog, crewSessionResults } = data;
   const [roundState, setRoundState] = useRealtimeRow<RoundStateRow>(
     "mission_round_state",
     { column: "mission_id", value: mission.id },
     initialRoundState as RoundStateRow
+  );
+  const [combatants, mergeCombatant] = useRealtimeCombatants(
+    crews.map((c) => c.id),
+    initialCombatants
   );
 
   return (
@@ -54,6 +59,7 @@ export function PlayModeShell({
           roundState={roundState}
           crews={crews}
           combatants={combatants}
+          onCombatantChange={mergeCombatant}
           currentUserId={currentUserId}
           onRoundStateChange={setRoundState}
         />
