@@ -112,22 +112,32 @@ function Badge({ statusKey }: { statusKey: StatusKey }) {
 export function StatusBadge({
   currentHealth,
   health,
+  isRobot = false,
   isStunned = false,
   weaponJammed = false,
+  variant = "roster",
 }: {
   currentHealth: number;
   health: number;
+  isRobot?: boolean;
   isStunned?: boolean;
   weaponJammed?: boolean;
+  // "combat": in-game Wounded per the Stargrave core rules (context/StarGrave
+  // Rules/07-core-rules-full.md) -- Health <= 4 (fixed, not proportional),
+  // robots exempt, and a figure that starts with <=4 Health isn't Wounded
+  // until it first takes damage. Matches aim-assist/engine.ts's
+  // WOUNDED_HEALTH_THRESHOLD. Used in Play Mode.
+  // "roster" (default): pre-existing half-Health read used on the crew
+  // dossier -- that page is actually about Badly Wounded / persistent
+  // campaign injuries (a between-games result, not this in-game status)
+  // and is being revisited separately, so its behavior stays as-is here.
+  variant?: "combat" | "roster";
 }) {
-  // "Injured" tracks the rulebook's Badly Wounded threshold (p.68: a figure
-  // that would start its next game at half Health), not merely any HP lost
-  // -- so a figure that's taken one point of damage still reads as Fit.
-  // Half is rounded up (17 Health -> injured at 9 or below) since the rules
-  // don't spell out a rounding direction and this project has no other
-  // "half stat" precedent to match.
-  const badlyWoundedThreshold = Math.ceil(health / 2);
-  const healthStatus: StatusKey = currentHealth <= 0 ? "out" : currentHealth <= badlyWoundedThreshold ? "injured" : "fit";
+  const isWounded =
+    variant === "combat"
+      ? !isRobot && currentHealth > 0 && currentHealth <= 4 && currentHealth < health
+      : currentHealth > 0 && currentHealth <= Math.ceil(health / 2);
+  const healthStatus: StatusKey = currentHealth <= 0 ? "out" : isWounded ? "injured" : "fit";
   const active: StatusKey[] = [healthStatus];
   if (isStunned) active.push("stunned");
   if (weaponJammed) active.push("weaponJammed");

@@ -291,8 +291,10 @@ function RosterTile({
             <StatusBadge
               currentHealth={combatant.currentHealth}
               health={combatant.health}
+              isRobot={combatant.isRobot}
               isStunned={combatant.isStunned}
               weaponJammed={combatant.weaponJammed}
+              variant="combat"
             />
             {combatant.isStunned || combatant.weaponJammed ? (
               <button
