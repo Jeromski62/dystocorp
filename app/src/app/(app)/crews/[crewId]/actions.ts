@@ -22,6 +22,7 @@ import {
   computeActivationNumber,
   computeGearSlotTotal,
   computeStatLine,
+  parseItemNumericModifier,
   validateArmourLimit,
   validateChosenStatOptions,
   validateGearSlots,
@@ -88,7 +89,7 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
     supabase.from("backgrounds").select("id, fixed_stat_mods, choice_stat_count, choice_stat_options").eq("id", input.backgroundId).maybeSingle(),
     supabase.from("background_core_powers").select("power_id").eq("background_id", input.backgroundId),
     supabase.from("powers").select("id, activation_number").in("id", input.powerIds),
-    supabase.from("equipment_items").select("id, key, gear_slots, category").in("id", Array.from(new Set(input.gearItemIds))),
+    supabase.from("equipment_items").select("id, key, gear_slots, category, damage_modifier").in("id", Array.from(new Set(input.gearItemIds))),
     supabase.from(table).select("id, current_health, health").eq("crew_id", input.crewId).maybeSingle(),
   ]);
 
@@ -138,11 +139,19 @@ export async function saveOfficer(input: SaveOfficerInput): Promise<{ error?: st
   // Rulebook: "A figure may never wear more than one armour type at the
   // same time" -- Light/Heavy/Combat Armour and Shield all share the
   // "armour" category, so this is a cap of 1 total unit across it.
-  const armourCount = input.gearItemIds.filter((id) => gearById.get(id)!.category === "armour").length;
+  const armourItemId = input.gearItemIds.find((id) => gearById.get(id)!.category === "armour");
+  const armourCount = armourItemId ? 1 : 0;
   const armourError = validateArmourLimit(armourCount);
   if (armourError) return { error: armourError };
 
+  // 06-general-equipment.md "Armour" table: Light/Heavy/Combat Armour grant a
+  // flat Armour bonus on top of the base stat -- Soldiers get this baked
+  // into their fixed soldier_types.armour value, but Captain/First Mate gear
+  // is freely chosen, so it has to be added here.
+  const armourBonus = armourItemId ? (parseItemNumericModifier(gearById.get(armourItemId)!.damage_modifier) ?? 0) : 0;
+
   const stats = computeStatLine(rules.baseStats, background.fixed_stat_mods as Record<string, number>, input.chosenStatOptions);
+  stats.armour += armourBonus;
   const defaultName = input.role === "captain" ? "Captain" : "First Mate";
 
   // Preserve accumulated damage when re-saving; only reset current_health if

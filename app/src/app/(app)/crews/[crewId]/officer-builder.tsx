@@ -24,6 +24,7 @@ import {
   computeActivationNumber,
   computeGearSlotTotal,
   computeStatLine,
+  parseItemNumericModifier,
   validateArmourLimit,
   validateChosenStatOptions,
   validateGearSlots,
@@ -57,6 +58,7 @@ type EquipmentItem = {
   gear_slots: number;
   cost_cr: number | null;
   effect_text: string;
+  damage_modifier: string | null;
 };
 
 type ExistingOfficer = {
@@ -358,6 +360,14 @@ export function OfficerBuilder({
     background?.fixed_stat_mods ?? {},
     chosenStatOptions as ChoosableStat[]
   );
+  // Light/Heavy/Combat Armour grant a flat Armour bonus on top of the base
+  // stat (06-general-equipment.md "Armour" table) -- mirrors the same
+  // computation saveOfficer does server-side, so the preview matches what
+  // actually gets saved.
+  const equippedArmourItem = Object.keys(gearQuantities)
+    .map((id) => equipment.find((e) => e.id === id))
+    .find((item) => item?.category === "armour");
+  stats.armour += parseItemNumericModifier(equippedArmourItem?.damage_modifier ?? null) ?? 0;
 
   // Per Figma node 2091:534 -- Start Level stands apart (no fill, bold,
   // left-aligned) from the five/six stat cells (filled header, centered).

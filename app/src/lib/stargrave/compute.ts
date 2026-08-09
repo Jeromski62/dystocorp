@@ -98,3 +98,15 @@ export function validateArmourLimit(armourCount: number): string | null {
   }
   return null;
 }
+
+// equipment_items.damage_modifier is free text ("+2", "-1", or qualitative
+// values like "Grenade") -- used generically for any item's flat numeric
+// stat bonus, not just weapon damage (e.g. Light/Heavy/Combat Armour's
+// Armour bonus, 06-general-equipment.md "Armour" table). Returns null for
+// the qualitative case so callers can fall back to a manual value.
+export function parseItemNumericModifier(raw: string | null): number | null {
+  if (!raw) return null;
+  const match = raw.trim().match(/^[+-]?\d+$/);
+  if (!match) return null;
+  return Number.parseInt(raw, 10);
+}

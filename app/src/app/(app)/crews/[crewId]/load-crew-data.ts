@@ -45,7 +45,7 @@ export async function loadCrewDetail(crewId: string) {
     supabase.from("powers").select("id, name, activation_number, strain, full_text").order("name"),
     supabase
       .from("equipment_items")
-      .select("id, key, name, category, gear_slots, cost_cr, effect_text, restrictions, base_weapon_type")
+      .select("id, key, name, category, gear_slots, cost_cr, effect_text, restrictions, base_weapon_type, damage_modifier")
       .order("category, name"),
     supabase
       .from("soldier_types")
