@@ -92,8 +92,7 @@ that Group Activation is never compulsory.
 | Stunned | +2 | Target was stunned when it activated this turn (bonus to the *target's* defence roll) |
 | Cleared Jam | +1 | Shooter already cleared a weapon jam this activation |
 
-All values in this table are added to the relevant roll (shooter's Shooting Roll for
-Hasty Shot/Cleared Jam; target's Combat Roll for the defensive circumstances).
+All values in this table are added to the target's Combat Roll.
 
 ### General Weapons Table
 

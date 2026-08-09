@@ -263,8 +263,7 @@ aktivieren.
 
 ### Modifiers to Shooting
 
-Alle Modifikatoren werden auf den **Fight-Wurf des Ziels** angerechnet (Ausnahme:
-Hasty Shot/Cleared Jam gelten für den **Shooting-Wurf** des Schützen).
+Alle Modifikatoren werden auf den **Fight-Wurf des Ziels** angerechnet.
 
 | Umstand | Modifikator | Notiz |
 |---|---|---|

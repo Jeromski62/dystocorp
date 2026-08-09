@@ -80,8 +80,7 @@ export function AimAssistCalculator({
     setDamageModifierOverride(parseWeaponDamageModifier(weapon?.damageModifier ?? null) ?? 0);
   }
 
-  const shooterResult: ShooterTotalResult | null =
-    shooter && shooterRoll !== "" ? computeShooterTotal({ ...shooter, hasMovedThisActivation: hasMoved, clearedJamThisActivation: clearedJam }, Number(shooterRoll)) : null;
+  const shooterResult: ShooterTotalResult | null = shooter && shooterRoll !== "" ? computeShooterTotal(shooter, Number(shooterRoll)) : null;
 
   const targetResult: TargetTotalResult | null =
     target && targetRoll !== ""
@@ -92,6 +91,8 @@ export function AimAssistCalculator({
             isInCombat,
             interveningTerrainCount: interveningTerrain,
             cover,
+            shooterHasMovedThisActivation: hasMoved,
+            shooterClearedJamThisActivation: clearedJam,
           },
           Number(targetRoll)
         )
@@ -254,14 +255,6 @@ export function AimAssistCalculator({
 
       {shooter ? (
         <div className="flex flex-wrap gap-3">
-          <label className="flex items-center gap-1.5 text-xs text-text-secondary">
-            <input type="checkbox" checked={hasMoved} onChange={(e) => setHasMoved(e.target.checked)} className="accent-corp-accent" />
-            Hasty Shot (bewegt)
-          </label>
-          <label className="flex items-center gap-1.5 text-xs text-text-secondary">
-            <input type="checkbox" checked={clearedJam} onChange={(e) => setClearedJam(e.target.checked)} className="accent-corp-accent" />
-            Cleared Jam
-          </label>
           {shooter.isStunned ? <span className="text-xs text-danger">Schütze ist Stunned</span> : null}
           {shooter.weaponJammed ? <span className="text-xs text-danger">Waffe war blockiert (Jam)</span> : null}
         </div>
@@ -336,6 +329,14 @@ export function AimAssistCalculator({
                 <label className="flex items-center gap-1.5 text-xs text-text-secondary self-end pb-2">
                   <input type="checkbox" checked={isLarge} onChange={(e) => setIsLarge(e.target.checked)} className="accent-corp-accent" />
                   Large Target
+                </label>
+                <label className="flex items-center gap-1.5 text-xs text-text-secondary self-end pb-2">
+                  <input type="checkbox" checked={hasMoved} onChange={(e) => setHasMoved(e.target.checked)} className="accent-corp-accent" />
+                  Hasty Shot (Schütze bewegt, +1)
+                </label>
+                <label className="flex items-center gap-1.5 text-xs text-text-secondary self-end pb-2">
+                  <input type="checkbox" checked={clearedJam} onChange={(e) => setClearedJam(e.target.checked)} className="accent-corp-accent" />
+                  Cleared Jam (+1)
                 </label>
               </div>
 
@@ -559,7 +560,20 @@ function FragmentationTargetForm({
 }) {
   const targetResult =
     targetRoll !== ""
-      ? computeTargetTotal({ ...target, isLarge, isInCombat: false, interveningTerrainCount: interveningTerrain, cover }, Number(targetRoll))
+      ? computeTargetTotal(
+          {
+            ...target,
+            isLarge,
+            isInCombat: false,
+            interveningTerrainCount: interveningTerrain,
+            cover,
+            // Fragmentation is a fixed-bonus blast attack (FRAGMENTATION_ATTACK_BONUS),
+            // not a Shoot-stat roll -- Hasty Shot/Cleared Jam don't apply to it.
+            shooterHasMovedThisActivation: false,
+            shooterClearedJamThisActivation: false,
+          },
+          Number(targetRoll)
+        )
       : null;
 
   const shooterTotal = FRAGMENTATION_ATTACK_BONUS;

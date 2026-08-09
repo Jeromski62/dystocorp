@@ -32,8 +32,6 @@ export type ShooterInput = {
   isRobot: boolean;
   currentHealth: number;
   health: number;
-  hasMovedThisActivation: boolean;
-  clearedJamThisActivation: boolean;
 };
 
 export type TargetInput = {
@@ -48,6 +46,11 @@ export type TargetInput = {
   interveningTerrainCount: number;
   cover: Cover;
   lostEyeStacks: number;
+  // Properties of the shooter's activation, not the target -- but per the
+  // Shooting Modifier Table (Stargrave core rules p.56) their bonus is added
+  // to the target's Combat Roll like every other circumstance in that table.
+  shooterHasMovedThisActivation: boolean;
+  shooterClearedJamThisActivation: boolean;
 };
 
 export function isShooterWounded(shooter: Pick<ShooterInput, "isRobot" | "currentHealth">): boolean {
@@ -66,19 +69,11 @@ export type ShooterTotalResult = {
   breakdown: { label: string; value: number }[];
 };
 
-// S_Moved -> S_Hasty/S_NoHasty -> S_ClearedJam -> S_ShooterWounded -> S_ShooterRoll -> S_ShooterCrit -> S_JamCheck
+// S_ShooterWounded -> S_ShooterRoll -> S_ShooterCrit -> S_JamCheck
 export function computeShooterTotal(shooter: ShooterInput, roll: number): ShooterTotalResult {
   const breakdown: { label: string; value: number }[] = [{ label: "Shoot", value: shooter.shoot }];
   let total = shooter.shoot;
 
-  if (shooter.hasMovedThisActivation) {
-    total += HASTY_SHOT_BONUS;
-    breakdown.push({ label: "Hasty Shot", value: HASTY_SHOT_BONUS });
-  }
-  if (shooter.clearedJamThisActivation) {
-    total += CLEARED_JAM_BONUS;
-    breakdown.push({ label: "Cleared Jam", value: CLEARED_JAM_BONUS });
-  }
   const woundedMalusApplied = isShooterWounded(shooter);
   if (woundedMalusApplied) {
     total += WOUNDED_MALUS;
@@ -104,7 +99,7 @@ export type TargetTotalResult = {
   breakdown: { label: string; value: number }[];
 };
 
-// S_IntTerrain -> S_Cover -> S_StunnedMod -> S_LargeTarget -> S_TargetWounded -> S_LostEye -> S_TargetRoll -> S_TargetCrit
+// S_IntTerrain -> S_Cover -> S_Hasty/S_NoHasty -> S_ClearedJam -> S_StunnedMod -> S_LargeTarget -> S_TargetWounded -> S_LostEye -> S_TargetRoll -> S_TargetCrit
 export function computeTargetTotal(target: TargetInput, roll: number): TargetTotalResult {
   // Lost Eye's second stack is "treated as a Dead result" per the
   // permanent_injury_types seed (not mentioned in the Aim Assist Flow doc
@@ -120,6 +115,14 @@ export function computeTargetTotal(target: TargetInput, roll: number): TargetTot
     const bonus = target.interveningTerrainCount;
     total += bonus;
     breakdown.push({ label: `Intervening Terrain (x${target.interveningTerrainCount})`, value: bonus });
+  }
+  if (target.shooterHasMovedThisActivation) {
+    total += HASTY_SHOT_BONUS;
+    breakdown.push({ label: "Hasty Shot", value: HASTY_SHOT_BONUS });
+  }
+  if (target.shooterClearedJamThisActivation) {
+    total += CLEARED_JAM_BONUS;
+    breakdown.push({ label: "Cleared Jam", value: CLEARED_JAM_BONUS });
   }
   if (target.cover !== "none") {
     const bonus = COVER_BONUS[target.cover];
