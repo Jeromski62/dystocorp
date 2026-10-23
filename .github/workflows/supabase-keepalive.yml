@@ -18,9 +18,18 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
+          # Beim Einfuegen der Secrets rutschen leicht Leerzeichen,
+          # Zeilenumbrueche oder Anfuehrungszeichen mit rein.
+          url=$(printf '%s' "$SUPABASE_URL" | tr -d " \t\r\n\"'")
+          url=${url%/}
+          key=$(printf '%s' "$SUPABASE_ANON_KEY" | tr -d " \t\r\n\"'")
+          case "$url" in
+            https://*) ;;
+            *) echo "SUPABASE_URL muss mit https:// beginnen"; exit 1 ;;
+          esac
           status=$(curl -s -o /dev/null -w "%{http_code}" \
-            "$SUPABASE_URL/rest/v1/players?select=id&limit=1" \
-            -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+            "$url/rest/v1/players?select=id&limit=1" \
+            -H "apikey: $key" \
+            -H "Authorization: Bearer $key")
           echo "HTTP $status"
           test "$status" = "200"
