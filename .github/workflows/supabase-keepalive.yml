@@ -1,0 +1,26 @@
+# Haelt das Supabase-Free-Projekt aktiv: Supabase pausiert Free-Projekte
+# nach ~7 Tagen ohne Aktivitaet. Eine kleine REST-Abfrage alle 3 Tage
+# zaehlt als Aktivitaet. RLS liefert fuer den Anon-Key ggf. eine leere
+# Liste -- das ist egal, entscheidend ist, dass die DB angefragt wird.
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: "0 6 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/players?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "HTTP $status"
+          test "$status" = "200"
